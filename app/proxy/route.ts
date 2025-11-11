@@ -1,0 +1,24 @@
+import { NextRequest } from "next/server";
+import { proxyHandler } from "@/hooks/proxyHandler"; 
+
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const endpoint = url.searchParams.get('endpoint') || '';
+  return proxyHandler(req, endpoint, 'GET');
+}
+
+export async function POST(req: NextRequest) {
+  const url = new URL(req.url);
+  const endpoint = url.searchParams.get('endpoint') || '';
+  return proxyHandler(req, endpoint, 'POST');
+}
+export async function PUT(req: NextRequest) {
+  const url = new URL(req.url);
+  const endpoint = url.searchParams.get('endpoint') || '';
+  return proxyHandler(req, endpoint, 'PUT');
+}
+export async function DELETE(req: NextRequest) {
+  const url = new URL(req.url);
+  const endpoint = url.searchParams.get('endpoint') || '';
+  return proxyHandler(req, endpoint, 'DELETE');
+}
