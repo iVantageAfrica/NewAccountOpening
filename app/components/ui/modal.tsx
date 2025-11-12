@@ -5,7 +5,8 @@ import React, { useEffect, useState } from "react";
 
 interface ModalProps {
   isVisible: boolean;
-  size?: "xs" |"sm" | "md" | "lg" | "xl";
+  cancelIcon: boolean;
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   type?: "center" | "side";
   title?: string;
   subTitle?: string;
@@ -21,6 +22,7 @@ const Modal: React.FC<ModalProps> = ({
   size = "md",
   type = "center",
   title = "Modal",
+  cancelIcon = true
 }) => {
   const sizeClassMap: Record<string, string> = {
     xs: "lg:w-[25%]",
@@ -38,10 +40,10 @@ const Modal: React.FC<ModalProps> = ({
   useEffect(() => {
     if (isVisible) {
       setRender(true);
-      setTimeout(() => setShow(true), 10); 
+      setTimeout(() => setShow(true), 10);
     } else {
-      setShow(false); 
-      setTimeout(() => setRender(false), 300); 
+      setShow(false);
+      setTimeout(() => setRender(false), 300);
     }
   }, [isVisible]);
 
@@ -69,11 +71,14 @@ const Modal: React.FC<ModalProps> = ({
         >
           <div className="flex justify-between items-center  py-4 px-8 text-sm">
             <span className="text-black font-semibold text-lg">{title}</span>
-            <X
-              size={20}
-              className="cursor-pointer"
-              onClick={onClose}
-            />
+            {cancelIcon && (
+              <X
+                size={20}
+                className="cursor-pointer"
+                onClick={onClose}
+              />
+            )}
+
           </div>
           <div className="grid text-xs pb-4">
             {subTitle && <p className="text-md font-bold">{subTitle}</p>}

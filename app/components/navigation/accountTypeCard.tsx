@@ -47,7 +47,7 @@ export default function AccountTypeCard({ accounts }: Props) {
                 className={`flex items-center gap-4 px-6 py-3 w-full rounded-md cursor-pointer transition-all duration-200 ${
                   isActive
                     ? "bg-primary text-white"
-                    : "text-black"
+                    : "text-black dark:text-white"
                 }`}
                 onClick={() => setActiveCategory(category)}
               >
@@ -92,7 +92,7 @@ export default function AccountTypeCard({ accounts }: Props) {
                           isMulti
                             ? isOpen
                               ? "bg-secondary text-primary rounded-t-md"
-                              : "border-2 border-primary text-black rounded-md"
+                              : "border-2 border-primary text-black dark:text-white rounded-md"
                             : "bg-secondary text-primary rounded-t-md"
                         }`}
                         onClick={() =>

@@ -8,17 +8,25 @@ interface FileUploadInputProps {
   labelName: string;
   description?: string;
   required?: boolean;
+  name?: string;
+  value?: File | null;
+  onFormChange?: (name: string, file: File | null) => void;
   onFileChange?: (file: File | null) => void;
+  inputError?: string | null;
 }
 
 const FileUploadInput: React.FC<FileUploadInputProps> = ({
   labelName,
+  name,
   description,
   required,
+  value,
+  onFormChange,
   onFileChange,
+  inputError
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = React.useState<File | null>(value || null);
   const [error, setError] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +42,7 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
     setError("");
     setFile(uploaded);
     onFileChange?.(uploaded);
+    if (name) onFormChange?.(name, uploaded);
   };
 
   const isImage = file?.type.startsWith("image/");
@@ -84,7 +93,10 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
         />
       </div>
 
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+
+      {(error || inputError) && (
+        <p className="text-red-500 text-xs mt-1">{error || inputError}</p>
+      )}
     </div>
   );
 };

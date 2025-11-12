@@ -9,6 +9,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: "text" | "password" | "amount" | "email" | "number";
   maxLength?: number;
   name: string;
+  formValue?: string;
+  onFormChange?: (name: string, value: string) => void;
 }
 
 const formatAmount = (value: string) => {
@@ -19,7 +21,7 @@ const formatAmount = (value: string) => {
 };
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ labelName, required, inputError, type = "text", name, className, maxLength = 1000, ...props }, ref) => {
+  ({ labelName, required, inputError, type = "text", name, className,formValue, onFormChange, maxLength = 1000, ...props }, ref) => {
     const [value, setValue] = React.useState(props.value || "");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,13 +36,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         newValue = newValue.replace(/\D/g, "");
       }
       setValue(newValue);
+      onFormChange?.(name, newValue);
       props.onChange?.(e);
     };
 
     return (
       <div className="space-y-1">
         {labelName && (
-          <label className="text-gray-700 text-sm md:text-[15px]" htmlFor={props.id}>
+          <label className="text-gray-700 dark:text-white text-sm md:text-[15px]" htmlFor={props.id}>
             {labelName} {required && <span className="text-red-500">*</span>}
           </label>
         )}
@@ -51,7 +54,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           type={type === "amount" ||"number" ? "text" : type}
           value={value}
           onChange={handleChange}
-          className={`w-full px-4 py-2 border border-gray-300 rounded text-sm text-black placeholder:text-xs focus:outline-none focus:border-primary ${className || ""}`}
+          className={`w-full px-4 py-2 border border-gray-300 rounded text-sm text-black dark:text-white placeholder:text-xs focus:outline-none focus:border-primary ${className || ""}`}
         />
         {inputError && <p className="text-red-500 text-xs">{inputError}</p>}
       </div>

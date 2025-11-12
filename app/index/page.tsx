@@ -4,7 +4,6 @@ import { GalleryHorizontalEnd, User, Users } from "lucide-react";
 import { AccountType } from "../components/types/accountType";
 import AccountTypeCard from "../components/navigation/accountTypeCard";
 import TopBar from "../components/navigation/topBar";
-import { toast } from "../components/toast/useToast";
 
 const LandingPage = () => {
     const accountType: AccountType[] = [
@@ -72,21 +71,6 @@ const LandingPage = () => {
                     <AccountTypeCard accounts={accountType} />
                 </div>
             </div>
-
-            <button
-                onClick={() => {
-                    console.log("clicked")
-                    toast({
-                        type:"error",
-                        title: "Error",
-                        description: "Hello Man this is what i dont like as the stuff is not woking well ",
-                    })
-                }
-                }
-
-            >
-                Heklo
-            </button>
         </div>
     );
 }

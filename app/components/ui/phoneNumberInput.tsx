@@ -2,7 +2,8 @@
 import React from "react";
 
 interface CountryOption { label: string; code: string; }
-interface Props {
+
+interface PhoneNumberInputProps {
   name: string;
   labelName?: string;
   required?: boolean;
@@ -10,10 +11,10 @@ interface Props {
   countries?: CountryOption[];
   defaultCountryCode?: string;
   value?: string;
-  onChange?: (val: string) => void;
+  onChange?: (value: string) => void;
 }
 
-const PhoneNumberInput: React.FC<Props> = ({
+const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   name,
   labelName = "Phone Number",
   required,
@@ -29,9 +30,15 @@ const PhoneNumberInput: React.FC<Props> = ({
   onChange,
 }) => {
   const [country, setCountry] = React.useState(defaultCountryCode);
-  const [phone, setPhone] = React.useState("");
+  const [phone, setPhone] = React.useState(value.replace(/\D/g, ""));
 
-  React.useEffect(() => onChange?.(`${country}${phone}`), [country, phone]);
+
+  React.useEffect(() => {
+    if (onChange) {
+      const formatted = `${country}${phone.replace(/^0+/, "")}`;
+      onChange(formatted);
+    }
+  }, [country, phone]);
 
   return (
     <div className="space-y-1 w-full">
@@ -47,8 +54,10 @@ const PhoneNumberInput: React.FC<Props> = ({
           value={country}
           onChange={(e) => setCountry(e.target.value)}
         >
-          {countries.map(c => (
-            <option key={c.code} value={c.code}>{c.label} ({c.code})</option>
+          {countries.map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.label} ({c.code})
+            </option>
           ))}
         </select>
 
@@ -57,8 +66,10 @@ const PhoneNumberInput: React.FC<Props> = ({
           value={country}
           onChange={(e) => setCountry(e.target.value)}
         >
-          {countries.map(c => (
-            <option key={c.code} value={c.code}>{c.code}</option>
+          {countries.map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.code}
+            </option>
           ))}
         </select>
 

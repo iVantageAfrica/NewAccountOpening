@@ -1,6 +1,5 @@
 "use client";
-
-import * as React from "react";
+import React from "react";
 
 interface Option {
   label: string;
@@ -13,6 +12,8 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   inputError?: string | null;
   name: string;
   options: Option[];
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -21,26 +22,15 @@ const Select: React.FC<SelectProps> = ({
   inputError,
   name,
   options,
-  className,
-  defaultValue = "",
+  value = "",
   onChange,
+  className,
   ...props
 }) => {
-  const [selected, setSelected] = React.useState(defaultValue);
-
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setSelected(value);
-    onChange?.(e);
-  };
-
   return (
     <div className="space-y-1">
       {labelName && (
-        <label
-          htmlFor={name}
-          className="text-gray-700 text-sm md:text-[15px]"
-        >
+        <label htmlFor={name} className="text-gray-700 text-sm md:text-[15px]">
           {labelName} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -48,8 +38,8 @@ const Select: React.FC<SelectProps> = ({
       <select
         id={name}
         name={name}
-        value={selected}
-        onChange={handleChange}
+        value={value}
+        onChange={onChange}
         className={`w-full px-4 py-2 border border-gray-300 rounded text-sm text-black focus:outline-none focus:border-primary ${className || ""}`}
         {...props}
       >

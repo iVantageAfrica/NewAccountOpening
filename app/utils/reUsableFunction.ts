@@ -1,13 +1,57 @@
+import CryptoJS from 'crypto-js';
+import { useAppStore } from '../store/appStore';
+
+
 export const maskPhone = (phone: string) =>
   phone ? `***${phone.slice(-3)}` : "";
 
 export const maskEmail = (email: string) => {
   if (!email.includes("@")) return "";
   const [name, domain] = email.split("@");
-  return `***${name.slice(-3)}@${domain}`;
+  return `***${name.slice(-4)}@${domain}`;
 };
 
-// lib/utils.ts
 export function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+export const formatTime = (seconds: number): string => {
+  const min = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const sec = (seconds % 60).toString().padStart(2, "0");
+  return `${min}:${sec}`;
+};
+
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY!;
+export const encrypt = (data: unknown): string => {
+  const stringifiedData = JSON.stringify(data);
+  return CryptoJS.AES.encrypt(stringifiedData, SECRET_KEY).toString();
+};
+
+export const decrypt = (cipher: string): string => {
+   try {
+    const bytes = CryptoJS.AES.decrypt(cipher, SECRET_KEY);
+    const decryptedStr = bytes.toString(CryptoJS.enc.Utf8);
+    return JSON.parse(decryptedStr);
+  } catch (e) {
+    console.error("Failed to decrypt:", e);
+    return "";
+  }
+};
+
+
+export function bvnDataClean(bvnData: Record<string, any>) {
+    const { UserPhoneNo, BVN, UserEmail, surname, middle_name,first_name,gender, NIN, DateOfBirth,residential_address } = bvnData;
+    const dataClean = { 
+      phoneNumber:UserPhoneNo, 
+      bvn:BVN, 
+      emailAddress:UserEmail, 
+      lastName:surname, 
+      middleName:middle_name, 
+      firstName:first_name, 
+      gender, 
+      nin:NIN,
+      dateOfBirth:DateOfBirth,
+      address:residential_address };
+    useAppStore.getState().set("bvnData", dataClean)
+} 
+

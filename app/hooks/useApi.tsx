@@ -2,15 +2,22 @@
 
 import { useState, useCallback } from "react";
 import { toast } from "../components/toast/useToast";
+import { useAppStore } from "../store/appStore";
 
 type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 export function useApi<T = any>() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const bearerToken = useAppStore((state) => state.get("bearerToken"));
+  const token = typeof bearerToken === "string" ? bearerToken : undefined;
 
-
-  const request = useCallback(async (endpoint: string, method: Method = "GET", body?: any): Promise<T> => {
+  const request = useCallback(async (
+    endpoint: string, 
+    method: Method = "GET", 
+    body?: any,
+    contentType: string = "application/json"
+  ): Promise<T> => {
     setLoading(true);
     setError(null);
 
@@ -19,7 +26,8 @@ export function useApi<T = any>() {
     const response = await fetch(url, {
       method,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": contentType,
+        ...(token && {Authorization: `Bearer ${token}`})
       },
       body: method === "GET" ? undefined : JSON.stringify(body),
     });
@@ -30,6 +38,7 @@ export function useApi<T = any>() {
       const message = data?.message || "Something went wrong";
       setError(message);
       toast({
+        type:"error",
         title: "Error",
         description: message,
       });
@@ -38,7 +47,7 @@ export function useApi<T = any>() {
 
     setLoading(false);
     return data;
-  }, []);
+  }, [token]);
 
   return { loading, error, request };
 }

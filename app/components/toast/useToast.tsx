@@ -53,7 +53,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               `}
             >
               {t.title && <strong className="block">{t.title}</strong>}
-              {t.description && <span>{t.description}</span>}
+              {t.description && <span className="text-sm">{t.description}</span>}
             </div>
           );
         })}
