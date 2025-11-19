@@ -1,6 +1,7 @@
 "use client";
 import StepProgress from "@/app/components/navigation/stepProgress";
 import TopBar from "@/app/components/navigation/topBar";
+import { useAccountGuard } from "@/app/components/types/accountGuard";
 import { Accordion, AccordionItem } from "@/app/components/ui/accordion";
 import AccountSuccess from "@/app/components/ui/accountSuccess";
 import DetailsLabel from "@/app/components/ui/detailsLabel";
@@ -16,12 +17,12 @@ import { useAppStore } from "@/app/store/appStore";
 import { savingsAccountMapper } from "@/app/utils/mapper/savingAccount";
 import { savingsAccountSchema } from "@/app/utils/validationSchema/savingsAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 
 const SavingsAccount = () => {
+    useAccountGuard();
     const router = useRouter();
     const { createIndividualAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
@@ -74,7 +75,7 @@ const SavingsAccount = () => {
 
             <div className="p-6 md:px-30">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <Accordion onChangeStep={(activeStep)=>{setActiveStep(activeStep+1)}}>
+                    <Accordion onChangeStep={(activeStep) => { setActiveStep(activeStep + 1) }}>
                         <AccordionItem title="Account Details">
                             <div className="bg-gray-200 px-3 md:px-6 pt-4 grid grid-cols-1 md:grid-cols-3 gap-y-2 pb-4 border-b border-gray-300 rounded-b md:rounded-b-xl">
                                 <DetailsLabel title="BVN" value={bvnData?.bvn} />
@@ -300,7 +301,7 @@ const SavingsAccount = () => {
                             )}
                         />
                     </div>
-                    <PrimaryButton type="submit" loading ={loading} >Submit</PrimaryButton>
+                    <PrimaryButton type="submit" loading={loading} >Submit</PrimaryButton>
                 </form>
             </div>
             <Modal isVisible={successModal}
@@ -309,7 +310,7 @@ const SavingsAccount = () => {
                 type="center"
                 cancelIcon={true}
                 title="">
-                    <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber}/>
+                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} />
             </Modal>
         </div>
     );

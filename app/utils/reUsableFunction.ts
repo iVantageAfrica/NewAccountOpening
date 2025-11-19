@@ -38,6 +38,11 @@ export const decrypt = (cipher: string): string => {
   }
 };
 
+export const clearAppState = () =>{
+    useAppStore.getState().clear();
+    localStorage.clear();
+    sessionStorage.clear();
+}
 
 export function bvnDataClean(bvnData: Record<string, any>) {
     const { phone_number, bvn, email, lastname, middle_name,firstname,gender, nin, date_of_birth,address } = bvnData;

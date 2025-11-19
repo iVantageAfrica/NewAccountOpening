@@ -1,6 +1,7 @@
 "use client";
 import StepProgress from "@/app/components/navigation/stepProgress";
 import TopBar from "@/app/components/navigation/topBar";
+import { useAccountGuard } from "@/app/components/types/accountGuard";
 import { Accordion, AccordionItem } from "@/app/components/ui/accordion";
 import AccountSuccess from "@/app/components/ui/accountSuccess";
 import DetailsLabel from "@/app/components/ui/detailsLabel";
@@ -16,12 +17,12 @@ import { useAppStore } from "@/app/store/appStore";
 import { currentAccountMapper } from "@/app/utils/mapper/currentAccount";
 import { currentAccountSchema } from "@/app/utils/validationSchema/currentAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 
 const IndividualAccount = () => {
+    useAccountGuard();
     const router = useRouter();
     const { createIndividualAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);

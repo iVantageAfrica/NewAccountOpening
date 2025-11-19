@@ -2,6 +2,7 @@
 import DynamicSignatories from "@/app/(pages)/accounts/corporate/dynamicSignatories";
 import StepProgress from "@/app/components/navigation/stepProgress";
 import TopBar from "@/app/components/navigation/topBar";
+import { useAccountGuard } from "@/app/components/types/accountGuard";
 import { Accordion, AccordionItem } from "@/app/components/ui/accordion";
 import AccountSuccess from "@/app/components/ui/accountSuccess";
 import DetailsLabel from "@/app/components/ui/detailsLabel";
@@ -14,17 +15,21 @@ import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { useAppStore } from "@/app/store/appStore";
 import { corporateAccountMapper } from "@/app/utils/mapper/corporateAccount";
+import { clearAppState } from "@/app/utils/reUsableFunction";
 import { CorporateAccountSchema } from "@/app/utils/validationSchema/corporateAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 
 const CorporateAccount = () => {
+    useAccountGuard();
     const router = useRouter();
+    const param = useSearchParams();
+    const accountData = JSON.parse(atob(param.get("account") || ""));
     const { createCorporateAccount, loading } = useApiEndPoints();
-    const [successModal, setSuccessModal] = React.useState(false);
+    const [successModal, setSuccessModal] = React.useState(true);
     const [accountNumber, setAccountNumber] = React.useState("");
     const bvnData = useAppStore((state) => state.get("bvnData"));
     const [activeStep, setActiveStep] = React.useState(2);
@@ -100,7 +105,7 @@ const CorporateAccount = () => {
     });
 
     const onSubmit = async (data: FormData) => {
-        const payload = corporateAccountMapper(data, bvnData.bvn);
+        const payload = corporateAccountMapper(data, bvnData.bvn, accountData.id);
         const apiResponse = await createCorporateAccount(payload);
         if (apiResponse.statusCode === 200) {
             setSuccessModal(true);
@@ -110,7 +115,7 @@ const CorporateAccount = () => {
 
     return (
         <div className="relative">
-            <TopBar showArrow={true} description={`Corporate Account`} />
+            <TopBar showArrow={true} description={`${accountData?.category}  Account`} />
             <div className="pt-28">
                 <StepProgress
                     steps={["BVN Verification", "Business Details", "Upload Documents"]}
@@ -364,6 +369,7 @@ const CorporateAccount = () => {
                                             render={({ field }) => (
                                                 <Input {...field} 
                                                 required 
+                                                type="number"
                                                 labelName={`Director ${index + 1} BVN`} 
                                                 inputError={errors.director?.[index]?.bvn?.message} />
                                             )}
@@ -423,12 +429,12 @@ const CorporateAccount = () => {
                 </form>
             </div>
             <Modal isVisible={successModal}
-                onClose={() => router.replace("/")}
+                onClose={() => {router.replace("/"); clearAppState()}}
                 size="md"
                 type="center"
                 cancelIcon={true}
                 title="">
-                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} />
+                <AccountSuccess url="https://corporate.imperialmortgagebank.com/?nav_source=ibs" accountNumber={accountNumber} />
             </Modal>
         </div>
     );

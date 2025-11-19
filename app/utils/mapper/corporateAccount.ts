@@ -1,9 +1,9 @@
-export const corporateAccountMapper = (userFormData: any, bvn: string) => {
+export const corporateAccountMapper = (userFormData: any, bvn: string, accountTypeId:string) => {
     const formData = new FormData();
 
     const fields: Record<string, any> = {
         bvn,
-        account_type_id: '3',
+        account_type_id: accountTypeId,
         company_name: userFormData.companyName,
         registration_number: userFormData.registrationNumber,
         company_type: userFormData.companyType,

@@ -58,6 +58,7 @@ const BvnValidation: React.FC = () => {
         const apiResponse = await verifyUserBvn(accountInformation.bvn)
         if (apiResponse.statusCode === 200) {
             useAppStore.getState().set("bearerToken", apiResponse.data.authToken)
+            useAppStore.getState().set("isAuthenticated", true)
             setAccountInformation((prev) => ({ ...prev, bvnData: apiResponse.data }))
             setVerificationModal(true);
             startTimer();
@@ -86,8 +87,8 @@ const BvnValidation: React.FC = () => {
             const routeMap: Record<string, string> = {
                 "Individual-1": "/accounts/individual/current",
                 "Individual-2": "/accounts/individual/savings",
-                "Corporate": "/accounts/corporate",
-                "Merchant": "/accounts/merchant/pos",
+                "Corporate": `/accounts/corporate/?account=${btoa(JSON.stringify(selectedAccount))}`,
+                "Merchant": `/accounts/corporate/?account=${btoa(JSON.stringify(selectedAccount))}`,
             };
 
             const routeKey = accountCategory === "Individual"? `${accountCategory}-${accountId}` : accountCategory;
