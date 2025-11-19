@@ -14,12 +14,12 @@ const TopBar: React.FC<TopBarProps> = ({ showArrow = false, description }) => {
             {showArrow && (
                 <MoveLeft className="cursor-pointer" onClick={() => router.back()} />
             )}
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-2 items-center">
             <div className="cursor-pointer" onClick={()=>router.replace('/')}>
-                <Image src="/images/imperialLogo.png" alt="Imperial Logo" width={60} height={60}   className="w-10 h-10 md:w-13 md:h-13" />
+                <Image src="/images/imperialLogo.png" alt="Imperial Logo" width={40} height={40}   className="w-10 h-10 " />
             </div>
             <div className="grid">
-                  <h1 className="text-lg md:text-2xl font-bold ">Account Opening</h1>
+                  <h1 className="text-lg md:text-xl font-bold ">Account Opening</h1>
             {description && <p className="text-sm text-gray-600 -mt-1">{description}</p>}
             </div>
           </div>

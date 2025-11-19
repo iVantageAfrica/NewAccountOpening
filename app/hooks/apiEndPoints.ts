@@ -27,11 +27,29 @@ export const useApiEndPoints = () => {
         return response;
     }, [request])
 
+    const createIndividualAccount = useCallback(async (data:any) => {
+        const response = await request("account/create-individual-account", "POST",data);
+        return response;
+    }, [request])
+
+    const createPosMerchantAccount = useCallback(async (data:any) => {
+        const response = await request("account/create-pos-account", "POST",data);
+        return response;
+    }, [request])
+
+    const createCorporateAccount = useCallback(async (data:any) =>{
+        const response = await request("account/create-corporate-account","POST", data);
+        return response;
+    }, [request])
+
     return {
         loading,
         error,
         verifyUserBvn,
         resendBVNOTPCode,
-        otpVerification
+        otpVerification,
+        createIndividualAccount,
+        createPosMerchantAccount,
+        createCorporateAccount
     }
 }

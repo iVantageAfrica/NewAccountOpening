@@ -44,15 +44,15 @@ export default function AccountTypeCard({ accounts }: Props) {
           return (
             <div key={idx} className="flex">
               <div
-                className={`flex items-center gap-4 px-6 py-3 w-full rounded-md cursor-pointer transition-all duration-200 ${
+                className={`flex items-center gap-2 px-6 py-3 w-full rounded-md cursor-pointer transition-all duration-200 ${
                   isActive
                     ? "bg-primary text-white"
                     : "text-black dark:text-white"
                 }`}
                 onClick={() => setActiveCategory(category)}
               >
-                {Icon && <Icon />}
-                <h3 className="text-md font-semibold">{category}</h3>
+                {Icon && <Icon size={15} />}
+                <h3 className="text-sm font-semibold">{category}</h3>
               </div>
             </div>
           );
@@ -72,9 +72,9 @@ export default function AccountTypeCard({ accounts }: Props) {
               className={`cursor-pointer ${!isMobileVisible ? "hidden lg:block" : ""}`}
             >
             
-              <div className="bg-primary text-white lg:flex items-center gap-4 px-8 py-3 md:rounded-t-2xl hidden">
-                {Icon && <Icon />}
-                <h3 className="text-xl font-semibold">{category}</h3>
+              <div className="bg-primary text-white lg:flex items-center gap-3 px-8 py-3 md:rounded-t-2xl hidden">
+                {Icon && <Icon size={18} />}
+                <h3 className="text-lg font-semibold">{category}</h3>
               </div>
 
           
@@ -101,7 +101,7 @@ export default function AccountTypeCard({ accounts }: Props) {
                             : undefined
                         }
                       >
-                        <p>{account.name}</p>
+                        <p className="text-sm">{account.name}</p>
                         {isMulti && (
                           <ChevronDown
                             size={20}
@@ -116,14 +116,14 @@ export default function AccountTypeCard({ accounts }: Props) {
                       {isOpen && (
                         <>
                           <div className="p-4 border border-gray-200 rounded-b-md">
-                            <p className="font-bold text-sm mb-1">
+                            <p className="font-bold text-xs mb-1">
                               Minimum Requirements:
                             </p>
                             <ul className="text-xs ml-1.5 gap-y-1.5 grid">
                               {account.requirements.map((req, idx) => (
-                                <li key={idx} className="flex items-start">
+                                <li key={idx} className="flex items-start text-[11px]">
                                   <CircleCheck
-                                    size={14}
+                                    size={12}
                                     className="mr-2 text-primary shrink-0 "
                                   />
                                   {req}

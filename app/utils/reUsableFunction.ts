@@ -40,18 +40,18 @@ export const decrypt = (cipher: string): string => {
 
 
 export function bvnDataClean(bvnData: Record<string, any>) {
-    const { UserPhoneNo, BVN, UserEmail, surname, middle_name,first_name,gender, NIN, DateOfBirth,residential_address } = bvnData;
+    const { phone_number, bvn, email, lastname, middle_name,firstname,gender, nin, date_of_birth,address } = bvnData;
     const dataClean = { 
-      phoneNumber:UserPhoneNo, 
-      bvn:BVN, 
-      emailAddress:UserEmail, 
-      lastName:surname, 
+      phoneNumber:phone_number, 
+      bvn:bvn, 
+      emailAddress:email, 
+      lastName:lastname, 
       middleName:middle_name, 
-      firstName:first_name, 
+      firstName:firstname, 
       gender, 
-      nin:NIN,
-      dateOfBirth:DateOfBirth,
-      address:residential_address };
+      nin:nin,
+      dateOfBirth:date_of_birth,
+      address:address };
     useAppStore.getState().set("bvnData", dataClean)
 } 
 

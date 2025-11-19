@@ -1,10 +1,10 @@
 "use client";
-import DynamicSignatories from "@/app/(pages)/accounts/corporate/dynamicSignatories";
 import StepProgress from "@/app/components/navigation/stepProgress";
 import TopBar from "@/app/components/navigation/topBar";
 import { Accordion, AccordionItem } from "@/app/components/ui/accordion";
 import AccountSuccess from "@/app/components/ui/accountSuccess";
 import DetailsLabel from "@/app/components/ui/detailsLabel";
+import FileUploadInput from "@/app/components/ui/fileUpload";
 import Input from "@/app/components/ui/input";
 import Modal from "@/app/components/ui/modal";
 import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
@@ -13,55 +13,37 @@ import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { useAppStore } from "@/app/store/appStore";
-import { corporateAccountMapper } from "@/app/utils/mapper/corporateAccount";
-import { CorporateAccountSchema } from "@/app/utils/validationSchema/corporateAccountSchema";
+import { currentAccountMapper } from "@/app/utils/mapper/currentAccount";
+import { currentAccountSchema } from "@/app/utils/validationSchema/currentAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 
-const CorporateAccount = () => {
+const IndividualAccount = () => {
     const router = useRouter();
-    const { createCorporateAccount, loading } = useApiEndPoints();
+    const { createIndividualAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
     const bvnData = useAppStore((state) => state.get("bvnData"));
-    const [activeStep, setActiveStep] = React.useState(2);
-    const [cacFileName, setCacFileName] = React.useState("");
-
-    const handleCacUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setValue("cacDocument", file);
-            setCacFileName(file.name);
-        }
-    };
-
-    const directorCountMap: Record<string, number> = {
-        "Limited Partnership": 2,
-        "Incorporated Trustee": 2,
-        "Unlimited Company": 1,
-        "Public Company": 2,
-        "Registered Business Name": 1,
-        "Limited Liability Company": 2,
-        "Limited Liability Partnership": 2,
-        "Company Limited by Guarantee": 1,
-    };
-
-    const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
-        resolver: zodResolver(CorporateAccountSchema),
+    const [activeStep, setActiveStep] = React.useState(1);
+    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+        resolver: zodResolver(currentAccountSchema),
         defaultValues: {
-            companyName: "",
-            registrationNumber: "",
-            companyType: "",
-            tin: "",
-            address: "",
+            mothersMaidenName: "",
             secondaryPhone: "",
-            businessEmailAddress: "",
+            phoneNumber: "",
+            employmentStatus: "",
+            maritalStatus: "",
+            houseNumber: "",
+            street: "",
             city: "",
-            lga: "",
             state: "",
+            nextOfKinName: "",
+            nextOfKinAddress: "",
+            nextOfKinRelationship: "",
+            nextOfKinPhone: "",
             referee1Name: "",
             referee1Email: "",
             referee1Mobile: "",
@@ -69,58 +51,38 @@ const CorporateAccount = () => {
             referee2Name: "",
             referee2Email: "",
             referee2Mobile: "",
-            accountOfficer: "",
-            cacDocument: undefined,
-            director: [{ lastname: "", firstname: "", bvn: "" }],
+            referee2Phone: "",
+            validId: null,
+            signature: null,
+            utilityBill: null,
+            passportPhoto: null,
             debitCard: false,
             acceptTerms: false,
-            signatory: [{ name: "", validId: null, signature: null, utilityBill: null, passportPhoto: null }]
         }
-    });
-    const selectedCompanyType = watch("companyType");
-    React.useEffect(() => {
-        if (!selectedCompanyType) return;
-        const requiredCount = directorCountMap[selectedCompanyType] ?? 0;
-        const currentLength = fields.length;
-
-        if (requiredCount > currentLength) {
-            for (let i = 0; i < requiredCount - currentLength; i++) {
-                append({ lastname: "", firstname: "", bvn: "" });
-            }
-        } else if (requiredCount < currentLength) {
-            for (let i = 0; i < currentLength - requiredCount; i++) {
-                remove(fields.length - 1 - i);
-            }
-        }
-    }, [selectedCompanyType]);
-
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "director",
     });
 
     const onSubmit = async (data: FormData) => {
-        const payload = corporateAccountMapper(data, bvnData.bvn);
-        const apiResponse = await createCorporateAccount(payload);
+        const payload = currentAccountMapper(data, bvnData.bvn)
+        const apiResponse = await createIndividualAccount(payload)
         if (apiResponse.statusCode === 200) {
-            setSuccessModal(true);
-            setAccountNumber(apiResponse.data.accountNumber);
+            setSuccessModal(true)
+            setAccountNumber(apiResponse.data.accountNumber)
         }
     };
 
     return (
         <div className="relative">
-            <TopBar showArrow={true} description={`Corporate Account`} />
+            <TopBar showArrow={true} description={`Individual Account / Current`} />
             <div className="pt-28">
                 <StepProgress
-                    steps={["BVN Verification", "Business Details", "Upload Documents"]}
+                    steps={["BVN Verification", "Bank Account Reference", "Upload Documents"]}
                     activeStep={activeStep}
                 />
             </div>
 
             <div className="p-6 md:px-30">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <Accordion onChangeStep={(activeStep) => { setActiveStep(activeStep + 1) }}>
+                    <Accordion onChangeStep={setActiveStep}>
                         <AccordionItem title="Account Details">
                             <div className="bg-gray-200 px-3 md:px-6 pt-4 grid grid-cols-1 md:grid-cols-3 gap-y-2 pb-4 border-b border-gray-300 rounded-b md:rounded-b-xl">
                                 <DetailsLabel title="BVN" value={bvnData?.bvn} />
@@ -134,132 +96,128 @@ const CorporateAccount = () => {
                                 <DetailsLabel title="Address" value={bvnData?.address} />
                                 <DetailsLabel title="Email Address" value={bvnData?.emailAddress} />
                             </div>
-                            <div className="m-4 bg-gray-100 p-3 md:w-1/2 overflow-hidden text-sm md:text-md  rounded">
-                                <div className="grid md:flex items-center gap-2 md:gap-4">
-                                    <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-                                        <p className="font-bold">Did you have a CAC Registered Business? </p>
-                                        {/* <div className="flex gap-3 md:ml-6">   
-                                        <PrimaryButton>Yes</PrimaryButton>
-                                        <PrimaryButton variant="secondary">No</PrimaryButton>
-                                    </div> */}
-                                    </div>
-                                    <label className="flex items-center bg-gray-200 gap-2 md:gap-4 w-25 md:w-30 px-4 py-1 cursor-pointer text-xs font-bold rounded text-black/70">
-                                        <Upload width={15}></Upload> Upload
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.jpg,.jpeg,.png"
-                                            className="hidden"
-                                            onChange={handleCacUpload}
-                                        />
-                                    </label>
-
-                                </div>
-                                <span className="text-primary italic font-bold">{cacFileName}</span>
-
-                            </div>
                             <div className="px-3 md:px-6 py-4 md:py-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                 <Controller
-                                    name="companyName"
+                                    name="mothersMaidenName"
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
                                             required
-                                            labelName="Company Name"
-                                            inputError={errors.companyName?.message} />
+                                            labelName="Mother's Maiden Name"
+                                            inputError={errors.mothersMaidenName?.message} />
                                     )}
                                 />
                                 <Controller
-                                    name="registrationNumber"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Company Registration Number"
-                                            inputError={errors.businessName?.message} />
-                                    )}
-                                />
-                                <Controller
-                                    name="companyType"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Select {...field}
-                                            required
-                                            labelName="Company Type / Business Type"
-                                            inputError={errors.companyType?.message}
-                                            options={[
-                                                { label: "Limited Partnership", value: "Limited Partnership" },
-                                                { label: "Incorporated Trustee", value: "Incorporated Trustee" },
-                                                { label: "Unlimited Company", value: "Unlimited Company" },
-                                                { label: "Public Company (PLC)", value: "Public Company" },
-                                                { label: "Registered Business Name", value: "Registered Business Name" },
-                                                { label: "Limited Liability Company(LTD)", value: "Limited Liability Company" },
-                                                { label: "Limited Liability Partnership", value: "Limited Liability Partnership" },
-                                                { label: "Company Limited by Guarantee(LTD/GTEE)", value: "Company Limited by Guarantee" },
-                                            ]} />
-                                    )}
-                                />
-                                <Controller
-                                    name="tin"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Tax Identification Number (TIN)"
-                                            inputError={errors.tin?.message} />
-                                    )}
-                                />
-                                <Controller
-                                    name="address"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Business Address"
-                                            inputError={errors.companyType?.message} />
-                                    )}
-                                />
-                                <Controller
-                                    name="secondaryPhone"
+                                    name="phoneNumber"
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
                                             required
-                                            labelName="Business Phone Number"
-                                            inputError={errors.secondaryPhone?.message} />
+                                            labelName="Phone Number"
+                                            inputError={errors.phoneNumber?.message} />
                                     )}
                                 />
 
-                                <Controller name="businessEmailAddress"
+                                <Controller
+                                    name="employmentStatus"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select {...field}
+                                            required
+                                            labelName="Employment Status"
+                                            inputError={errors.employmentStatus?.message}
+                                            options={[
+                                                { label: "Employed", value: "Employed" },
+                                                { label: "Self-Employed", value: "Self Employed" },
+                                            ]} />
+                                    )}
+                                />
+                                <Controller
+                                    name="maritalStatus"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select {...field}
+                                            required
+                                            labelName="Marital Status"
+                                            inputError={errors.maritalStatus?.message}
+                                            options={[
+                                                { label: "Single", value: "Single" },
+                                                { label: "Married", value: "Married" },
+                                            ]} />
+                                    )}
+                                />
+                                <Controller name="houseNumber"
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
                                             required
-                                            labelName="Business Email Address"
-                                            inputError={errors.businessEmailAddress?.message} />
+                                            labelName="House Number"
+                                            inputError={errors.houseNumber?.message} />
+                                    )} />
+                                <Controller name="street"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Street"
+                                            inputError={errors.street?.message} />
                                     )} />
                                 <Controller name="city"
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
+                                            required
                                             labelName="City"
                                             inputError={errors.city?.message} />
                                     )} />
-                                <Controller name="lga"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            labelName="Local Government Area"
-                                            inputError={errors.lga?.message} />
-                                    )} />
-
                                 <Controller name="state"
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
                                             required
-                                            labelName="State of Residence"
+                                            labelName="State"
                                             inputError={errors.state?.message} />
                                     )} />
+
+                                <Controller name="nextOfKinName"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Next of Kin"
+                                            inputError={errors.nextOfKinName?.message} />
+                                    )} />
+                                <Controller name="nextOfKinAddress"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Next of Kin Address"
+                                            inputError={errors.nextOfKinAddress?.message} />
+                                    )} />
+                                <Controller name="nextOfKinRelationship"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Relationship"
+                                            inputError={errors.nextOfKinRelationship?.message} />
+                                    )} />
+                                <Controller
+                                    name="nextOfKinPhone"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <PhoneNumberInput {...field}
+                                            required
+                                            labelName="Next of Kin Phone Number"
+                                            inputError={errors.nextOfKinPhone?.message} />
+                                    )}
+                                />
+                            </div>
+                        </AccordionItem>
+
+                        <AccordionItem title="Bank Account Reference">
+                            <div className="px-3 md:px-6 py-4 md:py-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                 <Controller name="referee1Name"
                                     control={control}
                                     render={({ field }) => (
@@ -323,58 +281,66 @@ const CorporateAccount = () => {
                                     )}
                                 />
 
-                                <Controller name="accountOfficer"
+                                <Controller
+                                    name="referee2Phone"
                                     control={control}
                                     render={({ field }) => (
-                                        <Input {...field}
-                                            labelName="Account Officer / Referrer"
-                                            inputError={errors.accountOfficer?.message} />
-                                    )} />
-
-                            </div>
-                            <div className="">
-                                <h3 className="font-bold px-4">Director Information</h3>
-                                {fields.map((field, index) => (
-                                    <div key={field.id} className="px-4 pb-4 pt-2 rounded grid grid-cols-1 md:grid-cols-3 gap-x-8">
-                                        <Controller
-                                            name={`director.${index}.lastname`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Input {...field} 
-                                                required
-                                                labelName={`Director ${index + 1} Lastname`} 
-                                                inputError={errors.director?.[index]?.lastname?.message} />
-                                            )}
-                                        />
-
-                                        <Controller
-                                            name={`director.${index}.firstname`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Input {...field} 
-                                                required 
-                                                labelName={`Director ${index + 1} Firstname`}
-                                                inputError={errors.director?.[index]?.firstname?.message} />
-                                            )}
-                                        />
-
-                                        <Controller
-                                            name={`director.${index}.bvn`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Input {...field} 
-                                                required 
-                                                labelName={`Director ${index + 1} BVN`} 
-                                                inputError={errors.director?.[index]?.bvn?.message} />
-                                            )}
-                                        />
-                                    </div>
-                                ))}
+                                        <PhoneNumberInput {...field}
+                                            labelName="Referee 2 Phone Number"
+                                            inputError={errors.referee2Phone?.message} />
+                                    )}
+                                />
                             </div>
                         </AccordionItem>
 
                         <AccordionItem title="Upload Documents">
-                            <DynamicSignatories control={control} errors={errors} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 md:px-8 gap-6 md:gap-12 p-4 md:p-8">
+                                <Controller
+                                    name="validId"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FileUploadInput
+                                            required
+                                            inputError={errors.validId?.message}
+                                            description="Upload a copy of your National ID, Driver’s License, or International Passport"
+                                            {...field} labelName="Valid ID Document" onFileChange={(file) => field.onChange(file)} />
+                                    )}
+                                />
+                                <Controller
+                                    name="signature"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FileUploadInput {...field}
+                                            required
+                                            description="Upload a copy of your signature"
+                                            inputError={errors.signature?.message}
+                                            labelName="Signature" onFileChange={(file) => field.onChange(file)} />
+                                    )}
+                                />
+                                <Controller
+                                    name="utilityBill"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FileUploadInput {...field}
+                                            required
+                                            inputError={errors.utilityBill?.message}
+                                            description="Upload a copy of your LAWMA Bill, or Task Force or Network"
+                                            labelName="Utility Bill" onFileChange={(file) => field.onChange(file)} />
+                                    )}
+                                />
+                                <Controller
+                                    name="passportPhoto"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FileUploadInput {...field}
+                                            required
+                                            inputError={errors.passportPhoto?.message}
+                                            description="Upload a copy of your passport photograph"
+                                            labelName="Passport" onFileChange={(file) => field.onChange(file)} />
+                                    )}
+                                />
+
+                            </div>
                         </AccordionItem>
                     </Accordion>
 
@@ -422,6 +388,7 @@ const CorporateAccount = () => {
                     <PrimaryButton type="submit" loading={loading} >Submit</PrimaryButton>
                 </form>
             </div>
+
             <Modal isVisible={successModal}
                 onClose={() => router.replace("/")}
                 size="md"
@@ -430,8 +397,9 @@ const CorporateAccount = () => {
                 title="">
                 <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} />
             </Modal>
+
         </div>
     );
 }
 
-export default CorporateAccount;
+export default IndividualAccount;

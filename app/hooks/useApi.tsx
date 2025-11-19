@@ -16,7 +16,6 @@ export function useApi<T = any>() {
     endpoint: string, 
     method: Method = "GET", 
     body?: any,
-    contentType: string = "application/json"
   ): Promise<T> => {
     setLoading(true);
     setError(null);
@@ -26,15 +25,16 @@ export function useApi<T = any>() {
     const response = await fetch(url, {
       method,
       headers: {
-        "Content-Type": contentType,
-        ...(token && {Authorization: `Bearer ${token}`})
+        ...(token && {Authorization: `Bearer ${token}`}),
       },
-      body: method === "GET" ? undefined : JSON.stringify(body),
+      body: method === "GET" 
+      ? undefined 
+      : (body instanceof FormData ? body : JSON.stringify(body)),
     });
-
+    
     const data = await response.json().catch(() => null);
 
-    if (!response.ok) {
+    if (!response.ok || data?.statusCode === false || data?.statusCode !== 200) {
       const message = data?.message || "Something went wrong";
       setError(message);
       toast({

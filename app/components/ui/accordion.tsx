@@ -30,7 +30,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
           {index + 1}
         </p>
         <p
-          className={`text-sm md:text-lg ml-4 md:ml-12 flex-1 font-bold ${
+          className={`text-sm md:text-lg ml-4 md:ml-8 flex-1 font-bold ${
             isActive ? "text-black" : "text-gray-700"
           }`}
         >

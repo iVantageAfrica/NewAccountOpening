@@ -10,8 +10,8 @@ interface PhoneNumberInputProps {
   inputError?: string | null;
   countries?: CountryOption[];
   defaultCountryCode?: string;
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
 const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
@@ -26,19 +26,22 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
     { label: "🇿🇦 South Africa", code: "+27" },
   ],
   defaultCountryCode = "+234",
-  value = "",
+  value,
   onChange,
 }) => {
-  const [country, setCountry] = React.useState(defaultCountryCode);
-  const [phone, setPhone] = React.useState(value.replace(/\D/g, ""));
 
+  const countryCode = countries.find(c => value.startsWith(c.code))?.code || defaultCountryCode;
 
-  React.useEffect(() => {
-    if (onChange) {
-      const formatted = `${country}${phone.replace(/^0+/, "")}`;
-      onChange(formatted);
-    }
-  }, [country, phone]);
+  const phone = value.replace(countryCode, "").replace(/\D/g, "");
+
+  const handlePhoneChange = (val: string) => {
+    const clean = val.replace(/\D/g, "");
+    onChange(`${countryCode}${clean.replace(/^0+/, "")}`);
+  };
+
+  const handleCountryChange = (val: string) => {
+    onChange(`${val}${phone}`);
+  };
 
   return (
     <div className="space-y-1 w-full">
@@ -51,8 +54,8 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
       <div className="flex border border-gray-300 rounded overflow-hidden">
         <select
           className="hidden md:block px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[180px]"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
+          value={countryCode}
+          onChange={(e) => handleCountryChange(e.target.value)}
         >
           {countries.map((c) => (
             <option key={c.code} value={c.code}>
@@ -63,13 +66,11 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
 
         <select
           className="block md:hidden px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[77px]"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
+          value={countryCode}
+          onChange={(e) => handleCountryChange(e.target.value)}
         >
           {countries.map((c) => (
-            <option key={c.code} value={c.code}>
-              {c.code}
-            </option>
+            <option key={c.code} value={c.code}>{c.code}</option>
           ))}
         </select>
 
@@ -80,7 +81,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
           inputMode="numeric"
           placeholder="Enter phone number"
           value={phone}
-          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+          onChange={(e) => handlePhoneChange(e.target.value)}
           className="flex-1 px-3 py-2 text-sm text-black placeholder:text-xs outline-none min-w-0"
         />
       </div>

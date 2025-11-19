@@ -2,27 +2,34 @@
 import StepProgress from "@/app/components/navigation/stepProgress";
 import TopBar from "@/app/components/navigation/topBar";
 import { Accordion, AccordionItem } from "@/app/components/ui/accordion";
+import AccountSuccess from "@/app/components/ui/accountSuccess";
 import DetailsLabel from "@/app/components/ui/detailsLabel";
 import FileUploadInput from "@/app/components/ui/fileUpload";
 import Input from "@/app/components/ui/input";
+import Modal from "@/app/components/ui/modal";
 import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
+import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { useAppStore } from "@/app/store/appStore";
-import { individualAccountSchema } from "@/app/utils/validationSchema/individualAccountSchema";
+import { savingsAccountMapper } from "@/app/utils/mapper/savingAccount";
+import { savingsAccountSchema } from "@/app/utils/validationSchema/savingsAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { ZodError } from "zod";
 import { useForm, Controller } from "react-hook-form";
 
-const IndividualAccount = () => {
+const SavingsAccount = () => {
     const router = useRouter();
+    const { createIndividualAccount, loading } = useApiEndPoints();
+    const [successModal, setSuccessModal] = React.useState(false);
+    const [accountNumber, setAccountNumber] = React.useState("");
     const bvnData = useAppStore((state) => state.get("bvnData"));
-    const [activeStep, setActiveStep] = React.useState(1);
+    const [activeStep, setActiveStep] = React.useState(2);
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
-        resolver: zodResolver(individualAccountSchema),
+        resolver: zodResolver(savingsAccountSchema),
         defaultValues: {
             mothersMaidenName: "",
             secondaryPhone: "",
@@ -32,19 +39,11 @@ const IndividualAccount = () => {
             houseNumber: "",
             street: "",
             city: "",
-            country: "",
+            state: "",
             nextOfKinName: "",
             nextOfKinAddress: "",
             nextOfKinRelationship: "",
             nextOfKinPhone: "",
-            referee1Name: "",
-            referee1Email: "",
-            referee1Mobile: "",
-            referee1Phone: "",
-            referee2Name: "",
-            referee2Email: "",
-            referee2Mobile: "",
-            referee2Phone: "",
             validId: null,
             signature: null,
             utilityBill: null,
@@ -54,23 +53,28 @@ const IndividualAccount = () => {
         }
     });
 
-    const onSubmit = (data: FormData) => {
-        console.log("Form Submitted ✅", data);
+    const onSubmit = async (data: FormData) => {
+        const payload = savingsAccountMapper(data, bvnData.bvn)
+        const apiResponse = await createIndividualAccount(payload)
+        if (apiResponse.statusCode === 200) {
+            setSuccessModal(true)
+            setAccountNumber(apiResponse.data.accountNumber)
+        }
     };
 
     return (
         <div className="relative">
-            <TopBar showArrow={true} description={`Individual Account / Corporate`} />
+            <TopBar showArrow={true} description={`Individual Account / Savings`} />
             <div className="pt-28">
                 <StepProgress
-                    steps={["BVN Verification", "Bank Account Reference", "Upload Documents"]}
+                    steps={["BVN Verification", "Personal Details", "Upload Documents"]}
                     activeStep={activeStep}
                 />
             </div>
 
             <div className="p-6 md:px-30">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <Accordion onChangeStep={setActiveStep}>
+                    <Accordion onChangeStep={(activeStep)=>{setActiveStep(activeStep+1)}}>
                         <AccordionItem title="Account Details">
                             <div className="bg-gray-200 px-3 md:px-6 pt-4 grid grid-cols-1 md:grid-cols-3 gap-y-2 pb-4 border-b border-gray-300 rounded-b md:rounded-b-xl">
                                 <DetailsLabel title="BVN" value={bvnData?.bvn} />
@@ -158,21 +162,15 @@ const IndividualAccount = () => {
                                             labelName="City"
                                             inputError={errors.city?.message} />
                                     )} />
-                                <Controller
-                                    name="country"
+                                <Controller name="state"
                                     control={control}
                                     render={({ field }) => (
-                                        <Select {...field}
+                                        <Input {...field}
                                             required
-                                            labelName="Country"
-                                            inputError={errors.country?.message}
-                                            options={[
-                                                { label: "Nigeria", value: "NG" },
-                                                { label: "Ghana", value: "GH" },
-                                                { label: "Kenya", value: "KE" },
-                                            ]} />
-                                    )}
-                                />
+                                            labelName="State"
+                                            inputError={errors.state?.message} />
+                                    )} />
+
                                 <Controller name="nextOfKinName"
                                     control={control}
                                     render={({ field }) => (
@@ -205,85 +203,6 @@ const IndividualAccount = () => {
                                             required
                                             labelName="Next of Kin Phone Number"
                                             inputError={errors.nextOfKinPhone?.message} />
-                                    )}
-                                />
-                            </div>
-                        </AccordionItem>
-
-                        <AccordionItem title="Bank Account Reference">
-                            <div className="px-3 md:px-6 py-4 md:py-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                                <Controller name="referee1Name"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Referee 1 Name"
-                                            inputError={errors.referee1Name?.message} />
-                                    )} />
-                                <Controller name="referee1Email"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Referee 1 Email Address"
-                                            inputError={errors.referee1Email?.message} />
-                                    )} />
-                                <Controller
-                                    name="referee1Mobile"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            required
-                                            labelName="Referee 1 Mobile Number"
-                                            inputError={errors.referee1Mobile?.message} />
-                                    )}
-                                />
-
-                                <Controller
-                                    name="referee1Phone"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            required
-                                            labelName="Referee 1 Phone Number"
-                                            inputError={errors.referee1Phone?.message} />
-                                    )}
-                                />
-                                <Controller name="referee2Name"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Referee 2 Name"
-                                            inputError={errors.referee2Name?.message} />
-                                    )} />
-                                <Controller name="referee2Email"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Referee 2 Email Address"
-                                            inputError={errors.referee2Email?.message} />
-                                    )} />
-                                <Controller
-                                    name="referee2Mobile"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            required
-                                            labelName="Referee 2 Mobile Number"
-                                            inputError={errors.referee2Mobile?.message} />
-                                    )}
-                                />
-
-                                <Controller
-                                    name="referee2Phone"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            required
-                                            labelName="Referee 2 Phone Number"
-                                            inputError={errors.referee2Phone?.message} />
                                     )}
                                 />
                             </div>
@@ -381,16 +300,19 @@ const IndividualAccount = () => {
                             )}
                         />
                     </div>
-                    <PrimaryButton type="submit" >Submit</PrimaryButton>
+                    <PrimaryButton type="submit" loading ={loading} >Submit</PrimaryButton>
                 </form>
-
             </div>
-
-            <div>
-
-            </div>
+            <Modal isVisible={successModal}
+                onClose={() => router.replace("/")}
+                size="md"
+                type="center"
+                cancelIcon={true}
+                title="">
+                    <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber}/>
+            </Modal>
         </div>
     );
 }
 
-export default IndividualAccount;
+export default SavingsAccount;

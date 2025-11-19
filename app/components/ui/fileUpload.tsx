@@ -77,7 +77,7 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
         ) : (
           <div className="flex flex-col items-center text-center text-gray-600">
             <Upload size={24} className="text-gray-400 mb-1 font-extrabold" />
-            <p className="font-medium text-sm">Click to upload ID</p>
+            <p className="font-medium text-sm">Click to upload</p>
             <p className="text-xs text-gray-500">
               PDF, DOC, or Image (Max 2MB)
             </p>

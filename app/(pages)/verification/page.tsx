@@ -74,20 +74,24 @@ const BvnValidation: React.FC = () => {
     }
 
     const verifyOtp = async () => {
-        if(otp.length !== 6) {
+        if (otp.length !== 6) {
             return;
         }
         const apiResponse = await otpVerification(otp);
         if (apiResponse.statusCode === 200) {
             bvnDataClean(apiResponse.data.bvnData)
-            const accountCategory = selectedAccount.category
-            if (accountCategory === "Individual") {
-                router.push(`/accounts/individual?account=${btoa(JSON.stringify(accountInformation))}`);
-            } else if (accountCategory === "Corporate") {
-                router.push(`/accounts/corporate?account=${btoa(JSON.stringify(accountInformation))}`);
-            } else if (accountCategory === "POS / Merchant") {
-                router.push(`/accounts/merchant?account=${btoa(JSON.stringify(accountInformation))}`);
-            }
+            const accountCategory = selectedAccount.category;
+            const accountId = selectedAccount.id;
+
+            const routeMap: Record<string, string> = {
+                "Individual-1": "/accounts/individual/current",
+                "Individual-2": "/accounts/individual/savings",
+                "Corporate": "/accounts/corporate",
+                "Merchant": "/accounts/merchant/pos",
+            };
+
+            const routeKey = accountCategory === "Individual"? `${accountCategory}-${accountId}` : accountCategory;
+            router.push(routeMap[routeKey]);
         }
     };
 
@@ -102,7 +106,7 @@ const BvnValidation: React.FC = () => {
                 />
 
                 <div className="p-6 md:px-20">
-                    <h2 className="text-2xl md:text-2xl font-bold mb-1">BVN Validation</h2>
+                    <h2 className="text-xl font-bold mb-1">BVN Validation</h2>
                     <p className="text-xs mb-6">
                         Please enter your Bank Verification Number (BVN) to proceed with the account opening process.
                     </p>
@@ -177,7 +181,7 @@ const BvnValidation: React.FC = () => {
                     </div>
                     <div className="flex justify-end mt-4 gap-10 mx-6">
                         <PrimaryButton variant="secondary" onClick={() => { setVerificationModal(false) }}>Cancel</PrimaryButton>
-                        <PrimaryButton onClick={verifyOtp}>Verify</PrimaryButton>
+                        <PrimaryButton onClick={verifyOtp} loading={loading}>Verify</PrimaryButton>
                     </div>
 
                     <p className="text-xs mt-6 text-gray-500 mx-10 text-center">

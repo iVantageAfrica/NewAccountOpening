@@ -47,7 +47,7 @@ const LandingPage = () => {
         {
             id: 4,
             name: "POS Merchant",
-            category: "POS / Merchant",
+            category: "Merchant",
             code: null,
             icon: GalleryHorizontalEnd,
             requirements: ["One passport photograph of each signatory showing full face forward, indicating full names and duly signed at the back.",
@@ -61,9 +61,9 @@ const LandingPage = () => {
     return (
         <div className="relative">
             <TopBar />
-            <div className="pt-28 p-6 md:px-14">
-                <h2 className="text-xl md:text-3xl font-bold md:mb-1">Choose Your Account Category</h2>
-                <p className="text-sm md:text-md ">
+            <div className="pt-24 p-6 md:px-14">
+                <h2 className="text-xl md:text-2xl font-bold md:mb-1">Choose Your Account Category</h2>
+                <p className="text-xs md:text-sm ">
                     Select the account category that best suits your needs and review the requirements.
                 </p>
 

@@ -1,0 +1,50 @@
+export const currentAccountMapper = (userFormData: any, bvn: string) => {
+    const formData = new FormData();
+
+    const fields: Record<string, any> = {
+        bvn: bvn,
+        account_type_id: '1',
+        mother_maiden_name: userFormData.mothersMaidenName,
+        phone_number: userFormData.phoneNumber,
+        employment_status: userFormData.employmentStatus,
+        marital_status: userFormData.maritalStatus,
+        house_number: userFormData.houseNumber,
+        street: userFormData.street,
+        city: userFormData.city,
+        state: userFormData.state,
+        next_of_kin_name: userFormData.nextOfKinName,
+        next_of_kin_phone_number: userFormData.nextOfKinPhone,
+        next_of_kin_address: userFormData.nextOfKinAddress,
+        next_of_kin_relationship: userFormData.nextOfKinRelationship,
+        debit_card: String(userFormData.debitCard),
+    };
+
+    Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
+    formData.append("valid_id", userFormData.validId);
+    formData.append("signature", userFormData.signature);
+    formData.append("utility_bill", userFormData.utilityBill);
+    formData.append("passport", userFormData.passportPhoto);
+
+    const referees = [
+        {
+            name: userFormData.referee1Name,
+            email_address: userFormData.referee1Email,
+            mobile_number: userFormData.referee1Mobile,
+            phone_number: userFormData.referee1Phone,
+        },
+        {
+            name: userFormData.referee2Name,
+            email_address: userFormData.referee2Email,
+            mobile_number: userFormData.referee2Mobile,
+            phone_number: userFormData.referee2Phone,
+        },
+    ];
+
+    referees.forEach((ref, index) => {
+        Object.entries(ref).forEach(([key, value]) => {
+            formData.append(`referee[${index}][${key}]`, value as string);
+        });
+    });
+
+    return formData;
+}

@@ -8,9 +8,18 @@ export async function proxyHandler(
     req: NextRequest,
     endPoint: string,
     method: Method = 'GET',
-    contentType?: string 
+    contentType?: string
 ) {
-    const payload = method === 'GET' ? null : await req.json();
+    let payload: any = null;
+    if (method !== "GET") {
+        const contentTypeHeader = req.headers.get("content-type") || "";
+        if (contentTypeHeader.includes("multipart/form-data")) {
+            const form = await req.formData();
+            payload = form; 
+        } else {
+            payload = await req.json();
+        }
+    }
     const authHeader = req.headers.get("authorization");
 
     try {
@@ -19,15 +28,15 @@ export async function proxyHandler(
             method,
             data: payload,
             headers: {
-                ...(authHeader && {Authorization: authHeader})
+                ...(authHeader && { Authorization: authHeader })
             }
         });
 
         return NextResponse.json(response.data);
-    } 
+    }
     catch (error: unknown) {
         const axiosError = error as AxiosError;
-        const apiData = axiosError.response?.data as {statusCode?:number; message?:string} | undefined;
+        const apiData = axiosError.response?.data as { statusCode?: number; message?: string } | undefined;
         const statusCode = apiData?.statusCode ?? axiosError.response?.status ?? 500;
         const message = apiData?.message ?? 'Server Down, Unable to Connect';
 
