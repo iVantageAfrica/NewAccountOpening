@@ -13,8 +13,8 @@ import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { useAppStore } from "@/app/store/appStore";
 import { currentAccountMapper } from "@/app/utils/mapper/currentAccount";
+import { getFromLocalStorage } from "@/app/utils/reUsableFunction";
 import { currentAccountSchema } from "@/app/utils/validationSchema/currentAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -27,7 +27,7 @@ const IndividualAccount = () => {
     const { createIndividualAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
-    const bvnData = useAppStore((state) => state.get("bvnData"));
+    const bvnData =  getFromLocalStorage("bvnData");
     const [activeStep, setActiveStep] = React.useState(1);
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(currentAccountSchema),

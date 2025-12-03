@@ -31,10 +31,11 @@ export const useAppStore = create<AppStoreType>()(
         getItem: (name) => {
           const raw = localStorage.getItem(name);
           if (!raw) return null;
-          return decrypt(raw);
+         const decrypted = decrypt(raw);
+         return { state: decrypted };
         },
         setItem: (name, value) => {
-          const encrypted = encrypt(value);
+          const encrypted = encrypt(value.state);
           localStorage.setItem(name, encrypted);
         },
         removeItem: (name) => {

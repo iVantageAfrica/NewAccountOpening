@@ -13,9 +13,8 @@ import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { useAppStore } from "@/app/store/appStore";
 import { corporateAccountMapper } from "@/app/utils/mapper/corporateAccount";
-import { clearAppState } from "@/app/utils/reUsableFunction";
+import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
 import { CorporateAccountSchema } from "@/app/utils/validationSchema/corporateAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
@@ -31,7 +30,7 @@ const CorporateAccount = () => {
     const { createCorporateAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(true);
     const [accountNumber, setAccountNumber] = React.useState("");
-    const bvnData = useAppStore((state) => state.get("bvnData"));
+    const bvnData = getFromLocalStorage("bvnData");
     const [activeStep, setActiveStep] = React.useState(2);
     const [cacFileName, setCacFileName] = React.useState("");
 
@@ -345,10 +344,10 @@ const CorporateAccount = () => {
                                             name={`director.${index}.lastname`}
                                             control={control}
                                             render={({ field }) => (
-                                                <Input {...field} 
-                                                required
-                                                labelName={`Director ${index + 1} Lastname`} 
-                                                inputError={errors.director?.[index]?.lastname?.message} />
+                                                <Input {...field}
+                                                    required
+                                                    labelName={`Director ${index + 1} Lastname`}
+                                                    inputError={errors.director?.[index]?.lastname?.message} />
                                             )}
                                         />
 
@@ -356,10 +355,10 @@ const CorporateAccount = () => {
                                             name={`director.${index}.firstname`}
                                             control={control}
                                             render={({ field }) => (
-                                                <Input {...field} 
-                                                required 
-                                                labelName={`Director ${index + 1} Firstname`}
-                                                inputError={errors.director?.[index]?.firstname?.message} />
+                                                <Input {...field}
+                                                    required
+                                                    labelName={`Director ${index + 1} Firstname`}
+                                                    inputError={errors.director?.[index]?.firstname?.message} />
                                             )}
                                         />
 
@@ -367,11 +366,11 @@ const CorporateAccount = () => {
                                             name={`director.${index}.bvn`}
                                             control={control}
                                             render={({ field }) => (
-                                                <Input {...field} 
-                                                required 
-                                                type="number"
-                                                labelName={`Director ${index + 1} BVN`} 
-                                                inputError={errors.director?.[index]?.bvn?.message} />
+                                                <Input {...field}
+                                                    required
+                                                    type="number"
+                                                    labelName={`Director ${index + 1} BVN`}
+                                                    inputError={errors.director?.[index]?.bvn?.message} />
                                             )}
                                         />
                                     </div>
@@ -429,7 +428,7 @@ const CorporateAccount = () => {
                 </form>
             </div>
             <Modal isVisible={successModal}
-                onClose={() => {router.replace("/"); clearAppState()}}
+                onClose={() => { router.replace("/"); clearAppState() }}
                 size="md"
                 type="center"
                 cancelIcon={true}

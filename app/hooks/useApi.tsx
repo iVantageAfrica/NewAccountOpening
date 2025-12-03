@@ -2,52 +2,69 @@
 
 import { useState, useCallback } from "react";
 import { toast } from "../components/toast/useToast";
-import { useAppStore } from "../store/appStore";
+import { clearAppState, getFromLocalStorage } from "../utils/reUsableFunction";
+import { useRouter } from "next/navigation";
 
 type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 export function useApi<T = any>() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const bearerToken = useAppStore((state) => state.get("bearerToken"));
+  const router = useRouter();
+  const bearerToken = getFromLocalStorage("bearerToken");
   const token = typeof bearerToken === "string" ? bearerToken : undefined;
 
-  const request = useCallback(async (
-    endpoint: string, 
-    method: Method = "GET", 
-    body?: any,
-  ): Promise<T> => {
-    setLoading(true);
-    setError(null);
+  const request = useCallback(
+    async (endpoint: string, method: Method = "GET", body?: any): Promise<T> => {
+      setLoading(true);
+      setError(null);
+      try {
+        const url = `/api/proxy?endpoint=${encodeURIComponent(endpoint)}`;
+        const response = await fetch(url, {
+          method,
+          headers: {
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body:
+            method === "GET"
+              ? undefined
+              : body instanceof FormData
+              ? body
+              : JSON.stringify(body),
+        });
 
-    const url = `/api/proxy?endpoint=${encodeURIComponent(endpoint)}`;
+        const data = await response.json().catch(() => null);
 
-    const response = await fetch(url, {
-      method,
-      headers: {
-        ...(token && {Authorization: `Bearer ${token}`}),
-      },
-      body: method === "GET" 
-      ? undefined 
-      : (body instanceof FormData ? body : JSON.stringify(body)),
-    });
-    
-    const data = await response.json().catch(() => null);
+        if (!response.ok || data?.statusCode !== 200) {
+          const message = data?.message || "Something went wrong";
+          setError(message);
+          toast({
+            type: "error",
+            title: "Error",
+            description: message,
+          });
+          if (response.status === 401 || data?.statusCode === 401) {
+            clearAppState();
+            router.push("/admin/auth");
+          }
+        }
 
-    if (!response.ok || data?.statusCode === false || data?.statusCode !== 200) {
-      const message = data?.message || "Something went wrong";
-      setError(message);
-      toast({
-        type:"error",
-        title: "Error",
-        description: message,
-      });
-      setLoading(false);
-    }
-
-    setLoading(false);
-    return data;
-  }, [token]);
+        return data;
+      } catch (err: any) {
+        const message = err?.message || "Something went wrong";
+        setError(message);
+        toast({
+          type: "error",
+          title: "Error",
+          description: message,
+        });
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token, router]
+  );
 
   return { loading, error, request };
 }

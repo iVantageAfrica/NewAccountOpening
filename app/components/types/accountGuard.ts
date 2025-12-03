@@ -1,15 +1,16 @@
 "use client";
 
+import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useAppStore } from "@/app/store/appStore";
 
 export const useAccountGuard = () => {
   const router = useRouter();
-  const isAuthenticated = useAppStore((state) => state.store.isAuthenticated);
+  const isAuthenticated = getFromLocalStorage("isAuthenticated");
 
   useEffect(() => {
     if (!isAuthenticated) {
+      clearAppState();
       router.push("/");
     }
   }, [isAuthenticated, router]);

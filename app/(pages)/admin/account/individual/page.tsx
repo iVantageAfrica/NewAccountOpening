@@ -1,0 +1,131 @@
+"use client";
+import InformationText from "@/app/components/ui/informationText";
+import Spinner from "@/app/components/ui/spinner";
+import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { Ban, BookUser, Clock, Download, User, UserLock } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import React from "react";
+
+const IndividualAccount = () => {
+    const { loading, fetchIndividualAccount } = useApiEndPoints();
+    const param = useSearchParams();
+    const accountNumber = atob(param.get("account") || "");
+    const accountType = atob(param.get("type") || "");
+    const [state, setState] = React.useState({
+        accountInformation: {}
+    })
+
+    React.useEffect(() => {
+        (async () => {
+            const accountData = await fetchIndividualAccount(accountNumber);
+            setState((prev) => ({
+                ...prev,
+                accountInformation: accountData
+            }))
+        })();
+    }, [accountNumber, fetchIndividualAccount]);
+
+    return (
+        <div>
+            <Spinner loading={loading} />
+            <div className="flex -mt-1 gap-8 flex-col md:flex-row">
+                <div className="w-full md:w-[70%] bg-white px-4 md:px-8 py-4 rounded order-2 md:order-1">
+                    <div className="flex justify-between flex-col md:flex-row mb-6">
+                        <p className="font-bold text-lg">{accountType} Account</p>
+                        <div className="grid">
+                            <p className="text-xs"><span className="text-primary font-bold">Status: </span> {state.accountInformation?.status}</p>
+                            <p className="text-xs w-full flex gap-1 items-center opacity-75"><Clock size={12} />{state.accountInformation?.createdAt}</p>
+                        </div>
+                    </div>
+                    <div id="accountPdfWrapper">
+                        <div className="flex justify-between flex-col md:flex-row gap-y-4">
+                            <div className="gap-2 flex items-center">
+                                <div className="bg-white border-gray-300 border-2 p-2 rounded-full text-gray-400"><User size={15} /> </div>
+                                <div className="grid">
+                                    <p className="text-sm opacity-75">Fullname</p>
+                                    <p className="font-bold text-sm opacity-80 capitalize">{state.accountInformation?.lastname} {state.accountInformation?.firstname}</p>
+                                </div>
+                            </div>
+                            <div className="gap-2 flex items-center">
+                                <div className="bg-white border-gray-300 border-2 p-2 rounded-full text-gray-400"><BookUser size={15} /> </div>
+                                <div className="grid">
+                                    <p className="text-sm opacity-75">Account Number</p>
+                                    <p className="font-bold text-sm opacity-75">{state.accountInformation?.accountNumber}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
+                            Account Information
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
+                            <InformationText title="Firstname" data={state.accountInformation?.firstname } />
+                            <InformationText title="Middlename" data={state.accountInformation?.middleName} />
+                            <InformationText title="Lastname" data={state.accountInformation?.lastname} />
+                            <InformationText title="BVN" data={state.accountInformation?.bvn} />
+                            <InformationText title="NIN" data={state.accountInformation?.nin} />
+                            <InformationText title="Gender" data={state.accountInformation?.gender} />
+                            <InformationText title="Date of Birth" data={state.accountInformation?.dateOfBirth} />
+                            <InformationText title="Phone Number" data={state.accountInformation?.phoneNumber} />
+                            <InformationText title="Email Address" data={state.accountInformation?.email} />
+                            <InformationText title="Request Debit Card" data={state.accountInformation?.debitCard ? 'YES' : 'NO'} />
+                        </div>
+                        <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
+                            Personal Information
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
+                            <InformationText title="Mother Maiden Name" data={state.accountInformation?.motherMaidenName} />
+                            <InformationText title="Secondary Phone" data={state.accountInformation?.mobilePhoneNumber} />
+                            <InformationText title="Marital Status" data={state.accountInformation?.maritalStatus} />
+                            <InformationText title="Employment Status" data={state.accountInformation?.employmentStatus} />
+                            <InformationText title="Employer" data={state.accountInformation?.employer} />
+                            <InformationText title="House Address" data={state.accountInformation?.address} />
+                            <InformationText title="Next of Kin" data={state.accountInformation?.nextOfKinName} />
+                            <InformationText title="Next of Kin Relationship" data={state.accountInformation?.nextOfKinRelationship} />
+                            <InformationText title="Next of Kin Phone" data={state.accountInformation?.nextOfKinPhoneNumber} />
+                            <InformationText title="Next of Kin Address" data={state.accountInformation?.nextOfKinAddress} />
+                        </div>
+                        {state.accountInformation?.referee && state.accountInformation?.referee.length > 0 && (
+                            <>
+                                <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
+                                    Bank Account Reference
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
+                                    <InformationText title="Referee 1 Name" data={state.accountInformation.referee[0]?.name} />
+                                    <InformationText title="Referee 1 Phone" data={state.accountInformation.referee[0]?.phoneNumber}  />
+                                    <InformationText title="Referee 1 Mobile" data={state.accountInformation.referee[0]?.mobileNumber}  />
+                                    <InformationText title="Referee 1 Email" data={state.accountInformation.referee[0]?.emailAddress}  />
+                                    <InformationText title="Referee 2 Name" data={state.accountInformation.referee[1]?.name}  />
+                                    <InformationText title="Referee 2 Phone" data={state.accountInformation.referee[1]?.phoneNumber}  />
+                                    <InformationText title="Referee 2 Mobile" data={state.accountInformation.referee[1]?.mobileNumber}  />
+                                    <InformationText title="Referee 2 Email" data={state.accountInformation.referee[0]?.emailAddress}  />
+                                </div>
+                            </>
+                        )}
+
+                        <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
+                            Documents
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-3">
+                            <InformationText title="Passport" data={state.accountInformation?.documents?.passport || "Not Submitted"} type="file" />
+                            <InformationText title="Valid Id" data={state.accountInformation?.documents?.validId || "Not Submitted"} type="file" />
+                            <InformationText title="Signature" data={state.accountInformation?.documents?.signature || "Not Submitted"} type="file" />
+                            <InformationText title="Utility Bill" data={state.accountInformation?.documents?.utilityBill || "Not Submitted"} type="file" />
+                        </div>
+                    </div>
+
+                </div>
+                <div className="w-full md:w-[30%] order-1 md:order-2 mt-4 md:mt-0">
+                    <p className="bg-primary text-white rounded p-2 font-bold text-center items-center">Review and Action</p>
+                    <div className="pt-4 ps-3 grid gap-3">
+                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Download size={15} /> Download Information</p>
+                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><Ban size={15} /> Deactivate Account </p>
+                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black dark:hover:text-white"><UserLock size={15} /> Activate PND</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default IndividualAccount;

@@ -17,6 +17,13 @@
   --color-primary: #DE4F01;
   --color-secondary: #FFE5D7;
 }
+@font-face {
+  font-family: 'Averta';
+  src: url('/fonts/AvertaDemo-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 .font-montserrat {
   font-family: var(--font-montserrat), sans-serif;
@@ -25,11 +32,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Avenir', sans-serif;
+  font-family: 'Averta', sans-serif;
 }
 
 .custom-toast {
-  font-family: 'Avenir', sans-serif !important;
+  font-family: 'Averta', sans-serif !important;
   font-size: 14px !important;
   font-weight: 500 !important;
 }

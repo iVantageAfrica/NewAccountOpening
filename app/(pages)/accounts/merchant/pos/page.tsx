@@ -11,8 +11,8 @@ import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { useAppStore } from "@/app/store/appStore";
 import { posAccountMapper } from "@/app/utils/mapper/posAccount";
+import { getFromLocalStorage } from "@/app/utils/reUsableFunction";
 import { PosMerchantAccountSchema } from "@/app/utils/validationSchema/posMerchantAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
@@ -25,7 +25,7 @@ const POSMerchantAccount = () => {
     const { createPosMerchantAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
-    const bvnData = useAppStore((state) => state.get("bvnData"));
+    const bvnData = getFromLocalStorage("bvnData");
     const [activeStep, setActiveStep] = React.useState(2);
     const [cacFileName, setCacFileName] = React.useState("");
 
@@ -111,7 +111,7 @@ const POSMerchantAccount = () => {
                                             onChange={handleCacUpload}
                                         />
                                     </label>
-                             
+
                                 </div>
                                 <span className="text-primary italic font-bold">{cacFileName}</span>
 

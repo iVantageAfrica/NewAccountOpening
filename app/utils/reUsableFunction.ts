@@ -1,5 +1,4 @@
 import CryptoJS from 'crypto-js';
-import { useAppStore } from '../store/appStore';
 
 
 export const maskPhone = (phone: string) =>
@@ -39,7 +38,6 @@ export const decrypt = (cipher: string): string => {
 };
 
 export const clearAppState = () =>{
-    useAppStore.getState().clear();
     localStorage.clear();
     sessionStorage.clear();
 }
@@ -57,6 +55,32 @@ export function bvnDataClean(bvnData: Record<string, any>) {
       nin:nin,
       dateOfBirth:date_of_birth,
       address:address };
-    useAppStore.getState().set("bvnData", dataClean)
+      saveToLocalStorage("bvnData", dataClean)
 } 
 
+
+const hour = new Date().getHours();
+
+export const timeOfDay =
+  hour >= 5 && hour < 12
+    ? "Good Morning"
+    : hour >= 12 && hour < 17
+    ? "Good Afternoon"
+    : "Good Evening";
+
+
+export const saveToLocalStorage = <T>(key: string, data: T): void => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(key, encrypt(data));
+};
+
+export const getFromLocalStorage = <T>(key: string): T | null => {
+    if (typeof window === "undefined") return null;
+    const value = localStorage.getItem(key);
+    return value ? decrypt(value) as T : null;
+};
+
+export const removeFromLocalStorage = (key: string): void => {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(key);
+};

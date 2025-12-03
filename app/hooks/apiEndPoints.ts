@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { useApi } from "./useApi";
 import { toast } from "../components/toast/useToast";
+import { LoginSchema } from "../utils/validationSchema/loginSchema";
 
 export const useApiEndPoints = () => {
     const { request, loading, error } = useApi();
@@ -27,20 +28,112 @@ export const useApiEndPoints = () => {
         return response;
     }, [request])
 
-    const createIndividualAccount = useCallback(async (data:any) => {
-        const response = await request("account/create-individual-account", "POST",data);
+    const createIndividualAccount = useCallback(async (data: any) => {
+        const response = await request("account/create-individual-account", "POST", data);
         return response;
     }, [request])
 
-    const createPosMerchantAccount = useCallback(async (data:any) => {
-        const response = await request("account/create-pos-account", "POST",data);
+    const createPosMerchantAccount = useCallback(async (data: any) => {
+        const response = await request("account/create-pos-account", "POST", data);
         return response;
     }, [request])
 
-    const createCorporateAccount = useCallback(async (data:any) =>{
-        const response = await request("account/create-corporate-account","POST", data);
+    const createCorporateAccount = useCallback(async (data: any) => {
+        const response = await request("account/create-corporate-account", "POST", data);
         return response;
     }, [request])
+
+    const adminLogin = useCallback(async (data: LoginSchema) => {
+        const response = await request("admin/login", "POST", data)
+        return response;
+    }, [request])
+
+    const customerSummaryList = useCallback(async () => {
+        const response = await request("admin/customer-summary")
+        return response.data
+    }, [request]);
+
+    const savingsAccountSummary = useCallback(async () => {
+        const response = await request("admin/savings-account-summary");
+        return response.data;
+    }, [request]);
+
+    const currentAccountSummary = useCallback(async () => {
+        const response = await request("admin/current-account-summary");
+        return response.data;
+    }, [request]);
+
+    const listAllCustomer = useCallback(
+        async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
+            let queryParams = "";
+            if (pageUrl) {
+                const match = pageUrl.match(/[?&]page=(\d+)/);
+                if (match) page = match[1];
+            }
+
+            if (Number(page) > 1) {
+                queryParams = `?page=${page}${search ? `&search=${search}` : ""}`;
+            } else if (dataLength === 'all' || Number(dataLength) > 10) {
+                queryParams = `?dataLength=${dataLength}${search ? `&search=${search}` : ""}`;
+            } else if (search) {
+                queryParams = `?search=${search}`;
+            }
+
+            const response = await request(`admin/customer-list${queryParams}`, "GET");
+            return response.data;
+        },
+        [request]
+    );
+
+    const savingsAccountList = useCallback(
+        async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
+            let queryParams = "";
+            if (pageUrl) {
+                const match = pageUrl.match(/[?&]page=(\d+)/);
+                if (match) page = match[1];
+            }
+
+            if (Number(page) > 1) {
+                queryParams = `?page=${page}${search ? `&search=${search}` : ""}`;
+            } else if (dataLength === 'all' || Number(dataLength) > 10) {
+                queryParams = `?dataLength=${dataLength}${search ? `&search=${search}` : ""}`;
+            } else if (search) {
+                queryParams = `?search=${search}`;
+            }
+            const response = await request(`admin/savings-account-list${queryParams}`, "GET");
+            return response.data
+        },
+        [request]
+    )
+
+    const currentAccountList = useCallback(
+        async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
+            let queryParams = "";
+            if (pageUrl) {
+                const match = pageUrl.match(/[?&]page=(\d+)/);
+                if (match) page = match[1];
+            }
+
+            if (Number(page) > 1) {
+                queryParams = `?page=${page}${search ? `&search=${search}` : ""}`;
+            } else if (dataLength === 'all' || Number(dataLength) > 10) {
+                queryParams = `?dataLength=${dataLength}${search ? `&search=${search}` : ""}`;
+            } else if (search) {
+                queryParams = `?search=${search}`;
+            }
+            const response = await request(`admin/current-account-list${queryParams}`, "GET");
+            return response.data
+        },
+        [request]
+    )
+
+    const fetchIndividualAccount = useCallback(async (accountNumber: string) => {
+            const response = await request(`admin/fetch-individual-account?accountNumber=${accountNumber}`, "GET");
+            return response.data;
+        },
+        [request]
+    );
+
 
     return {
         loading,
@@ -50,6 +143,14 @@ export const useApiEndPoints = () => {
         otpVerification,
         createIndividualAccount,
         createPosMerchantAccount,
-        createCorporateAccount
+        createCorporateAccount,
+        listAllCustomer,
+        customerSummaryList,
+        adminLogin,
+        savingsAccountList,
+        savingsAccountSummary,
+        currentAccountSummary,
+        currentAccountList,
+        fetchIndividualAccount
     }
 }

@@ -105,7 +105,7 @@ const Modal: React.FC<ModalProps> = ({
             onClick={onClose}
           />
         </div>
-        <div className="grid text-xs px-4 pt-2 pb-4">{children}</div>
+        <div className="grid text-xs px-4 pt-2 pb-4 mr-8">{children}</div>
       </div>
     </div>
   );

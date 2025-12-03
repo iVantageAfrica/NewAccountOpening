@@ -7,8 +7,7 @@ import Modal from "@/app/components/ui/modal";
 import OtpInput from "@/app/components/ui/otpInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { useAppStore } from "@/app/store/appStore";
-import { bvnDataClean, formatTime, maskEmail, maskPhone } from "@/app/utils/reUsableFunction";
+import { bvnDataClean, formatTime, maskEmail, maskPhone, removeFromLocalStorage, saveToLocalStorage } from "@/app/utils/reUsableFunction";
 import { MessageSquareText } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useRef, useState } from "react";
@@ -57,8 +56,7 @@ const BvnValidation: React.FC = () => {
         setBvnInputError(null);
         const apiResponse = await verifyUserBvn(accountInformation.bvn)
         if (apiResponse.statusCode === 200) {
-            useAppStore.getState().set("bearerToken", apiResponse.data.authToken)
-            useAppStore.getState().set("isAuthenticated", true)
+            saveToLocalStorage("bearerToken",  apiResponse.data.authToken)
             setAccountInformation((prev) => ({ ...prev, bvnData: apiResponse.data }))
             setVerificationModal(true);
             startTimer();
@@ -69,7 +67,7 @@ const BvnValidation: React.FC = () => {
         const userEmailAddress = accountInformation.bvnData.emailAddress;
         const apiResponse = await resendBVNOTPCode(userEmailAddress)
         if (apiResponse.statusCode === 200) {
-            useAppStore.getState().set("bearerToken", apiResponse.data)
+            saveToLocalStorage("bearerToken",  apiResponse.data)
             startTimer()
         }
     }
@@ -80,6 +78,8 @@ const BvnValidation: React.FC = () => {
         }
         const apiResponse = await otpVerification(otp);
         if (apiResponse.statusCode === 200) {
+            removeFromLocalStorage("bearerToken")
+            saveToLocalStorage("isAuthenticated", true)
             bvnDataClean(apiResponse.data.bvnData)
             const accountCategory = selectedAccount.category;
             const accountId = selectedAccount.id;
