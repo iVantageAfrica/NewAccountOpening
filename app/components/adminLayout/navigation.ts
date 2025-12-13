@@ -30,7 +30,7 @@ export const Navigation = [
   },
   {
     title: "Debit Card Request",
-    path: "/admin/card",
+    path: "/admin/card-request",
     icon: CreditCard
   }
 ];

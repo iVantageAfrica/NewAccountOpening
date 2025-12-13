@@ -13,6 +13,7 @@ interface FileUploadInputProps {
   onFormChange?: (name: string, file: File | null) => void;
   onFileChange?: (file: File | null) => void;
   inputError?: string | null;
+  fileType?: string;
 }
 
 const FileUploadInput: React.FC<FileUploadInputProps> = ({
@@ -23,7 +24,8 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
   value,
   onFormChange,
   onFileChange,
-  inputError
+  inputError,
+  fileType
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = React.useState<File | null>(value || null);
@@ -79,7 +81,10 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
             <Upload size={24} className="text-gray-400 mb-1 font-extrabold" />
             <p className="font-medium text-sm">Click to upload</p>
             <p className="text-xs text-gray-500">
-              PDF, DOC, or Image (Max 2MB)
+              {fileType
+                ? `${fileType.replace(/[,]/g, ", ").toUpperCase()} (Max 2MB)`
+                : "PDF, DOC, or Image (Max 2MB)"
+              }
             </p>
           </div>
         )}
@@ -87,7 +92,8 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*,.pdf,.doc,.docx"
+          accept={fileType ? fileType : "image/*,.pdf,.doc,.docx"}
+          // capture={fileType?.includes("image") ? "environment" : undefined}
           onChange={handleFileChange}
           className="hidden"
         />

@@ -19,14 +19,14 @@ export const CorporateAccountSchema = z.object({
   debitCard: z.boolean(),
   acceptTerms: z.boolean().refine(val => val, "You must accept the terms"),
 
- referee1Name: z.string().min(1, "Referee 1 Name is required"),
-  referee1Email: z.string().email("Invalid email for Referee 1"),
-  referee1Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 1 Mobile is invalid"),
-  referee1Phone: z.string().optional(),
+//  referee1Name: z.string().min(1, "Referee 1 Name is required"),
+//   referee1Email: z.string().email("Invalid email for Referee 1"),
+//   referee1Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 1 Mobile is invalid"),
+//   referee1Phone: z.string().optional(),
 
-  referee2Name: z.string().min(1, "Referee 2 Name is required"),
-  referee2Email: z.string().email("Invalid email for Referee 2"),
-  referee2Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 2 Mobile is invalid"),
+//   referee2Name: z.string().min(1, "Referee 2 Name is required"),
+//   referee2Email: z.string().email("Invalid email for Referee 2"),
+//   referee2Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 2 Mobile is invalid"),
 
   director: z.array(
   z.object({

@@ -84,3 +84,32 @@ export const removeFromLocalStorage = (key: string): void => {
   if (typeof window === "undefined") return;
   localStorage.removeItem(key);
 };
+
+
+
+const key = CryptoJS.enc.Base64.parse(
+  process.env.NEXT_PUBLIC_DECRYPT_KEY?.replace(/^base64:/, "") || ""
+);
+
+export const cryptoHelper = {
+  encrypt: (text) => {
+    try {
+      const iv = CryptoJS.lib.WordArray.random(16);
+      const encrypted = CryptoJS.AES.encrypt(text, key, { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+      return CryptoJS.enc.Base64.stringify(iv.concat(encrypted.ciphertext));
+    } catch {
+      return null;
+    }
+  },
+  decrypt: (base64) => {
+    try {
+      const raw = CryptoJS.enc.Base64.parse(base64);
+      const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4), 16);
+      const cipher = CryptoJS.lib.WordArray.create(raw.words.slice(4));
+      const decrypted = CryptoJS.AES.decrypt({ ciphertext: cipher }, key, { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+      return decrypted.toString(CryptoJS.enc.Utf8);
+    } catch {
+      return null;
+    }
+  }
+};

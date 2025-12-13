@@ -18,26 +18,26 @@ export const corporateAccountMapper = (userFormData: any, bvn: string, accountTy
         debit_card: String(userFormData.debitCard),
     };
 
-    const referees = [
-        {
-            name: userFormData.referee1Name,
-            email_address: userFormData.referee1Email,
-            mobile_number: userFormData.referee1Mobile,
-            phone_number: userFormData.referee1Phone,
-        },
-        {
-            name: userFormData.referee2Name,
-            email_address: userFormData.referee2Email,
-            mobile_number: userFormData.referee2Mobile,
-            phone_number: userFormData.referee2Phone,
-        },
-    ];
+    // const referees = [
+    //     {
+    //         name: userFormData.referee1Name,
+    //         email_address: userFormData.referee1Email,
+    //         mobile_number: userFormData.referee1Mobile,
+    //         phone_number: userFormData.referee1Phone,
+    //     },
+    //     {
+    //         name: userFormData.referee2Name,
+    //         email_address: userFormData.referee2Email,
+    //         mobile_number: userFormData.referee2Mobile,
+    //         phone_number: userFormData.referee2Phone,
+    //     },
+    // ];
 
-    referees.forEach((ref, index) => {
-        Object.entries(ref).forEach(([key, value]) => {
-            formData.append(`referee[${index}][${key}]`, value as string);
-        });
-    });
+    // referees.forEach((ref, index) => {
+    //     Object.entries(ref).forEach(([key, value]) => {
+    //         formData.append(`referee[${index}][${key}]`, value as string);
+    //     });
+    // });
 
     Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
 

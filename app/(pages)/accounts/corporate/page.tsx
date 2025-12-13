@@ -66,13 +66,13 @@ const CorporateAccount = () => {
             city: "",
             lga: "",
             state: "",
-            referee1Name: "",
-            referee1Email: "",
-            referee1Mobile: "",
-            referee1Phone: "",
-            referee2Name: "",
-            referee2Email: "",
-            referee2Mobile: "",
+            // referee1Name: "",
+            // referee1Email: "",
+            // referee1Mobile: "",
+            // referee1Phone: "",
+            // referee2Name: "",
+            // referee2Email: "",
+            // referee2Mobile: "",
             accountOfficer: "",
             cacDocument: undefined,
             director: [{ lastname: "", firstname: "", bvn: "" }],
@@ -264,7 +264,7 @@ const CorporateAccount = () => {
                                             labelName="State of Residence"
                                             inputError={errors.state?.message} />
                                     )} />
-                                <Controller name="referee1Name"
+                                {/* <Controller name="referee1Name"
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
@@ -325,7 +325,7 @@ const CorporateAccount = () => {
                                             labelName="Referee 2 Mobile Number"
                                             inputError={errors.referee2Mobile?.message} />
                                     )}
-                                />
+                                /> */}
 
                                 <Controller name="accountOfficer"
                                     control={control}

@@ -46,14 +46,14 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   return (
     <div className="space-y-1 w-full">
       {labelName && (
-        <label htmlFor={name} className="text-gray-700 text-sm">
+        <label htmlFor={name} className="text-gray-700 text-sm dark:text-white">
           {labelName} {required && <span className="text-red-500">*</span>}
         </label>
       )}
 
       <div className="flex border border-gray-300 rounded overflow-hidden">
         <select
-          className="hidden md:block px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[180px]"
+          className="hidden md:block px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[180px] dark:text-black"
           value={countryCode}
           onChange={(e) => handleCountryChange(e.target.value)}
         >
@@ -65,7 +65,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
         </select>
 
         <select
-          className="block md:hidden px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[77px]"
+          className="block md:hidden px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[77px] dark:text-black"
           value={countryCode}
           onChange={(e) => handleCountryChange(e.target.value)}
         >
@@ -82,7 +82,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
           placeholder="Enter phone number"
           value={phone}
           onChange={(e) => handlePhoneChange(e.target.value)}
-          className="flex-1 px-3 py-2 text-sm text-black placeholder:text-xs outline-none min-w-0"
+          className="flex-1 px-3 py-2 text-sm text-black placeholder:text-xs outline-none min-w-0 dark:text-white"
         />
       </div>
 

@@ -105,7 +105,6 @@ const SavingsAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
-                                            required
                                             labelName="Phone Number"
                                             inputError={errors.phoneNumber?.message} />
                                     )}
@@ -217,6 +216,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput
                                             required
+                                            fileType=".pdf,.doc,.docx"
                                             inputError={errors.validId?.message}
                                             description="Upload a copy of your National ID, Driver’s License, or International Passport"
                                             {...field} labelName="Valid ID Document" onFileChange={(file) => field.onChange(file)} />
@@ -228,6 +228,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
+                                            fileType="image/jpeg,image/png"
                                             description="Upload a copy of your signature"
                                             inputError={errors.signature?.message}
                                             labelName="Signature" onFileChange={(file) => field.onChange(file)} />
@@ -239,6 +240,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
+                                            fileType=".pdf,.doc,.docx"
                                             inputError={errors.utilityBill?.message}
                                             description="Upload a copy of your LAWMA Bill, or Task Force or Network"
                                             labelName="Utility Bill" onFileChange={(file) => field.onChange(file)} />
@@ -250,6 +252,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
+                                            fileType="image/jpeg,image/png"
                                             inputError={errors.passportPhoto?.message}
                                             description="Upload a copy of your passport photograph"
                                             labelName="Passport" onFileChange={(file) => field.onChange(file)} />

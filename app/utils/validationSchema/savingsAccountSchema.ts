@@ -5,7 +5,7 @@ const fileSchema = (label: string) =>
 
 export const savingsAccountSchema = z.object({
   mothersMaidenName: z.string().min(1, "Mother's Maiden Name is required"),
-  phoneNumber: z.string().regex(/^\+?\d{8,15}$/, "Phone number is invalid"),
+  phoneNumber: z.string().regex(/^\+?\d{8,15}$/, "Phone number is invalid").optional().or(z.literal("")),
   employmentStatus: z.string().min(1, "Employment Status is required"),
   maritalStatus: z.string().min(1, "Marital Status is required"),
   houseNumber: z.string().min(1, "House Number is required"),

@@ -31,6 +31,13 @@ export default function DynamicSignatories({ control, errors }: Props) {
     if (active === index + 1) setActive(1); 
   };
 
+  const fileTypes: Record<string, string> = {
+  validId: ".pdf,.jpg,.jpeg,.png",
+  signature: "image/png,image/jpeg",
+  utilityBill: ".pdf,.doc,.docx",
+  passportPhoto: "image/jpeg,image/png"
+};
+
   return (
     <>
       <div className="flex items-center gap-3 bg-gray-200 p-2 mb-4 overflow-x-auto">
@@ -75,6 +82,7 @@ export default function DynamicSignatories({ control, errors }: Props) {
                 render={({ field }) => (
                   <FileUploadInput
                     required
+                    fileType={fileTypes[key]} 
                     labelName={key.replace(/([A-Z])/g, " $1").replace(/\b\w/g, c => c.toUpperCase())}
                     inputError={errors?.signatory?.[idx]?.[key]?.message}
                     {...field}

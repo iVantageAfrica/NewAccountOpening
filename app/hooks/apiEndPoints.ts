@@ -128,11 +128,21 @@ export const useApiEndPoints = () => {
     )
 
     const fetchIndividualAccount = useCallback(async (accountNumber: string) => {
-            const response = await request(`admin/fetch-individual-account?accountNumber=${accountNumber}`, "GET");
-            return response.data;
-        },
+        const response = await request(`admin/fetch-individual-account?accountNumber=${accountNumber}`, "GET");
+        return response.data;
+    },
         [request]
     );
+
+    const debitCardRequest = useCallback(async () => {
+        const response = await request("admin/debit-card-requests");
+        return response.data;
+    }, [request]);
+
+    const addBankAccountReference = useCallback(async (data: any) => {
+        const response = await request("account/add-bank-account-reference", "POST", data);
+        return response;
+    }, [request])
 
 
     return {
@@ -151,6 +161,8 @@ export const useApiEndPoints = () => {
         savingsAccountSummary,
         currentAccountSummary,
         currentAccountList,
-        fetchIndividualAccount
+        fetchIndividualAccount,
+        debitCardRequest,
+        addBankAccountReference
     }
 }

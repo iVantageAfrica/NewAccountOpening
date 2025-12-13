@@ -80,7 +80,7 @@ const LandingPage = () => {
                 </div>
             </div>
 
-            <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black">
+            <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black dark:text-black">
                 <p>Copyright © Imperial Homes Mortgage Bank</p>
                 <p>
                     Licensed by the Central Bank of Nigeria. All deposits are insured by Nigeria Deposit Insurance

@@ -45,14 +45,14 @@ const IndividualAccount = () => {
             nextOfKinAddress: "",
             nextOfKinRelationship: "",
             nextOfKinPhone: "",
-            referee1Name: "",
-            referee1Email: "",
-            referee1Mobile: "",
-            referee1Phone: "",
-            referee2Name: "",
-            referee2Email: "",
-            referee2Mobile: "",
-            referee2Phone: "",
+            // referee1Name: "",
+            // referee1Email: "",
+            // referee1Mobile: "",
+            // referee1Phone: "",
+            // referee2Name: "",
+            // referee2Email: "",
+            // referee2Mobile: "",
+            // referee2Phone: "",
             validId: null,
             signature: null,
             utilityBill: null,
@@ -113,7 +113,6 @@ const IndividualAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
-                                            required
                                             labelName="Phone Number"
                                             inputError={errors.phoneNumber?.message} />
                                     )}
@@ -217,13 +216,12 @@ const IndividualAccount = () => {
                             </div>
                         </AccordionItem>
 
-                        <AccordionItem title="Bank Account Reference">
+                        {/* <AccordionItem title="Bank Account Reference">
                             <div className="px-3 md:px-6 py-4 md:py-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                 <Controller name="referee1Name"
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
-                                            required
                                             labelName="Referee 1 Name"
                                             inputError={errors.referee1Name?.message} />
                                     )} />
@@ -231,7 +229,6 @@ const IndividualAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
-                                            required
                                             labelName="Referee 1 Email Address"
                                             inputError={errors.referee1Email?.message} />
                                     )} />
@@ -240,7 +237,6 @@ const IndividualAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
-                                            required
                                             labelName="Referee 1 Mobile Number"
                                             inputError={errors.referee1Mobile?.message} />
                                     )}
@@ -259,7 +255,6 @@ const IndividualAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
-                                            required
                                             labelName="Referee 2 Name"
                                             inputError={errors.referee2Name?.message} />
                                     )} />
@@ -267,7 +262,6 @@ const IndividualAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
-                                            required
                                             labelName="Referee 2 Email Address"
                                             inputError={errors.referee2Email?.message} />
                                     )} />
@@ -276,7 +270,6 @@ const IndividualAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
-                                            required
                                             labelName="Referee 2 Mobile Number"
                                             inputError={errors.referee2Mobile?.message} />
                                     )}
@@ -292,7 +285,7 @@ const IndividualAccount = () => {
                                     )}
                                 />
                             </div>
-                        </AccordionItem>
+                        </AccordionItem> */}
 
                         <AccordionItem title="Upload Documents">
                             <div className="grid grid-cols-1 md:grid-cols-2 md:px-8 gap-6 md:gap-12 p-4 md:p-8">
@@ -302,6 +295,7 @@ const IndividualAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput
                                             required
+                                            fileType=".pdf,.doc,.docx"
                                             inputError={errors.validId?.message}
                                             description="Upload a copy of your National ID, Driver’s License, or International Passport"
                                             {...field} labelName="Valid ID Document" onFileChange={(file) => field.onChange(file)} />
@@ -313,6 +307,7 @@ const IndividualAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
+                                            fileType="image/jpeg,image/png"
                                             description="Upload a copy of your signature"
                                             inputError={errors.signature?.message}
                                             labelName="Signature" onFileChange={(file) => field.onChange(file)} />
@@ -324,6 +319,7 @@ const IndividualAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
+                                            fileType=".pdf,.doc,.docx"
                                             inputError={errors.utilityBill?.message}
                                             description="Upload a copy of your LAWMA Bill, or Task Force or Network"
                                             labelName="Utility Bill" onFileChange={(file) => field.onChange(file)} />
@@ -335,9 +331,10 @@ const IndividualAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
+                                            fileType="image/jpeg,image/png"
                                             inputError={errors.passportPhoto?.message}
                                             description="Upload a copy of your passport photograph"
-                                            labelName="Passport" onFileChange={(file) => field.onChange(file)} />
+                                            labelName="Passport Photograph" onFileChange={(file) => field.onChange(file)} />
                                     )}
                                 />
 
