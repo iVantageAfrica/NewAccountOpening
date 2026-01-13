@@ -20,6 +20,34 @@ export const formatTime = (seconds: number): string => {
   return `${min}:${sec}`;
 };
 
+
+export const formatDate = (dateString?: string, options?: Intl.DateTimeFormatOptions) => {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  };
+  return date.toLocaleString("en-US", options || defaultOptions);
+};
+
+export const formatDateTime = (dateString?: string, options?: Intl.DateTimeFormatOptions) => {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  };
+  return date.toLocaleString("en-US", options || defaultOptions);
+};
+
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY!;
 export const encrypt = (data: unknown): string => {
   const stringifiedData = JSON.stringify(data);

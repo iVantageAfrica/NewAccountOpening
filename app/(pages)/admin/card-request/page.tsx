@@ -70,6 +70,7 @@ const CardRequest = () => {
                     { key: "accountType", label: "Account Type" },
                     { key: "firstname", label: "Firstname" },
                     { key: "lastname", label: "Lastname" },
+                    { key: "phoneNumber", label: "Phone Number"},
                     { key: "status", label: "Status" },
                     { key: "createdAt", label: "DATE" },
                 ]}

@@ -40,7 +40,7 @@ const AccountReference = () => {
         const payloadData = ({
             account_type_id: Number(accountTypeId),
             account_number: accountNumber,
-            account_name: "accountName",
+            account_name: accountName,
             ...data,
         });
         const apiResponse = await addBankAccountReference(payloadData);
@@ -67,7 +67,7 @@ const AccountReference = () => {
                         <div className="border border-gray-300 rounded-b-lg py-3 px-4 border-t-0">
                             <div className="grid mb-2">
                                 <span className="text-sm md:text-base font-bold opacity-70">Account Type</span>
-                                <span className="text-sm ml-4 -mt-1">Savings Account</span>
+                                <span className="text-sm ml-4 -mt-1">{accountTypeId === '1' ? "Current" : "Corporate"} Account</span>
                             </div>
                             <div className="grid mb-2">
                                 <span className="text-sm md:text-base font-bold opacity-70">Account Number</span>
@@ -114,7 +114,7 @@ const AccountReference = () => {
                                         )}
                                     />
 
-                                    <Controller
+                                    {/* <Controller
                                         name="referee1Phone"
                                         control={control}
                                         render={({ field }) => (
@@ -122,7 +122,9 @@ const AccountReference = () => {
                                                 labelName="Referee 1 Phone Number"
                                                 inputError={errors.referee1Phone?.message} />
                                         )}
-                                    />
+                                    /> */}
+                                    </div>
+                                     <div className="px-3 md:px-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                     <Controller name="referee2Name"
                                         control={control}
                                         render={({ field }) => (
@@ -150,7 +152,7 @@ const AccountReference = () => {
                                         )}
                                     />
 
-                                    <Controller
+                                    {/* <Controller
                                         name="referee2Phone"
                                         control={control}
                                         render={({ field }) => (
@@ -158,7 +160,7 @@ const AccountReference = () => {
                                                 labelName="Referee 2 Phone Number"
                                                 inputError={errors.referee2Phone?.message} />
                                         )}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className="px-3 md:px-6">
 
@@ -179,7 +181,7 @@ const AccountReference = () => {
                     <p className="text-primary font-bold text-lg md:text-2xl pb-2 pt-6">Reference Submitted!</p>
 
                     <div className="mx-6  flex items-center justify-center flex-col text-center">
-                        <p className="text-black/50 md:text-[16px] pb-6">Your account reference has been submitted successfully. The referees you provided will be notified to verify your information. Thank you.</p>
+                        <p className="text-black/50 md:text-[14px] pb-6">Your account reference has been submitted successfully. The referees you provided will be notified to verify your information. Thank you.</p>
                      
                     </div>
 

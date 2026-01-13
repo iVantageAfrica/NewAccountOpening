@@ -27,7 +27,7 @@ const SavingsAccount = () => {
     const { createIndividualAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
-      const bvnData =  getFromLocalStorage("bvnData");
+    const bvnData =  getFromLocalStorage("bvnData");
     const [activeStep, setActiveStep] = React.useState(2);
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(savingsAccountSchema),

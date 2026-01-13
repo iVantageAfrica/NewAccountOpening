@@ -2,7 +2,9 @@
 import InformationText from "@/app/components/ui/informationText";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { Ban, BookUser, Clock, Download, User, UserLock } from "lucide-react";
+import { downloadIndividualAccountForm } from "@/app/utils/formDownload/individualAccount";
+import { formatDate } from "@/app/utils/reUsableFunction";
+import { Ban, BookUser, Clock, Download, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -65,7 +67,7 @@ const IndividualAccount = () => {
                             <InformationText title="BVN" data={state.accountInformation?.bvn} />
                             <InformationText title="NIN" data={state.accountInformation?.nin} />
                             <InformationText title="Gender" data={state.accountInformation?.gender} />
-                            <InformationText title="Date of Birth" data={state.accountInformation?.dateOfBirth} />
+                            <InformationText title="Date of Birth" data={formatDate(state.accountInformation?.dateOfBirth)} />
                             <InformationText title="Phone Number" data={state.accountInformation?.phoneNumber} />
                             <InformationText title="Email Address" data={state.accountInformation?.email} />
                             <InformationText title="Request Debit Card" data={state.accountInformation?.debitCard ? 'YES' : 'NO'} />
@@ -90,15 +92,27 @@ const IndividualAccount = () => {
                                 <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                                     Bank Account Reference
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
-                                    <InformationText title="Referee 1 Name" data={state.accountInformation.referee[0]?.name} />
-                                    <InformationText title="Referee 1 Phone" data={state.accountInformation.referee[0]?.phoneNumber}  />
-                                    <InformationText title="Referee 1 Mobile" data={state.accountInformation.referee[0]?.mobileNumber}  />
-                                    <InformationText title="Referee 1 Email" data={state.accountInformation.referee[0]?.emailAddress}  />
-                                    <InformationText title="Referee 2 Name" data={state.accountInformation.referee[1]?.name}  />
-                                    <InformationText title="Referee 2 Phone" data={state.accountInformation.referee[1]?.phoneNumber}  />
-                                    <InformationText title="Referee 2 Mobile" data={state.accountInformation.referee[1]?.mobileNumber}  />
-                                    <InformationText title="Referee 2 Email" data={state.accountInformation.referee[0]?.emailAddress}  />
+                                <p className="pl-4 font-bold text-xs pt-2">Referee 1</p>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
+                                    <InformationText title="Name" data={state.accountInformation.referee[0]?.name} />
+                                    <InformationText title="Mobile" data={state.accountInformation.referee[0]?.mobileNumber}  />
+                                    <InformationText title="Email" data={state.accountInformation.referee[0]?.emailAddress}  />
+                                    <InformationText title="Bank Name" data={state.accountInformation.referee[0]?.bankName}  />
+                                    <InformationText title="Account Name" data={state.accountInformation.referee[0]?.accountName}  />
+                                    <InformationText title="Account Number" data={state.accountInformation.referee[0]?.accountNumber}  />
+                                    <InformationText title="Account Type" data={state.accountInformation.referee[0]?.accountType}  />
+                                    <InformationText title="Signature" data={state.accountInformation.referee[0]?.signature || "Not Submitted"} type="file" />
+                                </div>
+                                 <p className="pl-4 font-bold text-xs pt-4">Referee 2</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
+                                    <InformationText title="Name" data={state.accountInformation.referee[1]?.name}  />
+                                    <InformationText title="Mobile" data={state.accountInformation.referee[1]?.mobileNumber}  />
+                                    <InformationText title="Email" data={state.accountInformation.referee[1]?.emailAddress}  />
+                                    <InformationText title="Bank Name" data={state.accountInformation.referee[1]?.bankName}  />
+                                    <InformationText title="Account Name" data={state.accountInformation.referee[1]?.accountName}  />
+                                    <InformationText title="Account Number" data={state.accountInformation.referee[1]?.accountNumber}  />
+                                    <InformationText title="Account Type" data={state.accountInformation.referee[1]?.accountType}  />
+                                    <InformationText title="Signature" data={state.accountInformation.referee[1]?.signature || "Not Submitted"} type="file" />
                                 </div>
                             </>
                         )}
@@ -116,9 +130,10 @@ const IndividualAccount = () => {
 
                 </div>
                 <div className="w-full md:w-[30%] order-1 md:order-2 mt-4 md:mt-0">
-                    <p className="bg-primary text-white rounded p-2 font-bold text-center items-center">Review and Action</p>
+                    <p className="bg-primary text-white rounded p-2 font-bold text-center items-center">Actions & Operations</p>
                     <div className="pt-4 ps-3 grid gap-3">
-                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Download size={15} /> Download Information</p>
+                        <p onClick={() => downloadIndividualAccountForm(state.accountInformation, accountType)} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Download size={15} /> Download Information</p>
+                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><View size={15} /> Review Account</p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><Ban size={15} /> Deactivate Account </p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black dark:hover:text-white"><UserLock size={15} /> Activate PND</p>
                     </div>

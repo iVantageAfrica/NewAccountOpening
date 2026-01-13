@@ -43,7 +43,7 @@ export function useApi<T = any>() {
             title: "Error",
             description: message,
           });
-          if (response.status === 401 && data?.statusCode ===500 ) {
+          if (data?.error?.statusCode ===501 ) {
             clearAppState();
             router.push("/admin/auth");
           }

@@ -142,6 +142,11 @@ export const useApiEndPoints = () => {
     const addBankAccountReference = useCallback(async (data: any) => {
         const response = await request("account/add-bank-account-reference", "POST", data);
         return response;
+    }, [request]);
+
+    const accountReferenceSubmission = useCallback(async (data: any) => {
+        const response = await request("account/update-bank-account-reference", "POST", data);
+        return response;
     }, [request])
 
 
@@ -163,6 +168,7 @@ export const useApiEndPoints = () => {
         currentAccountList,
         fetchIndividualAccount,
         debitCardRequest,
-        addBankAccountReference
+        addBankAccountReference,
+        accountReferenceSubmission
     }
 }
