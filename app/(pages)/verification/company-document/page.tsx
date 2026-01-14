@@ -22,7 +22,7 @@ const CompanyDocument = () => {
     const [successModal, setSuccessModal] = useState(false);
     const { loading, businessDocumentSubmission } = useApiEndPoints();
     const accountNumber = cryptoHelper.decrypt(param.get("acc"));
-    const accountTypeId = cryptoHelper.decrypt(param.get("ty"));
+    const accountTypeId = Number(cryptoHelper.decrypt(param.get("ty")) ?? 0);
     const businessName = cryptoHelper.decrypt(param.get("bsNa"));
 
     const schema = useMemo(

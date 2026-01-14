@@ -63,6 +63,11 @@ export const useApiEndPoints = () => {
         return response.data;
     }, [request]);
 
+    const corporateAccountSummary = useCallback(async () => {
+        const response = await request("admin/corporate-account-summary");
+        return response.data;
+    }, [request]);
+
     const listAllCustomer = useCallback(
         async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
             let queryParams = "";
@@ -127,6 +132,27 @@ export const useApiEndPoints = () => {
         [request]
     )
 
+        const corporateAccountList = useCallback(
+        async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
+            let queryParams = "";
+            if (pageUrl) {
+                const match = pageUrl.match(/[?&]page=(\d+)/);
+                if (match) page = match[1];
+            }
+
+            if (Number(page) > 1) {
+                queryParams = `?page=${page}${search ? `&search=${search}` : ""}`;
+            } else if (dataLength === 'all' || Number(dataLength) > 10) {
+                queryParams = `?dataLength=${dataLength}${search ? `&search=${search}` : ""}`;
+            } else if (search) {
+                queryParams = `?search=${search}`;
+            }
+            const response = await request(`admin/corporate-account-list${queryParams}`, "GET");
+            return response.data
+        },
+        [request]
+    )
+
     const fetchIndividualAccount = useCallback(async (accountNumber: string) => {
         const response = await request(`admin/fetch-individual-account?accountNumber=${accountNumber}`, "GET");
         return response.data;
@@ -181,6 +207,8 @@ export const useApiEndPoints = () => {
         addBankAccountReference,
         accountReferenceSubmission,
         updateDirectorySignatorySubmission,
-        businessDocumentSubmission
+        businessDocumentSubmission,
+        corporateAccountSummary,
+        corporateAccountList
     }
 }

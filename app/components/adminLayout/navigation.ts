@@ -25,7 +25,7 @@ export const Navigation = [
   },
     {
     title: "Corporate Account",
-    path: "/admin/hakd",
+    path: "/admin/account/corporate",
     icon: GalleryHorizontalEnd,
   },
   {
