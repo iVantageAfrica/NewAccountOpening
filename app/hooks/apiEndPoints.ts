@@ -147,6 +147,16 @@ export const useApiEndPoints = () => {
     const accountReferenceSubmission = useCallback(async (data: any) => {
         const response = await request("account/update-bank-account-reference", "POST", data);
         return response;
+    }, [request]);
+
+    const updateDirectorySignatorySubmission = useCallback(async (data: any) => {
+        const response = await request("account/update-directory-signatory-information", "POST", data);
+        return response;
+    }, [request])
+
+    const businessDocumentSubmission = useCallback(async (data: any) => {
+        const response = await request("account/submit-corporate-account-document", "POST", data);
+        return response;
     }, [request])
 
 
@@ -169,6 +179,8 @@ export const useApiEndPoints = () => {
         fetchIndividualAccount,
         debitCardRequest,
         addBankAccountReference,
-        accountReferenceSubmission
+        accountReferenceSubmission,
+        updateDirectorySignatorySubmission,
+        businessDocumentSubmission
     }
 }

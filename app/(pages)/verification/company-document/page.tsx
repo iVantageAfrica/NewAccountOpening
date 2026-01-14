@@ -3,47 +3,58 @@ import TopBar from "@/app/components/navigation/topBar";
 import FileUploadInput from "@/app/components/ui/fileUpload";
 import { cryptoHelper } from "@/app/utils/reUsableFunction";
 import { Controller, useForm } from "react-hook-form";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Input from "@/app/components/ui/input";
 import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
-import { BankAccountReferencePayload, bankAccountReferenceSchema } from "@/app/utils/validationSchema/bankAccountReferenceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { useMemo, useState } from "react";
+import { ACCOUNT_TYPE_DOCUMENTS, buildCompanyDocumentSchema, CompanyDocumentPayload, DOCUMENT_META } from "@/app/utils/validationSchema/companyDocumentSchema";
+import { companyDocumentMapper } from "@/app/utils/mapper/companyDocumentMapper";
+import Modal from "@/app/components/ui/modal";
+import Image from "next/image";
 
 
 const CompanyDocument = () => {
     const param = useSearchParams();
-    const { loading } = useApiEndPoints();
+    const router = useRouter();
+    const [successModal, setSuccessModal] = useState(false);
+    const { loading, businessDocumentSubmission } = useApiEndPoints();
     const accountNumber = cryptoHelper.decrypt(param.get("acc"));
     const accountTypeId = cryptoHelper.decrypt(param.get("ty"));
     const businessName = cryptoHelper.decrypt(param.get("bsNa"));
 
+    const schema = useMemo(
+        () => buildCompanyDocumentSchema(accountTypeId),
+        [accountTypeId]
+    );
 
-    const { control, handleSubmit, formState: { errors } } = useForm<BankAccountReferencePayload>({
-        resolver: zodResolver(bankAccountReferenceSchema),
+    const { control, handleSubmit, formState: { errors }, } = useForm<CompanyDocumentPayload>({
+        resolver: zodResolver(schema),
         defaultValues: {
             referee1Name: "",
             referee1Email: "",
             referee1Mobile: "",
-            referee1Phone: "",
             referee2Name: "",
             referee2Email: "",
             referee2Mobile: "",
-            referee2Phone: "",
         }
     });
-    const onSubmit = async (data: BankAccountReferencePayload) => {
-        const payloadData = ({
-            account_type_id: Number(accountTypeId),
-            account_number: accountNumber,
-            account_name: accountName,
-            ...data,
+
+    const requiredDocs = ACCOUNT_TYPE_DOCUMENTS[accountTypeId] || [];
+    const onSubmit = async (data: CompanyDocumentPayload) => {
+        Object.keys(DOCUMENT_META).forEach((doc) => {
+            if (!requiredDocs.includes(doc)) {
+                data[doc as keyof CompanyDocumentPayload] = null;
+            }
         });
-        // const apiResponse = await addBankAccountReference(payloadData);
-        // if (apiResponse.statusCode === 200) {
-        //     setSuccessModal(true)
-        // }
+
+        const payload = companyDocumentMapper(data, accountNumber);
+        const apiResponse = await businessDocumentSubmission(payload);
+        if (apiResponse.statusCode === 200) {
+            setSuccessModal(true)
+        }
     };
 
 
@@ -61,84 +72,30 @@ const CompanyDocument = () => {
             </div>
 
             <div className="px-5 md:px-40 py-5">
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="border-y border-gray-300">
                         <p className="bg-secondary/70 p-3 font-bold text-lg">Company Documents</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 px-0 md:px-8 pt-4 pb-10 md:gap-x-20 gap-y-5 md:gap-y-10">
-                            <Controller
-                                name="signature"
-                                control={control}
-                                render={({ field }) => (
-                                    <FileUploadInput {...field}
-                                        required
-                                        fileType="image/jpeg,image/png"
-                                        description="Upload a copy of your CAC Document"
-                                        inputError={errors.signature?.message}
-                                        labelName="CAC (Certificate of Incorporation)" onFileChange={(file) => field.onChange(file)} />
-                                )}
-                            />
-                            <Controller
-                                name="signature"
-                                control={control}
-                                render={({ field }) => (
-                                    <FileUploadInput {...field}
-                                        required
-                                        fileType="image/jpeg,image/png"
-                                        description="Upload a copy MEMART"
-                                        inputError={errors.signature?.message}
-                                        labelName="Memorandum & Articles of Associan (MEMART)" onFileChange={(file) => field.onChange(file)} />
-                                )}
-                            />
-                            <Controller
-                                name="signature"
-                                control={control}
-                                render={({ field }) => (
-                                    <FileUploadInput {...field}
-                                        required
-                                        fileType="image/jpeg,image/png"
-                                        description="Upload a copy of your CAC form CO2"
-                                        inputError={errors.signature?.message}
-                                        labelName="CAC form CO2 (Shareholders)" onFileChange={(file) => field.onChange(file)} />
-                                )}
-                            />
-                            <Controller
-                                name="signature"
-                                control={control}
-                                render={({ field }) => (
-                                    <FileUploadInput {...field}
-                                        required
-                                        fileType="image/jpeg,image/png"
-                                        description="Upload a copy of your CAC Form CO7"
-                                        inputError={errors.signature?.message}
-                                        labelName="CAC Form CO7 (Directors)" onFileChange={(file) => field.onChange(file)} />
-                                )}
-                            />
-                              <Controller
-                                name="signature"
-                                control={control}
-                                render={({ field }) => (
-                                    <FileUploadInput {...field}
-                                        required
-                                        fileType="image/jpeg,image/png"
-                                        description="Upload a copy of your Board Resolution authorizing account opening"
-                                        inputError={errors.signature?.message}
-                                        labelName="Board Resolution authorizing account Opening" onFileChange={(file) => field.onChange(file)} />
-                                )}
-                            />
-                              <Controller
-                                name="signature"
-                                control={control}
-                                render={({ field }) => (
-                                    <FileUploadInput {...field}
-                                        required
-                                        fileType="image/jpeg,image/png"
-                                        description="Upload a copy of your UBO Declaration Form"
-                                        inputError={errors.signature?.message}
-                                        labelName="UBO Declaration Form" onFileChange={(file) => field.onChange(file)} />
-                                )}
-                            />
 
+                        <div className="grid grid-cols-1 md:grid-cols-2 px-0 md:px-8 pt-4 pb-10 md:gap-x-20 gap-y-5 md:gap-y-10">
+                            {requiredDocs.map((doc) => (
+                                <Controller
+                                    key={doc}
+                                    name={doc as any}
+                                    control={control}
+                                    render={({ field, fieldState }) => (
+                                        <FileUploadInput
+                                            {...field}
+                                            required
+                                            labelName={DOCUMENT_META[doc].label}
+                                            description={DOCUMENT_META[doc].description}
+                                            inputError={fieldState.error?.message}
+                                            onFileChange={(file) => field.onChange(file)}
+                                        />
+                                    )}
+                                />
+                            ))}
                         </div>
+
                     </div>
                     <div className="border-y border-gray-300">
                         <p className="bg-secondary/70 p-3 font-bold text-lg">Referee Information</p>
@@ -198,14 +155,33 @@ const CompanyDocument = () => {
                                 )}
                             />
                         </div>
-                             
-                    </div>
-                     <div className="py-8">
 
-                                    <PrimaryButton type="submit" loading={loading} >Submit</PrimaryButton>
-                                </div>
+                    </div>
+                    <div className="py-8">
+
+                        <PrimaryButton type="submit" loading={loading} >Submit</PrimaryButton>
+                    </div>
                 </form>
             </div>
+
+            <Modal size="sm"
+                title=""
+                isVisible={successModal}
+                type="center"
+                onClose={() => router.replace("/")}>
+                <div className="flex flex-col justify-center items-center">
+                    <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />
+                    <p className="text-primary font-bold text-lg md:text-2xl pb-2 pt-6">Thank You!</p>
+
+                    <div className="mx-6  flex items-center justify-center flex-col text-center">
+                        <p className="text-black/50 md:text-[14px] pb-6"> Your information has been submitted successfully. We appreciate
+                            your time and support. The bank will review the details provided.</p>
+
+                    </div>
+
+
+                </div>
+            </Modal>
         </div>
     );
 }

@@ -34,14 +34,14 @@ const CorporateAccount = () => {
 
 
     const directorCountMap: Record<string, number> = {
-        "Limited Partnership": 2,
-        "Incorporated Trustee": 2,
-        "Unlimited Company": 1,
-        "Public Company": 2,
-        "Registered Business Name": 1,
-        "Limited Liability Company": 2,
-        "Limited Liability Partnership": 2,
-        "Company Limited by Guarantee": 1,
+        "1": 2, // Limited Partnership
+        "4": 2, // Incorporated Trustee
+        "2": 1, // Unlimited Company
+        "3": 2, // Public Company
+        "8": 1, // Registered Business Name
+        "7": 2, // Limited Liability Company
+        "6": 2, // Limited Liability Partnership
+        "5": 1, // Company Limited by Guarantee
     };
 
     const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
@@ -193,7 +193,7 @@ const CorporateAccount = () => {
                                                 { label: "Registered Business Name", value: "8" },
                                                 { label: "Limited Liability Company(LTD)", value: "7" },
                                                 { label: "Limited Liability Partnership", value: "6" },
-                                                { label: "Company Limited by Guarantee(LTD/GTEE)", value: "" },
+                                                { label: "Company Limited by Guarantee(LTD/GTEE)", value: "5" },
                                             ]} />
                                     )}
                                 />
@@ -318,7 +318,7 @@ const CorporateAccount = () => {
                                                         required
                                                         type="text"
                                                         labelName={`Director ${index + 1} Email Address`}
-                                                        inputError={errors.director?.[index]?.bvn?.message} />
+                                                        inputError={errors.director?.[index]?.emailAddress?.message} />
                                                 )}
                                             />
                                             <Controller
@@ -329,7 +329,7 @@ const CorporateAccount = () => {
                                                         required
                                                         type="text"
                                                         labelName={`Director ${index + 1} Phone Number`}
-                                                        inputError={errors.director?.[index]?.bvn?.message} />
+                                                        inputError={errors.director?.[index]?.phoneNumber?.message} />
                                                 )}
                                             />
 
@@ -338,7 +338,7 @@ const CorporateAccount = () => {
                                                 control={control}
                                                 render={({ field }) => (
                                                     <Input {...field}
-                                                        
+
                                                         type="number"
                                                         labelName={`Director ${index + 1} BVN`}
                                                         inputError={errors.director?.[index]?.bvn?.message} />
@@ -349,7 +349,7 @@ const CorporateAccount = () => {
                                                 control={control}
                                                 render={({ field }) => (
                                                     <Input {...field}
-                                                        
+
                                                         type="number"
                                                         labelName={`Director ${index + 1} NIN`}
                                                         inputError={errors.director?.[index]?.bvn?.message} />

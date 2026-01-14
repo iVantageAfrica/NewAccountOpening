@@ -4,45 +4,41 @@ import FileUploadInput from "@/app/components/ui/fileUpload";
 import { cryptoHelper } from "@/app/utils/reUsableFunction";
 import { Controller, useForm } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
-import { BankAccountReferencePayload, bankAccountReferenceSchema } from "@/app/utils/validationSchema/bankAccountReferenceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { directorySchema } from "@/app/utils/validationSchema/directorySchema";
+import { directorySignatoryMapper } from "@/app/utils/mapper/directorySignatoryMapper";
+import { useState } from "react";
+import Modal from "@/app/components/ui/modal";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 
 const DirectoryVerification = () => {
     const param = useSearchParams();
-    const { loading } = useApiEndPoints();
+     const router = useRouter();
+    const { loading, updateDirectorySignatorySubmission } = useApiEndPoints();
+    const [successModal, setSuccessModal] = useState(false);
     const directoryId = cryptoHelper.decrypt(param.get("id"));
-    const businessTypeId = cryptoHelper.decrypt(param.get("cmTy"));
     const directoryName = cryptoHelper.decrypt(param.get("na"));
     const businessName = cryptoHelper.decrypt(param.get("buNa"));
 
 
-    const { control, handleSubmit, formState: { errors } } = useForm<BankAccountReferencePayload>({
-        resolver: zodResolver(bankAccountReferenceSchema),
+    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+        resolver: zodResolver(directorySchema),
         defaultValues: {
-            referee1Name: "",
-            referee1Email: "",
-            referee1Mobile: "",
-            referee1Phone: "",
-            referee2Name: "",
-            referee2Email: "",
-            referee2Mobile: "",
-            referee2Phone: "",
+            signature: null,
+            valid_id: null,
+            passport: null,
         }
     });
-    const onSubmit = async (data: BankAccountReferencePayload) => {
-        const payloadData = ({
-            account_type_id: Number(accountTypeId),
-            account_number: accountNumber,
-            account_name: accountName,
-            ...data,
-        });
-        // const apiResponse = await addBankAccountReference(payloadData);
-        // if (apiResponse.statusCode === 200) {
-        //     setSuccessModal(true)
-        // }
+    const onSubmit = async (data: FormData) => {
+        const payloadData = directorySignatoryMapper(data, directoryId, 'directory');
+        const apiResponse = await updateDirectorySignatorySubmission(payloadData);
+        if (apiResponse.statusCode === 200) {
+            setSuccessModal(true)
+        }
     };
 
 
@@ -62,19 +58,20 @@ const DirectoryVerification = () => {
             </div>
 
             <div className="px-5 md:px-40 py-5">
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
+
                     <div className="border-y border-gray-300">
                         <p className="bg-secondary/70 p-3 text-lg"> Name: <span className="font-bold">{directoryName}</span></p>
                         <div className="grid grid-cols-1 md:grid-cols-2 px-0 md:px-8 pt-4 pb-10 md:gap-x-20 gap-y-5 md:gap-y-10">
                             <Controller
-                                name="signature"
+                                name="valid_id"
                                 control={control}
                                 render={({ field }) => (
                                     <FileUploadInput {...field}
                                         required
-                                        fileType="image/jpeg,image/png"
+                                        fileType=".pdf,.jpg,.jpeg,.png,.docx"
                                         description="Upload a valid identification document"
-                                        inputError={errors.signature?.message}
+                                        inputError={errors.valid_id?.message}
                                         labelName="Valid ID" onFileChange={(file) => field.onChange(file)} />
                                 )}
                             />
@@ -84,35 +81,54 @@ const DirectoryVerification = () => {
                                 render={({ field }) => (
                                     <FileUploadInput {...field}
                                         required
-                                        fileType="image/jpeg,image/png"
+                                        fileType=".pdf,.jpg,.jpeg,.png,.docx"
                                         description="Upload a copy of your signature"
                                         inputError={errors.signature?.message}
                                         labelName="Signature" onFileChange={(file) => field.onChange(file)} />
                                 )}
                             />
                             <Controller
-                                name="signature"
+                                name="passport"
                                 control={control}
                                 render={({ field }) => (
                                     <FileUploadInput {...field}
                                         required
-                                        fileType="image/jpeg,image/png"
+                                        fileType=".pdf,.jpg,.jpeg,.png,.docx"
                                         description="Upload a copy of your passport photograph"
-                                        inputError={errors.signature?.message}
+                                        inputError={errors.passport?.message}
                                         labelName="Passport Photograph" onFileChange={(file) => field.onChange(file)} />
                                 )}
                             />
-                           
-                           
+
+
 
                         </div>
                     </div>
-              
+
                     <div className="py-8">
 
                         <PrimaryButton type="submit" loading={loading} >Submit</PrimaryButton>
                     </div>
                 </form>
+
+                <Modal size="sm"
+                    title=""
+                    isVisible={successModal}
+                    type="center"
+                    onClose={() => router.replace("/")}>
+                    <div className="flex flex-col justify-center items-center">
+                        <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />
+                        <p className="text-primary font-bold text-lg md:text-2xl pb-2 pt-6">Thank You!</p>
+
+                        <div className="mx-6  flex items-center justify-center flex-col text-center">
+                            <p className="text-black/50 md:text-[14px] pb-6"> Your information has been submitted successfully. We appreciate
+                                your time and support. The bank will review the details provided.</p>
+
+                        </div>
+
+
+                    </div>
+                </Modal>
             </div>
         </div>
     );
