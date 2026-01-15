@@ -172,8 +172,9 @@ const BvnValidation: React.FC = () => {
                             Enter Verification Code
                         </p>
                         <p className="text-xs mb-2 text-gray-500  pt-2 text-center mx-10 ">
-                            We've sent a 6-digit code to your registered phone number or email address ending
-                            in {maskPhone(accountInformation.bvnData?.phoneNumber)} or {maskEmail(accountInformation.bvnData?.emailAddress || "")}
+                            We've sent a 6-digit code to your registered  email address ending 
+                            in <span className="text-black">{maskEmail(accountInformation.bvnData?.emailAddress || "")} </span>
+                            or phone number ending with <span className="text-black">{maskPhone(accountInformation.bvnData?.phoneNumber)} </span>
                         </p>
                         <div className="overflow-hidden mb-5 mt-2 mx-1">
                             <OtpInput length={6} onChange={(value) => { setOtp(value) }} />
