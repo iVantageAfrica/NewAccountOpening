@@ -14,7 +14,6 @@ const AgreementModals: React.FC<AgreementModalsProps> = ({
     onClose,
 }) => {
     const isVisible = activeModal !== null;
-    const pdfUrl = "/file/terms.pdf";
 
     const titleMap: Record<Exclude<AgreementType, null>, string> = {
         indemnity: "INDEMNITY AGREEMENT",
@@ -388,7 +387,7 @@ const AgreementModals: React.FC<AgreementModalsProps> = ({
 
                         <p className="font-bold text-black">16. GOVERNING LAW</p>
                         <p className="pb-6">
-                            These Terms shall be governed by and construed in accordance with the laws of the <span className="text-black">Federal Republic of Nigeria.</span>
+                            These Terms shall be governed by and construed in accordance with the laws of the <span className="text-black font-bold">Federal Republic of Nigeria.</span>
                         </p>
 
                   
