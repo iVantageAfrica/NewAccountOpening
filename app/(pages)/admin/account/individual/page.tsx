@@ -77,11 +77,13 @@ const IndividualAccount = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
                             <InformationText title="Mother Maiden Name" data={state.accountInformation?.motherMaidenName} />
-                            <InformationText title="Secondary Phone" data={state.accountInformation?.mobilePhoneNumber} />
+                            <InformationText title="Current Phone Number" data={state.accountInformation?.mobilePhoneNumber} />
                             <InformationText title="Marital Status" data={state.accountInformation?.maritalStatus} />
                             <InformationText title="Employment Status" data={state.accountInformation?.employmentStatus} />
                             <InformationText title="Employer" data={state.accountInformation?.employer} />
-                            <InformationText title="House Address" data={state.accountInformation?.address} />
+                            <InformationText title="State of Origin" data={state.accountInformation?.origin} />
+                            <InformationText title="Local Government" data={state.accountInformation?.lga} />
+                            <InformationText title="Current House Address" data={state.accountInformation?.address} />
                             <InformationText title="Next of Kin" data={state.accountInformation?.nextOfKinName} />
                             <InformationText title="Next of Kin Relationship" data={state.accountInformation?.nextOfKinRelationship} />
                             <InformationText title="Next of Kin Phone" data={state.accountInformation?.nextOfKinPhoneNumber} />

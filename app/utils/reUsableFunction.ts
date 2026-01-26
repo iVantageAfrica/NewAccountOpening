@@ -10,6 +10,9 @@ export const maskEmail = (email: string) => {
   return `***${name.slice(-4)}@${domain}`;
 };
 
+export const formatTitle = (key: any) =>
+  key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase());
+
 export function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
 }

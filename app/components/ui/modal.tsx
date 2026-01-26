@@ -91,21 +91,32 @@ const Modal: React.FC<ModalProps> = ({
 
   // Side modal
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-start justify-end bg-black/70 px-4">
+    <div className="fixed inset-0 z-50 flex items-end md:items-start justify-end bg-black/70">
       <div
-        className={`bg-white rounded md:rounded-none ${modalWidth} md:h-screen mb-4 md:mb-0 overflow-auto overflow-x-hidden md:-mr-5 ${baseClass} ${transitionClass}`}
+        className={`
+          bg-white w-full ${modalWidth}
+          h-[80vh] md:h-screen
+          rounded-t-xl md:rounded-none
+          flex flex-col
+          transition-transform duration-300 ease-in-out
+          ${show ? "translate-x-0" : "translate-x-full"}
+        `}
       >
-        <div className="flex justify-between items-center border-b border-black/20 p-4 text-sm">
+        <div className="sticky top-0 z-10 flex justify-between items-center border-b border-gray-200 p-4 bg-white">
           <span className="text-primary font-semibold text-md truncate w-[95%]">
             {title} {subTitle}
           </span>
           <CircleX
-            size={14}
+            size={16}
             className="cursor-pointer text-primary"
             onClick={onClose}
           />
         </div>
-        <div className="grid text-xs px-4 pt-2 pb-4 mr-8">{children}</div>
+
+    
+        <div className="flex-1 overflow-y-auto px-4 pt-2  text-xs">
+          {children}
+        </div>
       </div>
     </div>
   );

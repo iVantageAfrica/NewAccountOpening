@@ -39,7 +39,7 @@ const TopBar: React.FC<TopBarProps> = ({ showArrow = false, description, headerT
                                     <Image src="/images/imperialLogo.png" alt="Imperial Logo" width={40} height={40} className="w-10 h-10 " />
                                 </div>
                                 <div className="grid">
-                                    <h1 className="text-lg md:text-xl font-bold ">Account Opening</h1>
+                                    <h1 className="text-lg md:text-xl font-bold ">Imperial Online Account Opening</h1>
                                     {description && <p className="text-sm text-gray-600 -mt-1">{description}</p>}
                                 </div>
                             </div>

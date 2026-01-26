@@ -48,7 +48,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
       <div className="relative w-fit">
         {showTooltip && (
           <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs bg-black text-white text-xs italic p-2 rounded-md shadow-md z-10">
-            {error || infoText}
+            {infoText}
             <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-black"></div>
           </div>
         )}
@@ -57,7 +57,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
           htmlFor={name}
           className={`text-xs md:text-sm ${checked ? "text-black" : "text-gray-600"}`}
         >
-          {label}
+          {label} <br /><span className="text-red-500 font-bold text-xs">{error}</span>
         </label>
       </div>
     </div>

@@ -40,6 +40,8 @@ export interface AccountInformation {
   gender?: string;
   dateOfBirth?: string;
   phoneNumber?: string;
+  origin?: string;
+  lga?: string;
   email?: string;
   debitCard?: boolean;
   motherMaidenName?: string;
@@ -141,11 +143,13 @@ export const downloadIndividualAccountForm = (
     head: [["Personal Information", ""]],
     body: [
       ["Mother Maiden Name", accountInformation.motherMaidenName || "-"],
-      ["Secondary Phone", accountInformation.mobilePhoneNumber || "-"],
+      ["Current Phone Number", accountInformation.mobilePhoneNumber || "-"],
       ["Marital Status", accountInformation.maritalStatus || "-"],
       ["Employment Status", accountInformation.employmentStatus || "-"],
+      ["State of origin", accountInformation.origin || "-"],
+      ["Local Government", accountInformation.lga || "-"],
       ["Employer", accountInformation.employer || "-"],
-      ["House Address", accountInformation.address || "-"],
+      ["Current House Address", accountInformation.address || "-"],
       ["Next of Kin", accountInformation.nextOfKinName || "-"],
       ["Next of Kin Relationship", accountInformation.nextOfKinRelationship || "-"],
       ["Next of Kin Phone", accountInformation.nextOfKinPhoneNumber || "-"],

@@ -12,6 +12,8 @@ export const currentAccountSchema = z.object({
   street: z.string().min(1, "Street is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
+  lga: z.string().min(1, "Local Government is required"),
+  origin: z.string().min(1, "State of origin is required"),
   nextOfKinName: z.string().min(1, "Next of Kin Name is required"),
   nextOfKinAddress: z.string().min(1, "Next of Kin Address is required"),
   nextOfKinRelationship: z.string().min(1, "Next of Kin Relationship is required"),
@@ -23,5 +25,6 @@ export const currentAccountSchema = z.object({
   passportPhoto: fileSchema("Passport Photo is required"),
 
   debitCard: z.boolean(),
-  acceptTerms: z.boolean().refine(val => val, "You must accept the terms"),
+  acceptTerms: z.boolean().refine(val => val, "You must accept the terms and agreement"),
+  indemnityAgreement:z.boolean().refine(val => val, "You must agree to the indemnity agreement")
 });

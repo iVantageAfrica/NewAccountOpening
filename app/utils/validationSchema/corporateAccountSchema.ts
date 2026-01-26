@@ -14,6 +14,8 @@ export const CorporateAccountSchema = z.object({
   state: z.string().min(1, "State is required"),
   debitCard: z.boolean(),
   acceptTerms: z.boolean().refine(val => val, "You must accept the terms"),
+  indemnityAgreement:z.boolean().refine(val => val, "You must agree to the indemnity agreement"),
+
   director: z
     .array(
       z.object({

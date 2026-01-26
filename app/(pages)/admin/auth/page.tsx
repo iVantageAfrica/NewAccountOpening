@@ -28,7 +28,7 @@ const Authenticate = () => {
             saveToLocalStorage("isAdministrative", true)
             saveToLocalStorage("bearerToken", apiResponse.data.token)
             saveToLocalStorage("adminDetails", apiResponse.data.adminInformation)
-            router.push("/admin/dashboard")
+            router.push("/admin/customer")
         }
     }
 

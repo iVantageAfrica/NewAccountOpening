@@ -4,6 +4,7 @@ import TopBar from "@/app/components/navigation/topBar";
 import { useAccountGuard } from "@/app/components/types/accountGuard";
 import { Accordion, AccordionItem } from "@/app/components/ui/accordion";
 import AccountSuccess from "@/app/components/ui/accountSuccess";
+import AgreementModals from "@/app/components/ui/agreementModal";
 import DetailsLabel from "@/app/components/ui/detailsLabel";
 import FileUploadInput from "@/app/components/ui/fileUpload";
 import Input from "@/app/components/ui/input";
@@ -27,8 +28,10 @@ const SavingsAccount = () => {
     const { createIndividualAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
-    const bvnData =  getFromLocalStorage("bvnData");
+    const bvnData = getFromLocalStorage("bvnData");
     const [activeStep, setActiveStep] = React.useState(2);
+    const [activeAgreementModal, setActiveAgreementModal] =
+        React.useState<"indemnity" | "terms" | null>(null);
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(savingsAccountSchema),
         defaultValues: {
@@ -38,6 +41,8 @@ const SavingsAccount = () => {
             employmentStatus: "",
             maritalStatus: "",
             houseNumber: "",
+            origin: "",
+            lga: "",
             street: "",
             city: "",
             state: "",
@@ -51,6 +56,7 @@ const SavingsAccount = () => {
             passportPhoto: null,
             debitCard: false,
             acceptTerms: false,
+            indemnityAgreement: false
         }
     });
 
@@ -105,7 +111,7 @@ const SavingsAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
-                                            labelName="Phone Number"
+                                            labelName="Current Phone Number"
                                             inputError={errors.phoneNumber?.message} />
                                     )}
                                 />
@@ -138,6 +144,22 @@ const SavingsAccount = () => {
                                             ]} />
                                     )}
                                 />
+                                <Controller name="origin"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="State of Origin"
+                                            inputError={errors.origin?.message} />
+                                    )} />
+                                <Controller name="lga"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Local Government"
+                                            inputError={errors.lga?.message} />
+                                    )} />
                                 <Controller name="houseNumber"
                                     control={control}
                                     render={({ field }) => (
@@ -176,7 +198,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <Input {...field}
                                             required
-                                            labelName="Next of Kin"
+                                            labelName="Next of Kin Name"
                                             inputError={errors.nextOfKinName?.message} />
                                     )} />
                                 <Controller name="nextOfKinAddress"
@@ -192,7 +214,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <Input {...field}
                                             required
-                                            labelName="Relationship"
+                                            labelName="Next of KinRelationship"
                                             inputError={errors.nextOfKinRelationship?.message} />
                                     )} />
                                 <Controller
@@ -283,6 +305,28 @@ const SavingsAccount = () => {
                         />
 
                         <Controller
+                            name="indemnityAgreement"
+                            control={control}
+                            rules={{ validate: value => value === true || "You must agree to the indemnity agreement" }}
+                            render={({ field, fieldState }) => (
+                                <RadioButton
+                                    label={
+                                        <span>
+                                            I agree to{" "}
+                                            <span className="text-primary font-bold cursor-pointer " onClick={() => setActiveAgreementModal("indemnity")}>
+                                                Indemnity Agreement
+                                            </span>
+                                        </span>
+                                    }
+                                    checked={field.value || false}
+                                    infoText="Click to read the Indemnity Agreement"
+                                    onChange={field.onChange}
+                                    name="indemnityAgreement"
+                                    error={fieldState.error?.message || null}
+                                />
+                            )}
+                        />
+                        <Controller
                             name="acceptTerms"
                             control={control}
                             rules={{ validate: value => value === true || "You must accept the terms" }}
@@ -291,18 +335,20 @@ const SavingsAccount = () => {
                                     label={
                                         <span>
                                             I agree to{" "}
-                                            <a href="/terms" className="text-primary font-bold">
+                                            <span className="text-primary font-bold cursor-pointer" onClick={() => setActiveAgreementModal("terms")}>
                                                 Terms and Conditions
-                                            </a>
+                                            </span>
                                         </span>
                                     }
                                     checked={field.value || false}
+                                    infoText="Click to read the Terms and Agreement"
                                     onChange={field.onChange}
                                     name="acceptTerms"
                                     error={fieldState.error?.message || null}
                                 />
                             )}
                         />
+
                     </div>
                     <PrimaryButton type="submit" loading={loading} >Submit</PrimaryButton>
                 </form>
@@ -315,6 +361,11 @@ const SavingsAccount = () => {
                 title="">
                 <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} />
             </Modal>
+
+            <AgreementModals
+                activeModal={activeAgreementModal}
+                onClose={() => setActiveAgreementModal(null)}
+            />
         </div>
     );
 }

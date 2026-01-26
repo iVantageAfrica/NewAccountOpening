@@ -160,6 +160,14 @@ export const useApiEndPoints = () => {
         [request]
     );
 
+
+    const fetchCorporateAccount = useCallback(async (accountNumber: string) => {
+        const response = await request(`admin/fetch-corporate-account?accountNumber=${accountNumber}`, "GET");
+        return response.data;
+    },
+        [request]
+    );
+
     const debitCardRequest = useCallback(async () => {
         const response = await request("admin/debit-card-requests");
         return response.data;
@@ -209,6 +217,7 @@ export const useApiEndPoints = () => {
         updateDirectorySignatorySubmission,
         businessDocumentSubmission,
         corporateAccountSummary,
-        corporateAccountList
+        corporateAccountList,
+        fetchCorporateAccount
     }
 }

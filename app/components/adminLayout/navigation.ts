@@ -3,11 +3,11 @@ import path from "path";
 import { title } from "process";
 
 export const Navigation = [
-  {
-    title: "Dashboard",
-    path: "/admin/dashboard",
-    icon: LayoutDashboard,
-  },
+  // {
+  //   title: "Dashboard",
+  //   path: "/admin/dashboard",
+  //   icon: LayoutDashboard,
+  // },
   {
     title: "Customer Information",
     path: "/admin/customer",

@@ -4,6 +4,7 @@ import TopBar from "@/app/components/navigation/topBar";
 import { useAccountGuard } from "@/app/components/types/accountGuard";
 import { Accordion, AccordionItem } from "@/app/components/ui/accordion";
 import AccountSuccess from "@/app/components/ui/accountSuccess";
+import AgreementModals from "@/app/components/ui/agreementModal";
 import DetailsLabel from "@/app/components/ui/detailsLabel";
 import Input from "@/app/components/ui/input";
 import Modal from "@/app/components/ui/modal";
@@ -31,6 +32,8 @@ const CorporateAccount = () => {
     const [accountNumber, setAccountNumber] = React.useState("");
     const bvnData = getFromLocalStorage("bvnData");
     const [activeStep, setActiveStep] = React.useState(3);
+    const [activeAgreementModal, setActiveAgreementModal] =
+        React.useState<"indemnity" | "terms" | null>(null);
 
 
     const directorCountMap: Record<string, number> = {
@@ -62,6 +65,7 @@ const CorporateAccount = () => {
             director: [{ lastname: "", firstname: "", bvn: "", nin: "", emailAddress: "", phoneNumber: "" }],
             debitCard: false,
             acceptTerms: false,
+            indemnityAgreement: false,
             signatory: [{ name: "", validId: null, signature: null, utilityBill: null, passportPhoto: null }]
         }
     });
@@ -461,6 +465,28 @@ const CorporateAccount = () => {
                         />
 
                         <Controller
+                            name="indemnityAgreement"
+                            control={control}
+                            rules={{ validate: value => value === true || "You must agree to the indemnity agreement" }}
+                            render={({ field, fieldState }) => (
+                                <RadioButton
+                                    label={
+                                        <span>
+                                            I agree to{" "}
+                                            <span className="text-primary font-bold cursor-pointer " onClick={() => setActiveAgreementModal("indemnity")}>
+                                                Indemnity Agreement
+                                            </span>
+                                        </span>
+                                    }
+                                    checked={field.value || false}
+                                    infoText="Click to read the Indemnity Agreement"
+                                    onChange={field.onChange}
+                                    name="indemnityAgreement"
+                                    error={fieldState.error?.message || null}
+                                />
+                            )}
+                        />
+                        <Controller
                             name="acceptTerms"
                             control={control}
                             rules={{ validate: value => value === true || "You must accept the terms" }}
@@ -469,12 +495,13 @@ const CorporateAccount = () => {
                                     label={
                                         <span>
                                             I agree to{" "}
-                                            <a href="/terms" className="text-primary font-bold">
+                                            <span className="text-primary font-bold cursor-pointer" onClick={() => setActiveAgreementModal("terms")}>
                                                 Terms and Conditions
-                                            </a>
+                                            </span>
                                         </span>
                                     }
                                     checked={field.value || false}
+                                    infoText="Click to read the Terms and Agreement"
                                     onChange={field.onChange}
                                     name="acceptTerms"
                                     error={fieldState.error?.message || null}
@@ -493,6 +520,11 @@ const CorporateAccount = () => {
                 title="">
                 <AccountSuccess url="https://corporate.imperialmortgagebank.com/?nav_source=ibs" accountNumber={accountNumber} />
             </Modal>
+
+            <AgreementModals
+                activeModal={activeAgreementModal}
+                onClose={() => setActiveAgreementModal(null)}
+            />
         </div>
     );
 }

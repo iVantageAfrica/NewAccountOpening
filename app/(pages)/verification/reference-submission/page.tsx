@@ -122,7 +122,6 @@ const AccountReferenceSubmission = () => {
                                                 labelName="Account Type"
                                                 inputError={errors.accountType?.message}
                                                 options={[
-                                                    { label: "Savings", value: "Savings Account" },
                                                     { label: "Current", value: "Current Account" },
                                                     { label: "Corporate", value: "Corporate Account" }
                                                 ]} />

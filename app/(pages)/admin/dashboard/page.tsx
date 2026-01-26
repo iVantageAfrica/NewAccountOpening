@@ -6,7 +6,7 @@ const AdminDashboard = () => {
         <div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <DashboardStatCard
-                    label="Total Customers"
+                    label="Total Account"
                     value="7,090"
                     icon={<BookUser />}
                     iconBg="bg-red-500/50"

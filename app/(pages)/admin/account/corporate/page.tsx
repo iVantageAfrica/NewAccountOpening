@@ -97,7 +97,7 @@ const CorporateAccount = () => {
                     { key: "createdAt", label: "DATE" },
                 ]}
                 renderActions={(row: any) => (
-                    <button onClick={() => router.replace('/admin/account/xyz/?account=' + btoa(row.accountNumber)+'&type='+btoa('Current'))}
+                    <button onClick={() => router.replace('/admin/account/corporate/fetch-corporate/?account=' + btoa(row.accountNumber)+'&type='+btoa('Corporate'))}
                         className="px-3 py-1 hover:bg-primary hover:text-white cursor-pointer rounded text-xs gap-1 flex items-center text-primary border border-primary"
                     >
                         <Eye size={14} /> View
