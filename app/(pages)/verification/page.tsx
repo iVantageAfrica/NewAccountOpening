@@ -7,8 +7,9 @@ import Modal from "@/app/components/ui/modal";
 import OtpInput from "@/app/components/ui/otpInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { accountTypes } from "@/app/index/accountTypes";
 import { bvnDataClean, formatTime, maskEmail, maskPhone, removeFromLocalStorage, saveToLocalStorage } from "@/app/utils/reUsableFunction";
-import { MessageSquareText } from "lucide-react";
+import { CircleCheck, MessageSquareText } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useRef, useState } from "react";
 
@@ -20,6 +21,7 @@ const BvnValidation: React.FC = () => {
     const [otp, setOtp] = useState("");
     const accountData = atob(param.get("account") || "");
     const selectedAccount = JSON.parse(accountData);
+    const selectedAccountRequirements = accountTypes.find((account) => account.id === selectedAccount.id);
     const [consentModal, setConsentModal] = useState(true);
     const [verificationModal, setVerificationModal] = useState(false);
     const [bvnInputError, setBvnInputError] = useState<string | null>(null);
@@ -106,29 +108,67 @@ const BvnValidation: React.FC = () => {
                     activeStep={1}
                 />
 
-                <div className="p-6 md:px-20">
-                    <h2 className="text-xl font-bold mb-1">BVN Validation</h2>
-                    <p className="text-xs mb-6">
-                        Please enter your Bank Verification Number (BVN) to proceed with the account opening process.
-                    </p>
+                <div className="p-6 md:px-20 flex flex-col md:flex-row gap-10 lg:gap-20">
+                    <div className="w-full lg:w-[55%]">
+                        <h2 className="text-xl font-bold mb-1 text-primary">BVN Validation</h2>
+                        <p className="text-xs mb-6">
+                            Please enter your Bank Verification Number (BVN) to proceed with the account opening process.
+                        </p>
 
-                    <div className="mt-10 gap-8 flex flex-col">
-                        <Input
-                            name="bvn"
-                            required
-                            maxLength={11}
-                            type="number"
-                            labelName="BVN"
-                            inputError={bvnInputError}
-                            value={accountInformation.bvn}
-                            placeholder="Enter your 11 digit BVN e.g 01234567891"
-                            onChange={(e) => {
-                                const userBvn = e.target.value.replace(/\D/g, '');
-                                setAccountInformation({ ...accountInformation, bvn: userBvn })
-                            }}
-                        />
-                        <PrimaryButton onClick={verifyBVN} loading={loading} >Verify</PrimaryButton>
+                        <div className="mt-10 gap-8 flex flex-col">
+                            <Input
+                                name="bvn"
+                                required
+                                maxLength={11}
+                                type="number"
+                                labelName="BVN"
+                                inputError={bvnInputError}
+                                value={accountInformation.bvn}
+                                placeholder="Enter your 11 digit BVN e.g 01234567891"
+                                onChange={(e) => {
+                                    const userBvn = e.target.value.replace(/\D/g, '');
+                                    setAccountInformation({ ...accountInformation, bvn: userBvn })
+                                }}
+                            />
+                            <PrimaryButton onClick={verifyBVN} loading={loading} >Verify</PrimaryButton>
+                        </div>
                     </div>
+                    {
+                        selectedAccountRequirements && (
+                            <div className="grid">
+                                <h2 className="text-lg font-bold text-primary">{selectedAccountRequirements.name} Features</h2>
+                                <p className="text-xs mb-3 mt-2 lg:mt-0">The following are features and benefits attached to a {selectedAccountRequirements.name} Account:</p>
+
+                                <ul className="text-xs ml-1.5 gap-y-1.5 grid">
+                                    {selectedAccountRequirements.benefits.map((benefit, index) => (
+                                        <li key={index} className="flex items-start text-[11px]">
+                                            <CircleCheck
+                                                size={12}
+                                                className="mr-2 text-primary shrink-0"
+                                            />
+                                            {benefit}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <h2 className="text-lg font-bold text-primary mt-10">{selectedAccountRequirements.name} Minimum Requirement</h2>
+                                <p className="text-xs mb-3 mt-2 lg:mt-0">The following are minimum requirement to open a {selectedAccountRequirements.name} Account:</p>
+
+                                <ul className="text-xs ml-1.5 gap-y-1.5 grid">
+                                    {selectedAccountRequirements.requirements.map((requirement, index) => (
+                                        <li key={index} className="flex items-start text-[11px]">
+                                            <CircleCheck
+                                                size={12}
+                                                className="mr-2 text-primary shrink-0"
+                                            />
+                                            {requirement}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )
+                    }
+
                 </div>
 
                 <Modal isVisible={consentModal}

@@ -7,4 +7,5 @@ export interface AccountType {
     code?: string|null;
     icon: LucideIcon;
     requirements: string[];
+    benefits: string[];
 }

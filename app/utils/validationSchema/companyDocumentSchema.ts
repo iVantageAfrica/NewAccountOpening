@@ -3,14 +3,13 @@ import { z } from "zod";
 const fileOptional = z.instanceof(File).optional().nullable();
 
 const baseSchema = z.object({
-    referee1Name: z.string().min(1, "Referee 1 Name is required"),
-    referee1Email: z.string().email("Invalid Referee 1 Email"),
-    referee1Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 1 Mobile is invalid"),
+    referee1Name: z.string().min(1, "Referee 1 Name is required").max(50, "Referee 1 Name is too long"),
+    referee1Email: z.string().email("Invalid Referee 1 Email").max(100, "Referee 1 Email is too long"),
+    referee1Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 1 Mobile is invalid").max(25, "Referee 1 Mobile is too long"),
 
-    referee2Name: z.string().min(1, "Referee 2 Name is required"),
-    referee2Email: z.string().email("Invalid Referee 2 Email"),
-    referee2Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 2 Mobile is invalid"),
-
+    referee2Name: z.string().min(1, "Referee 2 Name is required").max(50, "Referee 2 Name is too long"),
+    referee2Email: z.string().email("Invalid Referee 2 Email").max(100, "Referee 2 Email is too long"),
+    referee2Mobile: z.string().regex(/^\+?\d{8,15}$/, "Referee 2 Mobile is invalid").max(25, "Referee 2 Mobile is too long"),
     cac: fileOptional,
     memart: fileOptional,
     cac_co2: fileOptional,

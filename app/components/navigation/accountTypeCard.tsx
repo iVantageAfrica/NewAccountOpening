@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, ChevronDown, CircleCheck } from "lucide-react";
-import { AccountType } from "../types/accountType";
+import { AccountType } from "../../index/accountType";
 import PrimaryButton from "../ui/primaryButton";
 import { useRouter } from "next/navigation";
 
