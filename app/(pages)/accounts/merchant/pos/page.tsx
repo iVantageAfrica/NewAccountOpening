@@ -223,7 +223,7 @@ const POSMerchantAccount = () => {
                                         <FileUploadInput {...field}
                                             required
                                             inputError={errors.utilityBill?.message}
-                                            description="Upload a copy of your LAWMA Bill, or Task Force or Network"
+                                            description="Upload a copy of your LAWMA Bill, or Task Force or Electricity Receipt"
                                             labelName="Utility Bill" onFileChange={(file) => field.onChange(file)} />
                                     )}
                                 />

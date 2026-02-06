@@ -20,7 +20,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { email } from "zod";
 
 const CorporateAccount = () => {
     useAccountGuard();
@@ -38,13 +37,17 @@ const CorporateAccount = () => {
 
     const directorCountMap: Record<string, number> = {
         "1": 2, // Limited Partnership
+        "2": 2, // Unlimited Company
+        "3": 2, // Public Limited Company (PLC)
         "4": 2, // Incorporated Trustee
-        "2": 1, // Unlimited Company
-        "3": 2, // Public Company
-        "8": 1, // Registered Business Name
-        "7": 2, // Limited Liability Company
-        "6": 2, // Limited Liability Partnership
-        "5": 1, // Company Limited by Guarantee
+        "5": 2, // Company Limited by Guarantee (CLG)
+        "6": 2, // Limited Liability Partnership (LLP)
+        "7": 1, // Limited Liability Company (LTD)
+        "8": 1, // Business Name / Sole Proprietorship
+        "9": 2, // Clubs, Societies & Associations
+        "10": 2, // NGOs / Foundation / Trusts
+        "11": 1, // Foreign-Owned / Foreign-Controlled Entities
+        "12": 1, // Franchise
     };
 
     const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
@@ -130,6 +133,9 @@ const CorporateAccount = () => {
         if (apiResponse.statusCode === 200) {
             setSuccessModal(true);
             setAccountNumber(apiResponse.data.accountNumber);
+            setTimeout(() => {
+                clearAppState();
+            }, 5000);
         }
     };
 
@@ -191,13 +197,17 @@ const CorporateAccount = () => {
                                             inputError={errors.companyType?.message}
                                             options={[
                                                 { label: "Limited Partnership", value: "1" },
-                                                { label: "Incorporated Trustee", value: "4" },
                                                 { label: "Unlimited Company", value: "2" },
-                                                { label: "Public Company (PLC)", value: "3" },
-                                                { label: "Registered Business Name", value: "8" },
-                                                { label: "Limited Liability Company(LTD)", value: "7" },
-                                                { label: "Limited Liability Partnership", value: "6" },
-                                                { label: "Company Limited by Guarantee(LTD/GTEE)", value: "5" },
+                                                { label: "Public Limited Company (PLC)", value: "3" },
+                                                { label: "Incorporated Trustee", value: "4" },
+                                                { label: "Company Limited by Guarantee (CLG)", value: "5" },
+                                                { label: "Limited Liability Partnership (LLP)", value: "6" },
+                                                { label: "Limited Liability Company (LTD)", value: "7" },
+                                                { label: "Business Name / Sole Proprietorship", value: "8" },
+                                                { label: "Clubs, Societies & Associations", value: "9" },
+                                                { label: "NGOs / Foundation / Trusts", value: "10" },
+                                                { label: "Foreign-Owned / Foreign-Controlled Entities", value: "11" },
+                                                { label: "Franchise", value: "12" },
                                             ]} />
                                     )}
                                 />
@@ -282,6 +292,11 @@ const CorporateAccount = () => {
                                             options={[
                                                 { label: "1", value: "1" },
                                                 { label: "2", value: "2" },
+                                                { label: "3", value: "3" },
+                                                { label: "4", value: "4" },
+                                                { label: "5", value: "5" },
+                                                { label: "6", value: "6" },
+                                                { label: "7", value: "7" },
                                             ]} />
                                     )}
                                 />

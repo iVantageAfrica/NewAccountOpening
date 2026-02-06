@@ -15,7 +15,7 @@ import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { savingsAccountMapper } from "@/app/utils/mapper/savingAccount";
-import { getFromLocalStorage } from "@/app/utils/reUsableFunction";
+import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
 import { savingsAccountSchema } from "@/app/utils/validationSchema/savingsAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -29,9 +29,10 @@ const SavingsAccount = () => {
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
     const bvnData = getFromLocalStorage("bvnData");
-    const [activeStep, setActiveStep] = React.useState(2);
+    const [activeStep, setActiveStep] = React.useState(0);
     const [activeAgreementModal, setActiveAgreementModal] =
         React.useState<"indemnity" | "terms" | null>(null);
+
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(savingsAccountSchema),
         defaultValues: {
@@ -59,13 +60,37 @@ const SavingsAccount = () => {
             indemnityAgreement: false
         }
     });
+    React.useEffect(() => {
+        if (Object.keys(errors).length === 0) return;
 
+        const accordionFields = [
+            [
+                "mothersMaidenName", "phoneNumber", "employmentStatus", "maritalStatus",
+                "houseNumber", "street", "city", "state", "origin", "lga",
+                "nextOfKinName", "nextOfKinAddress", "nextOfKinRelationship", "nextOfKinPhone"
+            ],
+            [
+                "validId", "signature", "utilityBill", "passportPhoto"
+            ]
+        ];
+        const errorFields = Object.keys(errors);
+        const indexWithError = accordionFields.findIndex(fields =>
+            errorFields.some(f => fields.includes(f))
+        );
+
+        if (indexWithError !== -1) {
+            setActiveStep(indexWithError);
+        }
+    }, [errors]);
     const onSubmit = async (data: FormData) => {
         const payload = savingsAccountMapper(data, bvnData.bvn)
         const apiResponse = await createIndividualAccount(payload)
         if (apiResponse.statusCode === 200) {
             setSuccessModal(true)
             setAccountNumber(apiResponse.data.accountNumber)
+            setTimeout(() => {
+                clearAppState();
+            }, 5000);
         }
     };
 
@@ -81,7 +106,7 @@ const SavingsAccount = () => {
 
             <div className="p-6 md:px-30">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <Accordion onChangeStep={(activeStep) => { setActiveStep(activeStep + 1) }}>
+                    <Accordion activeIndex={activeStep} onChangeStep={(step) => setActiveStep(step - 1)}>
                         <AccordionItem title="Account Details">
                             <div className="bg-gray-200 px-3 md:px-6 pt-4 grid grid-cols-1 md:grid-cols-3 gap-y-2 pb-4 border-b border-gray-300 rounded-b md:rounded-b-xl">
                                 <DetailsLabel title="BVN" value={bvnData?.bvn} />
@@ -214,7 +239,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <Input {...field}
                                             required
-                                            labelName="Next of KinRelationship"
+                                            labelName="Next of Kin Relationship"
                                             inputError={errors.nextOfKinRelationship?.message} />
                                     )} />
                                 <Controller
@@ -264,7 +289,7 @@ const SavingsAccount = () => {
                                             required
                                             fileType=".pdf,.doc,.docx"
                                             inputError={errors.utilityBill?.message}
-                                            description="Upload a copy of your LAWMA Bill, or Task Force or Network"
+                                            description="Upload a copy of your LAWMA Bill, or Task Force or Electricity Receipt"
                                             labelName="Utility Bill" onFileChange={(file) => field.onChange(file)} />
                                     )}
                                 />

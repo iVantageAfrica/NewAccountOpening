@@ -6,9 +6,10 @@ import Spinner from "@/app/components/ui/spinner";
 import DashboardStatCard from "@/app/components/ui/dashboardCard";
 import { User } from "lucide-react";
 import Modal from "@/app/components/ui/modal";
-import { stat } from "fs";
+import { useRouter } from "next/navigation";
 
 const CustomerAccount = () => {
+  const router = useRouter();
   const { listAllCustomer, loading, customerSummaryList } = useApiEndPoints();
   const [state, setState] = useState({
     customerList: [],
@@ -125,29 +126,49 @@ const CustomerAccount = () => {
         <div className="border-t border-gray-200 py-3 ">
           <p className="font-bold text-black">Account Details</p>
         </div>
-        <div className="grid grid-cols-2 mb-2">
+
+        <div className="grid grid-cols-2 mb-2 items-center">
           <span className="opacity-50">Savings Account No</span>
-          <span className="text-black font-bold opacity-75">
-            {state.customerDetails?.savingsAccountNumber}
-          </span>
+          <div className="flex justify-between items-center">
+            <span className="text-black font-bold opacity-75">
+              {state.customerDetails?.savingsAccountNumber}
+            </span>{
+              state.customerDetails?.savingsAccountNumber !== 'N/A' && (
+                <span className="bg-primary text-white cursor-pointer rounded p-2" 
+                onClick={() => router.replace('/admin/account/individual/?account=' + btoa(state.customerDetails?.savingsAccountNumber ?? '')+'&type='+btoa('Savings'))}>
+                  View Details
+                </span>
+              )
+            }
+          </div>
         </div>
 
 
-        <div className="grid grid-cols-2 mb-2">
+        <div className="grid grid-cols-2 mb-2 items-center">
           <span className="opacity-50">Current Account No</span>
-          <span className="text-black font-bold opacity-75">
-             {state.customerDetails?.currentAccountNumber}
-          </span>
+          <div className="flex justify-between items-center">
+            <span className="text-black font-bold opacity-75">
+              {state.customerDetails?.currentAccountNumber}
+            </span>
+            {
+              state.customerDetails?.currentAccountNumber !== 'N/A' && (
+                <span className="bg-primary text-white cursor-pointer rounded p-2" 
+                onClick={() => router.replace('/admin/account/individual/?account=' + btoa(state.customerDetails?.currentAccountNumber ?? '')+'&type='+btoa('Current'))}>
+                  View Details
+                </span>
+              )
+            }
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 mb-2">
+        {/* <div className="grid grid-cols-2 mb-2">
           <span className="opacity-50">Corporate Account</span>
           <span className="text-black font-bold opacity-75">
             {state.customerDetails?.corporateAccountNumber}
           </span>
-        </div>
-      </Modal>
-    </div>
+        </div> */}
+      </Modal >
+    </div >
   );
 };
 

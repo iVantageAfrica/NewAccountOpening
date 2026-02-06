@@ -3,8 +3,9 @@ import InformationText from "@/app/components/ui/informationText";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadCorporateAccountForm } from "@/app/utils/formDownload/corporateAccount";
+import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
 import { formatDate, formatTitle } from "@/app/utils/reUsableFunction";
-import { Ban, BookUser, Clock, Download, User, UserLock, View } from "lucide-react";
+import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -231,7 +232,19 @@ const FetchCorporate = () => {
                 <div className="w-full md:w-[30%] order-1 md:order-2 mt-4 md:mt-0">
                     <p className="bg-primary text-white rounded p-2 font-bold text-center items-center">Actions & Operations</p>
                     <div className="pt-4 ps-3 grid gap-3">
-                        <p onClick={() => downloadCorporateAccountForm(state.accountInformation, accountType)} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Download size={15} /> Download Information</p>
+                        <p onClick={() => downloadCorporateAccountForm(state.accountInformation, accountType)} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Download size={15} /> Download Information</p>         <p
+                            onClick={() => downloadIndemnityForm({
+                                firstname: state.accountInformation?.firstname,
+                                lastname: state.accountInformation?.lastname,
+                                email: state.accountInformation?.email,
+                                signature: state.accountInformation?.documents?.signature,
+                                companyName: state.accountInformation?.companyName
+                            })}
+                            className="inline-flex gap-3 cursor-pointer text-sm items-center hover:text-primary"
+                        >
+                            <File size={15} />
+                            Download Indemnity Form
+                        </p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><View size={15} /> Review Account</p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><Ban size={15} /> Deactivate Account </p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black dark:hover:text-white"><UserLock size={15} /> Activate PND</p>

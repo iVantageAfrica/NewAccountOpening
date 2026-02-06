@@ -57,8 +57,8 @@ export const ACCOUNT_TYPE_DOCUMENTS: Record<number, string[]> = {
     4: ["cac", "constitution", "society_resolution", "principal_list"],
     5: ["cac", "trust_deed", "trustee_resolution", "trustee_list"],
     6: ["cac", "nipc_certificate", "business_permit", "cac_co2", "due_diligence"],
-     7: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
-      8: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
+    7: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
+    8: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
 };
 
 export const DOCUMENT_META: Record<

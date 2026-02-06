@@ -22,7 +22,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                      setIsCollapsed={setIsCollapsed} 
                      mobileOpen={mobileOpen} 
                      setMobileOpen={setMobileOpen} />
-            <div className="flex-1 overflow-auto bg-gradient-to-b from-white to-gray-100 ">
+            <div className="flex-1 overflow-auto bg-linear-to-b from-white to-gray-100 ">
 
                 <div className="md:hidden flex items-center gap-7 px-4 py-5 border-b border-gray-200 fixed w-full bg-white z-50">
                     <Menu size={28} className="cursor-pointer" onClick={() => setMobileOpen(true)} />

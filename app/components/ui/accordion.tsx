@@ -57,10 +57,17 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
 interface AccordionProps {
   children: React.ReactElement<AccordionItemProps>[];
   onChangeStep?: (step: number) => void;
+  activeIndex?: number | null;
 }
 
-export const Accordion: React.FC<AccordionProps> = ({ children,onChangeStep }) => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(0);
+export const Accordion: React.FC<AccordionProps> = ({ children, onChangeStep, activeIndex: controlledIndex }) => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(controlledIndex ?? 0);
+
+  React.useEffect(() => {
+    if (controlledIndex !== undefined) {
+      setActiveIndex(controlledIndex);
+    }
+  }, [controlledIndex]);
 
   const handleClick = (index: number) => {
     setActiveIndex(prev => (prev === index ? null : index));
