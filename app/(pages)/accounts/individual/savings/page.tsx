@@ -16,11 +16,12 @@ import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { savingsAccountMapper } from "@/app/utils/mapper/savingAccount";
 import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
+import { STATES_AND_LGAS } from "@/app/utils/stateLocalGovt";
 import { savingsAccountSchema } from "@/app/utils/validationSchema/savingsAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 
 const SavingsAccount = () => {
     useAccountGuard();
@@ -32,6 +33,7 @@ const SavingsAccount = () => {
     const [activeStep, setActiveStep] = React.useState(0);
     const [activeAgreementModal, setActiveAgreementModal] =
         React.useState<"indemnity" | "terms" | null>(null);
+
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(savingsAccountSchema),
@@ -82,6 +84,14 @@ const SavingsAccount = () => {
             setActiveStep(indexWithError);
         }
     }, [errors]);
+
+    const selectedState = useWatch({
+        control,
+        name: "origin",
+    });
+
+    const lgaOptions =
+        STATES_AND_LGAS.find(s => s.state === selectedState)?.lgas || [];
     const onSubmit = async (data: FormData) => {
         const payload = savingsAccountMapper(data, bvnData.bvn)
         const apiResponse = await createIndividualAccount(payload)
@@ -169,22 +179,40 @@ const SavingsAccount = () => {
                                             ]} />
                                     )}
                                 />
-                                <Controller name="origin"
+                                <Controller
+                                    name="origin"
                                     control={control}
                                     render={({ field }) => (
-                                        <Input {...field}
+                                        <Select
+                                            {...field}
                                             required
                                             labelName="State of Origin"
-                                            inputError={errors.origin?.message} />
-                                    )} />
-                                <Controller name="lga"
+                                            inputError={errors.origin?.message}
+                                            options={STATES_AND_LGAS.map(s => ({
+                                                label: s.state,
+                                                value: s.state,
+                                            }))}
+                                        />
+                                    )}
+                                />
+
+                                <Controller
+                                    name="lga"
                                     control={control}
                                     render={({ field }) => (
-                                        <Input {...field}
+                                        <Select
+                                            {...field}
                                             required
                                             labelName="Local Government"
-                                            inputError={errors.lga?.message} />
-                                    )} />
+                                            inputError={errors.lga?.message}
+                                            options={lgaOptions.map(lga => ({
+                                                label: lga,
+                                                value: lga,
+                                            }))}
+                                            disabled={!selectedState}
+                                        />
+                                    )}
+                                />
                                 <Controller name="houseNumber"
                                     control={control}
                                     render={({ field }) => (
@@ -217,6 +245,7 @@ const SavingsAccount = () => {
                                             labelName="State"
                                             inputError={errors.state?.message} />
                                     )} />
+
 
                                 <Controller name="nextOfKinName"
                                     control={control}

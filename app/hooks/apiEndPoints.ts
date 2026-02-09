@@ -132,7 +132,7 @@ export const useApiEndPoints = () => {
         [request]
     )
 
-        const corporateAccountList = useCallback(
+    const corporateAccountList = useCallback(
         async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
             let queryParams = "";
             if (pageUrl) {
@@ -183,6 +183,13 @@ export const useApiEndPoints = () => {
         return response;
     }, [request]);
 
+
+    const accountReferenceCreation = useCallback(async (data: any) => {
+        const response = await request("account/create-bank-account-reference", "POST", data);
+        return response;
+    }, [request]);
+
+
     const updateDirectorySignatorySubmission = useCallback(async (data: any) => {
         const response = await request("account/update-directory-signatory-information", "POST", data);
         return response;
@@ -203,6 +210,7 @@ export const useApiEndPoints = () => {
         createIndividualAccount,
         createPosMerchantAccount,
         createCorporateAccount,
+        accountReferenceCreation,
         listAllCustomer,
         customerSummaryList,
         adminLogin,

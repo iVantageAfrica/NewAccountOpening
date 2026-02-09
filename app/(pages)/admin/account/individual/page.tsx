@@ -4,7 +4,7 @@ import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
 import { downloadIndividualAccountForm } from "@/app/utils/formDownload/individualAccount";
-import { formatDate } from "@/app/utils/reUsableFunction";
+import { cryptoHelper, formatDate } from "@/app/utils/reUsableFunction";
 import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
@@ -27,6 +27,23 @@ const IndividualAccount = () => {
             }))
         })();
     }, [accountNumber, fetchIndividualAccount]);
+
+    const copyReferenceLink = async () => {
+        const url = new URL(
+            "/verification/reference-creation",
+            window.location.origin
+        );
+        url.searchParams.set("acc", cryptoHelper.encrypt(accountNumber) ?? "");
+        url.searchParams.set("accType", cryptoHelper.encrypt(accountType) ?? "");
+        url.searchParams.set(
+            "accName",
+            cryptoHelper.encrypt(
+                `${state.accountInformation?.lastname ?? ""} ${state.accountInformation?.firstname ?? ""}`.trim()
+            ) ?? ""
+        );
+        await navigator.clipboard.writeText(url.toString());
+        alert("Reference URL Copied!");
+    };
 
     return (
         <div>
@@ -90,33 +107,42 @@ const IndividualAccount = () => {
                             <InformationText title="Next of Kin Phone" data={state.accountInformation?.nextOfKinPhoneNumber} />
                             <InformationText title="Next of Kin Address" data={state.accountInformation?.nextOfKinAddress} />
                         </div>
-                        {state.accountInformation?.referee && state.accountInformation?.referee.length > 0 && (
+
+                        {state.accountInformation?.referee?.length > 0 && (
                             <>
                                 <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                                     Bank Account Reference
                                 </div>
-                                <p className="pl-4 font-bold text-xs pt-2">Referee 1</p>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
-                                    <InformationText title="Name" data={state.accountInformation.referee[0]?.name} />
-                                    <InformationText title="Mobile" data={state.accountInformation.referee[0]?.mobileNumber} />
-                                    <InformationText title="Email" data={state.accountInformation.referee[0]?.emailAddress} />
-                                    <InformationText title="Bank Name" data={state.accountInformation.referee[0]?.bankName} />
-                                    <InformationText title="Account Name" data={state.accountInformation.referee[0]?.accountName} />
-                                    <InformationText title="Account Number" data={state.accountInformation.referee[0]?.accountNumber} />
-                                    <InformationText title="Account Type" data={state.accountInformation.referee[0]?.accountType} />
-                                    <InformationText title="Signature" data={state.accountInformation.referee[0]?.signature || "Not Submitted"} type="file" />
-                                </div>
-                                <p className="pl-4 font-bold text-xs pt-4">Referee 2</p>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
-                                    <InformationText title="Name" data={state.accountInformation.referee[1]?.name} />
-                                    <InformationText title="Mobile" data={state.accountInformation.referee[1]?.mobileNumber} />
-                                    <InformationText title="Email" data={state.accountInformation.referee[1]?.emailAddress} />
-                                    <InformationText title="Bank Name" data={state.accountInformation.referee[1]?.bankName} />
-                                    <InformationText title="Account Name" data={state.accountInformation.referee[1]?.accountName} />
-                                    <InformationText title="Account Number" data={state.accountInformation.referee[1]?.accountNumber} />
-                                    <InformationText title="Account Type" data={state.accountInformation.referee[1]?.accountType} />
-                                    <InformationText title="Signature" data={state.accountInformation.referee[1]?.signature || "Not Submitted"} type="file" />
-                                </div>
+
+                                <p
+                                    className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
+                                    onClick={copyReferenceLink}
+                                >
+                                    New Reference Link
+                                </p>
+
+                                {state.accountInformation.referee.map((ref, index) => (
+                                    <div key={index}>
+                                        <p className="pl-4 font-bold text-xs pt-4">
+                                            Referee {index + 1}
+                                        </p>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
+                                            <InformationText title="Name" data={ref?.name} />
+                                            <InformationText title="Mobile" data={ref?.mobileNumber} />
+                                            <InformationText title="Email" data={ref?.emailAddress} />
+                                            <InformationText title="Bank Name" data={ref?.bankName} />
+                                            <InformationText title="Account Name" data={ref?.accountName} />
+                                            <InformationText title="Account Number" data={ref?.accountNumber} />
+                                            <InformationText title="Account Type" data={ref?.accountType} />
+                                            <InformationText
+                                                title="Signature"
+                                                data={ref?.signature || "Not Submitted"}
+                                                type="file"
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
                             </>
                         )}
 

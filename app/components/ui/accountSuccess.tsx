@@ -3,6 +3,7 @@ import PrimaryButton from "./primaryButton";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { clearAppState } from "@/app/utils/reUsableFunction";
+import { TriangleAlert } from "lucide-react";
 
 interface accountProps {
   url: string;
@@ -28,7 +29,18 @@ const AccountSuccess: React.FC<accountProps> = ({ url, accountNumber }) => {
           Account Number: <span className="text-black font-bold">{accountNumber}</span>
         </p>
         <p className="text-black/50 md:text-[16px]">
-          You can now access your account using the default login credentials sent to your registered email address.
+          Your default login credentials have been sent to your registered email address.
+
+        </p>
+           <p className="text-black/50 md:text-[16px] py-3">
+Please log in to Internet Banking to create a new password and set your transaction PIN before performing any transactions.
+
+        </p>
+          <p className="text-black/50 md:text-[16px]"><TriangleAlert size={16} className="inline mr-2 text-red-500"/>Security Note, For your protection:<br/>
+Do not share your password, PIN, OTP, or any sensitive banking information with anyone.
+Imperial Homes staff will never request your PIN, password, or OTP.
+
+
         </p>
       </div>
 

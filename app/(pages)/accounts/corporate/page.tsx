@@ -15,11 +15,12 @@ import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { corporateAccountMapper } from "@/app/utils/mapper/corporateAccount";
 import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
+import { STATES_AND_LGAS } from "@/app/utils/stateLocalGovt";
 import { CorporateAccountSchema } from "@/app/utils/validationSchema/corporateAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form";
 
 const CorporateAccount = () => {
     useAccountGuard();
@@ -127,6 +128,14 @@ const CorporateAccount = () => {
         name: "signatory",
     });
 
+       const selectedState = useWatch({
+        control,
+        name: "state",
+    });
+
+    const lgaOptions =
+        STATES_AND_LGAS.find(s => s.state === selectedState)?.lgas || [];
+
     const onSubmit = async (data: FormData) => {
         const payload = corporateAccountMapper(data, bvnData.bvn, accountData.id);
         const apiResponse = await createCorporateAccount(payload);
@@ -144,7 +153,7 @@ const CorporateAccount = () => {
             <TopBar showArrow={true} description={`${accountData?.category}  Account`} />
             <div className="pt-28">
                 <StepProgress
-                    steps={["BVN Verification", "Account Type", "Business Details"]}
+                    steps={["BVN Verification", "Account Details", "Business Details"]}
                     activeStep={activeStep}
                 />
             </div>
@@ -217,7 +226,7 @@ const CorporateAccount = () => {
                                     render={({ field }) => (
                                         <Input {...field}
                                             required
-                                            labelName="Tax Identification Number (TIN)"
+                                            labelName="Tax Identification Number (TIN) / National Identification Number (NIN)"
                                             inputError={errors.tin?.message} />
                                     )}
                                 />
@@ -250,6 +259,42 @@ const CorporateAccount = () => {
                                             labelName="Business Email Address"
                                             inputError={errors.businessEmailAddress?.message} />
                                     )} />
+
+                                             <Controller
+                                    name="state"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select
+                                            {...field}
+                                            required
+                                            labelName="State of Residence"
+                                            inputError={errors.state?.message}
+                                            options={STATES_AND_LGAS.map(s => ({
+                                                label: s.state,
+                                                value: s.state,
+                                            }))}
+                                        />
+                                    )}
+                                />
+
+
+                                    <Controller
+                                    name="lga"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select
+                                            {...field}
+                                            required
+                                            labelName="Local Government"
+                                            inputError={errors.lga?.message}
+                                            options={lgaOptions.map(lga => ({
+                                                label: lga,
+                                                value: lga,
+                                            }))}
+                                            disabled={!selectedState}
+                                        />
+                                    )}
+                                />
                                 <Controller name="city"
                                     control={control}
                                     render={({ field }) => (
@@ -257,22 +302,9 @@ const CorporateAccount = () => {
                                             labelName="City"
                                             inputError={errors.city?.message} />
                                     )} />
-                                <Controller name="lga"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            labelName="Local Government Area"
-                                            inputError={errors.lga?.message} />
-                                    )} />
 
-                                <Controller name="state"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="State of Residence"
-                                            inputError={errors.state?.message} />
-                                    )} />
+
+                             
 
                                 <Controller name="accountOfficer"
                                     control={control}
