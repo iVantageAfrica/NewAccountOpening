@@ -83,13 +83,13 @@ const IndividualAccount = () => {
         }
     }, [errors]);
 
-       const selectedState = useWatch({
-            control,
-            name: "origin",
-        });
-    
-        const lgaOptions =
-            STATES_AND_LGAS.find(s => s.state === selectedState)?.lgas || [];
+    const selectedState = useWatch({
+        control,
+        name: "origin",
+    });
+
+    const lgaOptions =
+        STATES_AND_LGAS.find(s => s.state === selectedState)?.lgas || [];
 
     const onSubmit = async (data: FormData) => {
         const payload = currentAccountMapper(data, bvnData.bvn)
@@ -236,14 +236,24 @@ const IndividualAccount = () => {
                                             labelName="City"
                                             inputError={errors.city?.message} />
                                     )} />
-                                <Controller name="state"
+               
+
+                                <Controller
+                                    name="state"
                                     control={control}
                                     render={({ field }) => (
-                                        <Input {...field}
+                                        <Select
+                                            {...field}
                                             required
                                             labelName="State"
-                                            inputError={errors.state?.message} />
-                                    )} />
+                                            inputError={errors.state?.message}
+                                            options={STATES_AND_LGAS.map(s => ({
+                                                label: s.state,
+                                                value: s.state,
+                                            }))}
+                                        />
+                                    )}
+                                />
 
                                 <Controller name="nextOfKinName"
                                     control={control}
