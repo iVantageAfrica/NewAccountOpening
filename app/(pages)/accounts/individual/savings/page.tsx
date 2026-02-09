@@ -237,14 +237,7 @@ const SavingsAccount = () => {
                                             labelName="City"
                                             inputError={errors.city?.message} />
                                     )} />
-                                <Controller name="state"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="State"
-                                            inputError={errors.state?.message} />
-                                    )} />
+          
                                 <Controller
                                     name="state"
                                     control={control}
