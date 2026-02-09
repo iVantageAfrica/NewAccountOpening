@@ -245,7 +245,22 @@ const SavingsAccount = () => {
                                             labelName="State"
                                             inputError={errors.state?.message} />
                                     )} />
-
+                                <Controller
+                                    name="state"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select
+                                            {...field}
+                                            required
+                                            labelName="State"
+                                            inputError={errors.state?.message}
+                                            options={STATES_AND_LGAS.map(s => ({
+                                                label: s.state,
+                                                value: s.state,
+                                            }))}
+                                        />
+                                    )}
+                                />
 
                                 <Controller name="nextOfKinName"
                                     control={control}
