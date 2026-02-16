@@ -1,6 +1,4 @@
-import { BookUser, CreditCard, GalleryHorizontalEnd, LayoutDashboard,  User, Users, } from "lucide-react";
-import path from "path";
-import { title } from "process";
+import { BookCopy, BookUser, CreditCard, GalleryHorizontalEnd,  User, Users, } from "lucide-react";
 
 export const Navigation = [
   // {
@@ -27,6 +25,11 @@ export const Navigation = [
     title: "Corporate Account",
     path: "/admin/account/corporate",
     icon: GalleryHorizontalEnd,
+  },
+      {
+    title: "POS Account",
+    path: "/admin/account/pos",
+    icon: BookCopy,
   },
   {
     title: "Debit Card Request",

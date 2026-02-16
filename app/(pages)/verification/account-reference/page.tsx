@@ -5,7 +5,7 @@ import Modal from "@/app/components/ui/modal";
 import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { cryptoHelper } from "@/app/utils/reUsableFunction";
+import { cryptoHelper } from "@/app/utils/Utility/reUsableFunction";
 import { BankAccountReferencePayload, bankAccountReferenceSchema } from "@/app/utils/validationSchema/bankAccountReferenceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Book, User } from "lucide-react";
@@ -61,7 +61,7 @@ const AccountReference = () => {
                 </p>
                 <div className="grid md:flex mt-10 gap-8 ">
                     <div className="w-full md:w-1/3 order-2 md:order-1">
-                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary dark:bg-white text-white dark:text-black py-3 px-6 flex gap-4">
+                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary text-white py-3 px-6 flex gap-4">
                             <User /> Account Details
                         </div>
                         <div className="border border-gray-300 rounded-b-lg py-3 px-4 border-t-0">
@@ -81,7 +81,7 @@ const AccountReference = () => {
                         </div>
                     </div>
                     <div className="w-full md:w-2/3 order-1 md:order-2">
-                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary dark:bg-white text-white dark:text-black py-3 px-6 flex gap-4">
+                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary text-white py-3 px-6 flex gap-4">
                             <Book /> Account Reference Form
                         </div>
                         <div className="rounded-b-lg border border-gray-300  border-t-0 pb-6">
@@ -113,16 +113,6 @@ const AccountReference = () => {
                                                 inputError={errors.referee1Mobile?.message} />
                                         )}
                                     />
-
-                                    {/* <Controller
-                                        name="referee1Phone"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <PhoneNumberInput {...field}
-                                                labelName="Referee 1 Phone Number"
-                                                inputError={errors.referee1Phone?.message} />
-                                        )}
-                                    /> */}
                                     </div>
                                      <div className="px-3 md:px-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                     <Controller name="referee2Name"
@@ -151,16 +141,6 @@ const AccountReference = () => {
                                                 inputError={errors.referee2Mobile?.message} />
                                         )}
                                     />
-
-                                    {/* <Controller
-                                        name="referee2Phone"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <PhoneNumberInput {...field}
-                                                labelName="Referee 2 Phone Number"
-                                                inputError={errors.referee2Phone?.message} />
-                                        )}
-                                    /> */}
                                 </div>
                                 <div className="px-3 md:px-6">
 
@@ -189,7 +169,7 @@ const AccountReference = () => {
                 </div>
             </Modal>
 
-             <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black dark:text-black">
+             <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black">
                 <p>Copyright © Imperial Homes Mortgage Bank</p>
                 <p>
                     Licensed by the Central Bank of Nigeria. All deposits are insured by Nigeria Deposit Insurance

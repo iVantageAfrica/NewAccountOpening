@@ -8,7 +8,8 @@ import PrimaryButton from "@/app/components/ui/primaryButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { referenceCreationMapper } from "@/app/utils/mapper/referenceCreation";
-import { cryptoHelper } from "@/app/utils/reUsableFunction";
+import { BANKS } from "@/app/utils/Utility/bankList";
+import { cryptoHelper } from "@/app/utils/Utility/reUsableFunction";
 import { accountReferenceCreationSchema } from "@/app/utils/validationSchema/accountReferenceCreationSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Book, User } from "lucide-react";
@@ -37,6 +38,8 @@ const AccountReferenceCreation = () => {
             bankName: "",
             accountName: "",
             accountType: "",
+            knownPeriod: "",
+            comment: "",
             accountNumber: "",
             signature: null,
         }
@@ -64,7 +67,7 @@ const AccountReferenceCreation = () => {
                 </p>
                 <div className="grid md:flex mt-10 gap-8 ">
                     <div className="w-full md:w-1/3">
-                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary dark:bg-white text-white dark:text-black py-3 px-6 flex gap-4">
+                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary text-white py-3 px-6 flex gap-4">
                             <User /> Account Details
                         </div>
                         <div className="border border-gray-300 rounded-b-lg py-3 px-4 border-t-0">
@@ -84,7 +87,7 @@ const AccountReferenceCreation = () => {
                         </div>
                     </div>
                     <div className="w-full md:w-2/3 ">
-                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary dark:bg-white text-white dark:text-black py-3 px-6 flex gap-4">
+                        <div className="border border-gray-300 font-bold rounded-t-lg bg-primary text-white py-3 px-6 flex gap-4">
                             <Book /> Account Confirmation Form
                         </div>
                         <div className="rounded-b-lg border border-gray-300  border-t-0 pb-6">
@@ -134,15 +137,24 @@ const AccountReferenceCreation = () => {
                                                 inputError={errors.accountNumber?.message} />
                                         )} />
 
-                                    <Controller name="bankName"
+
+                                    <Controller
+                                        name="bankName"
                                         control={control}
                                         render={({ field }) => (
-                                            <Input {...field}
+                                            <Select
+                                                {...field}
                                                 required
-                                                labelName="Bank Name"
-                                                type="text"
-                                                inputError={errors.bankName?.message} />
-                                        )} />
+                                                labelName="Bank"
+                                                inputError={errors.bankName?.message}
+                                                options={BANKS.map(s => ({
+                                                    label: s.label,
+                                                    value: s.value,
+                                                }))}
+                                            />
+                                        )}
+                                    />
+
                                     <Controller
                                         name="accountType"
                                         control={control}
@@ -157,6 +169,25 @@ const AccountReferenceCreation = () => {
                                                 ]} />
                                         )}
                                     />
+                                    <Controller name="knownPeriod"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Input {...field}
+                                                required
+                                                labelName="How long have you known the account holder?"
+                                                type="text"
+                                                inputError={errors.knownPeriod?.message} />
+                                        )} />
+                                    <Controller name="comment"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Input {...field}
+                                                required
+                                                labelName="Comment"
+                                                type="textarea"
+                                                rows={8}
+                                                inputError={errors.comment?.message} />
+                                        )} />
                                     <Controller
                                         name="signature"
                                         control={control}
@@ -198,7 +229,7 @@ const AccountReferenceCreation = () => {
                 </div>
             </Modal>
 
-            <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black dark:text-black">
+            <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black ">
                 <p>Copyright © Imperial Homes Mortgage Bank</p>
                 <p>
                     Licensed by the Central Bank of Nigeria. All deposits are insured by Nigeria Deposit Insurance

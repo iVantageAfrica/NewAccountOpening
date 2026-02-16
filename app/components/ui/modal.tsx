@@ -74,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
             {cancelIcon && (
               <X
                 size={20}
-                className="cursor-pointer dark:text-black"
+                className="cursor-pointer"
                 onClick={onClose}
               />
             )}

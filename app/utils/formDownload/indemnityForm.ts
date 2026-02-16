@@ -9,6 +9,7 @@ const LOGO_PATH = "/images/imperialLogo.png";
 interface AccountInformation {
   firstname?: string;
   lastname?: string;
+  middleName?: string;
   email?: string;
   signature?: string;
   companyName?: string;
@@ -44,9 +45,7 @@ export const downloadIndemnityForm = async (
 
   const holderName = accountInformation.companyName
     ? accountInformation.companyName
-    : `${accountInformation.firstname || "-"} ${
-        accountInformation.lastname || "-"
-      }`;
+    : `${accountInformation.firstname || "-"} ${accountInformation.middleName || "-"} ${accountInformation.lastname || "-"}`;
 
   const PAGE_WIDTH = doc.internal.pageSize.getWidth();
   const PAGE_HEIGHT = doc.internal.pageSize.getHeight();
@@ -134,10 +133,9 @@ By selecting “I Agree” and proceeding, I/we confirm that:
 
   doc.setFont("times", "bold");
   doc.setFontSize(12);
+  
   doc.text(
-    `Name: ${accountInformation.firstname || "-"} ${
-      accountInformation.lastname || "-"
-    }`,
+    `Name: ${accountInformation.firstname || "-"} ${accountInformation.middleName || "-"} ${accountInformation.lastname || "-"}`,
     40,
     yPos
   );

@@ -15,8 +15,8 @@ import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { savingsAccountMapper } from "@/app/utils/mapper/savingAccount";
-import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
-import { STATES_AND_LGAS } from "@/app/utils/stateLocalGovt";
+import { clearAppState, getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
+import { STATES_AND_LGAS } from "@/app/utils/Utility/stateLocalGovt";
 import { savingsAccountSchema } from "@/app/utils/validationSchema/savingsAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -42,6 +42,7 @@ const SavingsAccount = () => {
             secondaryPhone: "",
             phoneNumber: "",
             employmentStatus: "",
+            employer: "",
             maritalStatus: "",
             houseNumber: "",
             origin: "",
@@ -165,6 +166,15 @@ const SavingsAccount = () => {
                                             ]} />
                                     )}
                                 />
+                                <Controller name="employer"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Employer"
+                                            inputError={errors.employer?.message} />
+                                    )} />
+
                                 <Controller
                                     name="maritalStatus"
                                     control={control}
@@ -237,7 +247,7 @@ const SavingsAccount = () => {
                                             labelName="City"
                                             inputError={errors.city?.message} />
                                     )} />
-          
+
                                 <Controller
                                     name="state"
                                     control={control}
@@ -245,7 +255,7 @@ const SavingsAccount = () => {
                                         <Select
                                             {...field}
                                             required
-                                            labelName="State"
+                                            labelName="State of Residence"
                                             inputError={errors.state?.message}
                                             options={STATES_AND_LGAS.map(s => ({
                                                 label: s.state,
@@ -421,7 +431,7 @@ const SavingsAccount = () => {
                 type="center"
                 cancelIcon={true}
                 title="">
-                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} />
+                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} accountType="Savings" />
             </Modal>
 
             <AgreementModals

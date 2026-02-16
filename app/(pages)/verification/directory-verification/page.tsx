@@ -1,7 +1,7 @@
 "use client";
 import TopBar from "@/app/components/navigation/topBar";
 import FileUploadInput from "@/app/components/ui/fileUpload";
-import { cryptoHelper } from "@/app/utils/reUsableFunction";
+import { cryptoHelper } from "@/app/utils/Utility/reUsableFunction";
 import { Controller, useForm } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,12 +47,12 @@ const DirectoryVerification = () => {
             <TopBar showArrow={false} description="Finish Setting Up Your Account" headerType="corporate" />
 
             <div className="text-center items-center pt-22 p-6 md:px-14 justify-center">
-                <p className="text-primary font-bold text-lg md:text-2xl">Corporate Account Directory Information</p>
+                <p className="text-primary font-bold text-lg md:text-2xl">Account Directory Information</p>
                 <p className="md:w-1/2 mx-auto sm:px-25 text-sm">
                     <span className="opacity-60">As one of the listed directory to </span>
                     <span className="font-bold text-black">{businessName} </span>
                     <span className="opacity-60">
-                        account, please complete this form and upload the required documents to finalize the corporate account setup.
+                        account, please complete this form and upload the required documents to finalize the account setup.
                     </span>
                 </p>
             </div>

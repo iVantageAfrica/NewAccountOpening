@@ -15,8 +15,8 @@ import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { currentAccountMapper } from "@/app/utils/mapper/currentAccount";
-import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
-import { STATES_AND_LGAS } from "@/app/utils/stateLocalGovt";
+import { clearAppState, getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
+import { STATES_AND_LGAS } from "@/app/utils/Utility/stateLocalGovt";
 import { currentAccountSchema } from "@/app/utils/validationSchema/currentAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -40,6 +40,7 @@ const IndividualAccount = () => {
             secondaryPhone: "",
             phoneNumber: "",
             employmentStatus: "",
+            employer: "",
             maritalStatus: "",
             houseNumber: "",
             street: "",
@@ -164,6 +165,14 @@ const IndividualAccount = () => {
                                             ]} />
                                     )}
                                 />
+                                     <Controller name="employer"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Employer"
+                                            inputError={errors.employer?.message} />
+                                    )} />
                                 <Controller
                                     name="maritalStatus"
                                     control={control}
@@ -245,7 +254,7 @@ const IndividualAccount = () => {
                                         <Select
                                             {...field}
                                             required
-                                            labelName="State"
+                                            labelName="State of Residence"
                                             inputError={errors.state?.message}
                                             options={STATES_AND_LGAS.map(s => ({
                                                 label: s.state,
@@ -291,77 +300,6 @@ const IndividualAccount = () => {
                                 />
                             </div>
                         </AccordionItem>
-
-                        {/* <AccordionItem title="Bank Account Reference">
-                            <div className="px-3 md:px-6 py-4 md:py-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                                <Controller name="referee1Name"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            labelName="Referee 1 Name"
-                                            inputError={errors.referee1Name?.message} />
-                                    )} />
-                                <Controller name="referee1Email"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            labelName="Referee 1 Email Address"
-                                            inputError={errors.referee1Email?.message} />
-                                    )} />
-                                <Controller
-                                    name="referee1Mobile"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            labelName="Referee 1 Mobile Number"
-                                            inputError={errors.referee1Mobile?.message} />
-                                    )}
-                                />
-
-                                <Controller
-                                    name="referee1Phone"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            labelName="Referee 1 Phone Number"
-                                            inputError={errors.referee1Phone?.message} />
-                                    )}
-                                />
-                                <Controller name="referee2Name"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            labelName="Referee 2 Name"
-                                            inputError={errors.referee2Name?.message} />
-                                    )} />
-                                <Controller name="referee2Email"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            labelName="Referee 2 Email Address"
-                                            inputError={errors.referee2Email?.message} />
-                                    )} />
-                                <Controller
-                                    name="referee2Mobile"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            labelName="Referee 2 Mobile Number"
-                                            inputError={errors.referee2Mobile?.message} />
-                                    )}
-                                />
-
-                                <Controller
-                                    name="referee2Phone"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <PhoneNumberInput {...field}
-                                            labelName="Referee 2 Phone Number"
-                                            inputError={errors.referee2Phone?.message} />
-                                    )}
-                                />
-                            </div>
-                        </AccordionItem> */}
 
                         <AccordionItem title="Upload Documents">
                             <div className="grid grid-cols-1 md:grid-cols-2 md:px-8 gap-6 md:gap-12 p-4 md:p-8">
@@ -492,7 +430,7 @@ const IndividualAccount = () => {
                 type="center"
                 cancelIcon={true}
                 title="">
-                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} />
+                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} accountType="Current" />
             </Modal>
 
             <AgreementModals

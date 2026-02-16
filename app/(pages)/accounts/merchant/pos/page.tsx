@@ -12,7 +12,7 @@ import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { posAccountMapper } from "@/app/utils/mapper/posAccount";
-import { getFromLocalStorage } from "@/app/utils/reUsableFunction";
+import { getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { PosMerchantAccountSchema } from "@/app/utils/validationSchema/posMerchantAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";

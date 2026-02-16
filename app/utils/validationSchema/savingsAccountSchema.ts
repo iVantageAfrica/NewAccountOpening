@@ -7,6 +7,7 @@ export const savingsAccountSchema = z.object({
   mothersMaidenName: z.string().min(1, "Mother's Maiden Name is required").max(100, "Mother's Maiden Name is too long"),
   phoneNumber: z.string().regex(/^\+?\d{8,15}$/, "Phone number is invalid").optional().or(z.literal("")),
   employmentStatus: z.string().min(1, "Employment Status is required").max(50, "Employment Status is too long"),
+  employer: z.string().min(1, "Employer Name is required").max(100, "Employer Name is too long"),
   maritalStatus: z.string().min(1, "Marital Status is required").max(20, "Marital Status is too long"),
   houseNumber: z.string().min(1, "House Number is required").max(20, "House Number is too long"),
   street: z.string().min(1, "Street is required").max(50, "Street is too long"),

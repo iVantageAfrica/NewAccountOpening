@@ -9,6 +9,8 @@ export const referenceSubmissionMapper = (userFormData: any, refereeId: string) 
         account_number: userFormData.accountNumber,
         account_type: userFormData.accountType,
         bank_name: userFormData.bankName,
+        known_period: userFormData.knownPeriod,
+        comment: userFormData.comment,
     };
     Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
     formData.append("signature", userFormData.signature);

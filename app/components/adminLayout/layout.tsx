@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Navigation } from "../../components/adminLayout/navigation";
 import { usePathname } from "next/navigation";
 import { useAdminGuard } from "../types/administrativeGuard";
-import { getFromLocalStorage, timeOfDay } from "@/app/utils/reUsableFunction";
+import { getFromLocalStorage, timeOfDay } from "@/app/utils/Utility/reUsableFunction";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     useAdminGuard();
@@ -36,14 +36,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
 
                 <div className={` ${collapsed  ? 'md:ml-18': 'md:ml-60'}`}>
-                    <div className="dark:bg-black bg-white  pt-5  pb-4 px-4 dark:text-white text-black border-b border-gray-100 dark:border-gray-100 hidden md:block fixed z-10 w-full">
+                    <div className=" bg-white  pt-5  pb-4 px-4 text-black border-b border-gray-100 hidden md:block fixed z-10 w-full">
                         <div className="grid">
                             <p className="font-bold text-lg">{timeOfDay} {adminData?.firstname}</p>
-                            <span className="text-xs text-gray-600 -mt-1 italic dark:text-white/70">Here is what happening on Imperial Homes Mortgage Bank account opening</span>
+                            <span className="text-xs text-gray-600 -mt-1 italic ">Here is what happening on Imperial Homes Mortgage Bank account opening</span>
                         </div>
                     </div>
                     <div className="px-4 bg-gray-100 h-screen">
-                        <p className="text-gray-500 dark:text-black pt-22 font-bold text-lg">{current?.title}</p>
+                        <p className="text-gray-500 pt-22 font-bold text-lg">{current?.title}</p>
                         <div className="py-2">
                             {children}
                         </div>

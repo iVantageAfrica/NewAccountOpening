@@ -3,7 +3,7 @@ import Input from "@/app/components/ui/input";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { LoginMapper } from "@/app/utils/mapper/login";
-import { saveToLocalStorage } from "@/app/utils/reUsableFunction";
+import { saveToLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { loginSchema, type LoginSchema } from "@/app/utils/validationSchema/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";

@@ -121,7 +121,7 @@ const DataTable = <T extends Record<string, any>>({
     const endNumber = isLocalPagination ? (localPage - 1) * localEntriesPerPage + paginatedData.length : data.length;
 
     return (
-        <div className="p-4 rounded shadow-md shadow-black/20 dark:bg-black">
+        <div className="p-4 rounded shadow-md shadow-black/20 ">
             {tableTitle && <p className="uppercase pb-2 opacity-80 font-bold">{tableTitle}</p>}
 
             <div className="mb-5 flex justify-between items-center flex-wrap gap-4">
@@ -162,7 +162,7 @@ const DataTable = <T extends Record<string, any>>({
                                         checked={visibleColumns.includes(h.key)}
                                         onChange={() => toggleColumnVisibility(h.key)}
                                     />
-                                    <span className="text-sm dark:text-black">{h.label}</span>
+                                    <span className="text-sm ">{h.label}</span>
                                 </label>
                             ))}
                         </div>
@@ -188,7 +188,7 @@ const DataTable = <T extends Record<string, any>>({
                 <>
                     <div className="grid rounded-md border border-[#c4c4c460] overflow-auto scrollbar-thin scrollbar-thumb-red-600 scrollbar-track-transparent" style={{ maxHeight: `${tableHeight}px` }}>
                         <table className="min-w-full text-sm text-left">
-                            <thead className="bg-primary text-white text-sm font-semibold sticky top-0 z-10 dark:bg-black">
+                            <thead className="bg-primary text-white text-sm font-semibold sticky top-0 z-10">
                                 <tr>
                                     <th className="px-6 py-3 text-xs whitespace-nowrap uppercase bg-secondary/10 cursor-pointer select-none">
                                         S/N
@@ -204,7 +204,7 @@ const DataTable = <T extends Record<string, any>>({
                                     <tr
                                         key={idx}
                                         onClick={() => onRowClick?.(row)}
-                                        className={`dark:text-black ${onRowClick ? "cursor-pointer " : ""} ${idx % 2 === 0 ? "bg-white" : "bg-secondary/2 dark:bg-gray-300 "} hover:bg-black/5 dark:hover:text-white whitespace-nowrap`}
+                                        className={`${onRowClick ? "cursor-pointer " : ""} ${idx % 2 === 0 ? "bg-white" : "bg-secondary/2 "} hover:bg-black/5  whitespace-nowrap`}
                                     >
                                         <td className="text-start py-4 px-6">
                                             {isLocalPagination

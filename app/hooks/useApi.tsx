@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { toast } from "../components/toast/useToast";
-import { clearAppState, getFromLocalStorage } from "../utils/reUsableFunction";
+import { clearAppState, getFromLocalStorage } from "../utils/Utility/reUsableFunction";
 import { useRouter } from "next/navigation";
 
 type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";

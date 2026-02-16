@@ -44,11 +44,10 @@ export default function AccountTypeCard({ accounts }: Props) {
           return (
             <div key={idx} className="flex">
               <div
-                className={`flex items-center gap-2 px-6 py-3 w-full rounded-md cursor-pointer transition-all duration-200 ${
-                  isActive
+                className={`flex items-center gap-2 px-6 py-3 w-full rounded-md cursor-pointer transition-all duration-200 ${isActive
                     ? "bg-primary text-white"
-                    : "text-black dark:text-white"
-                }`}
+                    : "text-black "
+                  }`}
                 onClick={() => setActiveCategory(category)}
               >
                 {Icon && <Icon size={15} />}
@@ -71,13 +70,13 @@ export default function AccountTypeCard({ accounts }: Props) {
               key={category}
               className={`cursor-pointer ${!isMobileVisible ? "hidden lg:block" : ""}`}
             >
-            
+
               <div className="bg-primary text-white lg:flex items-center gap-3 px-8 py-3 md:rounded-t-2xl hidden">
                 {Icon && <Icon size={18} />}
                 <h3 className="text-lg font-semibold">{category}</h3>
               </div>
 
-          
+
               <div className="p-4 border border-gray-300 rounded-md md:rounded-b-2xl md:rounded-t-none gap-y-4 grid">
                 <p className="text-lg font-bold block md:hidden">
                   Select an account type below
@@ -88,13 +87,12 @@ export default function AccountTypeCard({ accounts }: Props) {
                   return (
                     <div key={account.id} className="overflow-hidden">
                       <div
-                        className={`px-10 py-3 font-bold flex justify-between items-center transition-all duration-200 ${
-                          isMulti
+                        className={`px-10 py-3 font-bold flex justify-between items-center transition-all duration-200 ${isMulti
                             ? isOpen
                               ? "bg-secondary text-primary rounded-t-md"
-                              : "border-2 border-primary text-black dark:text-white rounded-md"
+                              : "border-2 border-primary text-black  rounded-md"
                             : "bg-secondary text-primary rounded-t-md"
-                        }`}
+                          }`}
                         onClick={() =>
                           isMulti
                             ? setOpenAccountId(isOpen ? null : account.id)
@@ -105,9 +103,8 @@ export default function AccountTypeCard({ accounts }: Props) {
                         {isMulti && (
                           <ChevronDown
                             size={20}
-                            className={`transition-transform duration-200 ${
-                              isOpen ? "rotate-180" : "rotate-0"
-                            }`}
+                            className={`transition-transform duration-200 ${isOpen ? "rotate-180" : "rotate-0"
+                              }`}
                           />
                         )}
                       </div>
@@ -131,6 +128,8 @@ export default function AccountTypeCard({ accounts }: Props) {
                               ))}
                             </ul>
                             {isMulti ? (
+                              <>
+                                <p className="font-bold text-xs mb-1 py-2 flex items-center cursor-pointer" onClick={() => continueHandler(account)}>Product Features <ChevronDown size={15} className="text-primary"/></p>
                               <div className="flex w-1/2 mt-4 mb-2">
                                 <PrimaryButton
                                   icon={<ArrowRight size={15} />}
@@ -139,15 +138,20 @@ export default function AccountTypeCard({ accounts }: Props) {
                                   Continue
                                 </PrimaryButton>
                               </div>
+                              </>
                             ) : (
-                              <div className="flex w-1/2 mt-8 mb-2">
-                                <PrimaryButton
-                                  icon={<ArrowRight size={15} />}
-                                  onClick={() => continueHandler(account)}
-                                >
-                                  Continue
-                                </PrimaryButton>
-                              </div>
+                              <>
+                                <p className="font-bold text-xs mb-1 py-2 flex items-center cursor-pointer" onClick={() => continueHandler(account)}>Product Features <ChevronDown size={15} className="text-primary"/></p>
+                                <div className="flex w-1/2 mt-4 mb-2">
+
+                                  <PrimaryButton
+                                    icon={<ArrowRight size={15} />}
+                                    onClick={() => continueHandler(account)}
+                                  >
+                                    Continue
+                                  </PrimaryButton>
+                                </div>
+                              </>
                             )}
                           </div>
                         </>

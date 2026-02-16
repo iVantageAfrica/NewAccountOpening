@@ -14,7 +14,7 @@ const TopBar: React.FC<TopBarProps> = ({ showArrow = false, description, headerT
         <>
             {
                 headerType === "corporate" ? (
-                    <div className="p-4 md:px-14 flex items-center gap-4 md:gap-6 border-b border-gray-100 fixed bg-white  dark:bg-black w-full z-50">
+                    <div className="p-4 md:px-14 flex items-center gap-4 md:gap-6 border-b border-gray-100 fixed bg-white  w-full z-50">
                         {showArrow && (
                             <MoveLeft className="cursor-pointer" onClick={() => router.back()} />
                         )}
@@ -30,7 +30,7 @@ const TopBar: React.FC<TopBarProps> = ({ showArrow = false, description, headerT
                 )
                     :
                     (
-                        <div className="p-4 md:px-14 flex items-center gap-4 md:gap-6 border-b border-gray-300 fixed bg-white  dark:bg-black w-full z-50">
+                        <div className="p-4 md:px-14 flex items-center gap-4 md:gap-6 border-b border-gray-300 fixed bg-white w-full z-50">
                             {showArrow && (
                                 <MoveLeft className="cursor-pointer" onClick={() => router.back()} />
                             )}

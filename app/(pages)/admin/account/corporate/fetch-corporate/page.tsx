@@ -4,7 +4,7 @@ import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadCorporateAccountForm } from "@/app/utils/formDownload/corporateAccount";
 import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
-import { formatDate, formatTitle } from "@/app/utils/reUsableFunction";
+import { formatDate, formatTitle } from "@/app/utils/Utility/reUsableFunction";
 import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
@@ -130,7 +130,7 @@ const FetchCorporate = () => {
                                     ))}
                                 </>
                             )}
-                  
+
 
                         {state.accountInformation?.signatory &&
                             state.accountInformation.signatory.length > 0 && (
@@ -174,33 +174,29 @@ const FetchCorporate = () => {
                                 </>
                             )}
 
-                                  {state.accountInformation?.referee && state.accountInformation?.referee.length > 0 && (
+                        {state.accountInformation?.referee?.length > 0 && (
                             <>
                                 <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                                     Bank Account Reference
                                 </div>
-                                <p className="pl-4 font-bold text-xs py-2">Referee 1</p>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
-                                    <InformationText title="Name" data={state.accountInformation.referee[0]?.name} />
-                                    <InformationText title="Mobile" data={state.accountInformation.referee[0]?.mobileNumber} />
-                                    <InformationText title="Email" data={state.accountInformation.referee[0]?.emailAddress} />
-                                    <InformationText title="Bank Name" data={state.accountInformation.referee[0]?.bankName} />
-                                    <InformationText title="Account Name" data={state.accountInformation.referee[0]?.accountName} />
-                                    <InformationText title="Account Number" data={state.accountInformation.referee[0]?.accountNumber} />
-                                    <InformationText title="Account Type" data={state.accountInformation.referee[0]?.accountType} />
-                                    <InformationText title="Signature" data={state.accountInformation.referee[0]?.signature || "Not Submitted"} type="file" />
-                                </div>
-                                <p className="pl-4 font-bold text-xs py-2">Referee 2</p>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
-                                    <InformationText title="Name" data={state.accountInformation.referee[1]?.name} />
-                                    <InformationText title="Mobile" data={state.accountInformation.referee[1]?.mobileNumber} />
-                                    <InformationText title="Email" data={state.accountInformation.referee[1]?.emailAddress} />
-                                    <InformationText title="Bank Name" data={state.accountInformation.referee[1]?.bankName} />
-                                    <InformationText title="Account Name" data={state.accountInformation.referee[1]?.accountName} />
-                                    <InformationText title="Account Number" data={state.accountInformation.referee[1]?.accountNumber} />
-                                    <InformationText title="Account Type" data={state.accountInformation.referee[1]?.accountType} />
-                                    <InformationText title="Signature" data={state.accountInformation.referee[1]?.signature || "Not Submitted"} type="file" />
-                                </div>
+
+                                {state.accountInformation.referee.map((ref, index) => (
+                                    <div key={index}>
+                                        <p className="pl-4 font-bold text-xs py-2">Referee {index + 1}</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
+                                            <InformationText title="Name" data={ref?.name} />
+                                            <InformationText title="Mobile" data={ref?.mobileNumber} />
+                                            <InformationText title="Email" data={ref?.emailAddress} />
+                                            <InformationText title="Bank Name" data={ref?.bankName} />
+                                            <InformationText title="Account Name" data={ref?.accountName} />
+                                            <InformationText title="Account Number" data={ref?.accountNumber} />
+                                            <InformationText title="Account Type" data={ref?.accountType} />
+                                            <InformationText title="Known Period" data={ref?.knownPeriod} />
+                                            <InformationText title="Comment" data={ref?.comment} />
+                                            <InformationText title="Signature" data={ref?.signature || "Not Submitted"} type="file" />
+                                        </div>
+                                    </div>
+                                ))}
                             </>
                         )}
 
@@ -247,7 +243,7 @@ const FetchCorporate = () => {
                         </p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><View size={15} /> Review Account</p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><Ban size={15} /> Deactivate Account </p>
-                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black dark:hover:text-white"><UserLock size={15} /> Activate PND</p>
+                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black"><UserLock size={15} /> Activate PND</p>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, } from "react";
-import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
+import { clearAppState, getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 
 export const useAdminGuard = () => {
   const router = useRouter();

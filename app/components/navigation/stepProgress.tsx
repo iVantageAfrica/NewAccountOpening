@@ -44,7 +44,7 @@ const StepProgress: React.FC<StepProgressProps> = ({ steps, activeStep }) => {
               </p>
               <p
                 className={`text-xs md:text-[16px] pt-1 w-1/3 md:w-full items-center flex justify-center text-center ${
-                  isActive ? "text-black font-medium dark:text-white" : "text-gray-500"
+                  isActive ? "text-black font-medium" : "text-gray-500"
                 }`}
               >
                 {label}

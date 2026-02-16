@@ -7,8 +7,9 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelName?: string;
   required?: boolean;
   inputError?: string | null;
-  type?: "text" | "password" | "amount" | "email" | "number";
+  type?: "text" | "password" | "amount" | "email" | "number" | "textarea";
   maxLength?: number;
+  rows?: number; // for textarea
   name: string;
   formValue?: string;
   onFormChange?: (name: string, value: string) => void;
@@ -21,40 +22,56 @@ const formatAmount = (value: string) => {
   return decimal ? `${formattedInt}.${decimal}` : formattedInt;
 };
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ labelName, required, inputError, type = "text", name, className, formValue, onFormChange, maxLength = 1000, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
+  (
+    { labelName, required, inputError, type = "text", name, className, formValue, onFormChange, maxLength = 1000, rows = 3, ...props },
+    ref
+  ) => {
     const [value, setValue] = React.useState(props.value || "");
     const [showPassword, setShowPassword] = React.useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       let newValue = e.target.value;
       if (newValue.length > maxLength) newValue = newValue.slice(0, maxLength);
+
       if (type === "amount") newValue = formatAmount(newValue);
       else if (type === "number") newValue = newValue.replace(/\D/g, "");
 
       setValue(newValue);
       onFormChange?.(name, newValue);
-      props.onChange?.(e);
+      props.onChange?.(e as any);
     };
 
     return (
       <div className="space-y-1">
         {labelName && (
-          <label className="text-black dark:text-white text-sm md:text-[15px] opacity-80" htmlFor={props.id}>
+          <label className="text-black text-sm md:text-[15px] opacity-80" htmlFor={props.id}>
             {labelName} {required && <span className="-ms-1 text-red-500">*</span>}
           </label>
         )}
 
         <div className="relative w-full">
-          <input
-            {...props}
-            ref={ref}
-            name={name}
-            type={type === "password" ? (showPassword ? "text" : "password") : type === "amount" || type === "number" ? "text" : type}
-            value={value}
-            onChange={handleChange}
-            className={`w-full px-4 py-2 border border-gray-300 rounded text-sm text-black dark:text-white placeholder:text-xs focus:outline-none focus:border-primary pr-10 ${className || ""}`}
-          />
+          {type === "textarea" ? (
+            <textarea
+              {...props}
+              ref={ref as React.Ref<HTMLTextAreaElement>}
+              name={name}
+              value={value}
+              rows={rows}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 border border-gray-300 rounded text-sm text-black placeholder:text-xs focus:outline-none focus:border-primary ${className || ""}`}
+            />
+          ) : (
+            <input
+              {...props}
+              ref={ref as React.Ref<HTMLInputElement>}
+              name={name}
+              type={type === "password" ? (showPassword ? "text" : "password") : type === "amount" || type === "number" ? "text" : type}
+              value={value}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 border border-gray-300 rounded text-sm text-black placeholder:text-xs focus:outline-none focus:border-primary pr-10 ${className || ""}`}
+            />
+          )}
 
           {type === "password" && (
             <span

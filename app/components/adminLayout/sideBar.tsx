@@ -1,7 +1,7 @@
 "use client";
 import { Navigation } from "@/app/components/adminLayout/navigation";
-import { clearAppState } from "@/app/utils/reUsableFunction";
-import { ArrowLeftRight, LassoIcon, LayoutDashboard, SquareDashedBottom, LogOut, X } from "lucide-react";
+import { clearAppState } from "@/app/utils/Utility/reUsableFunction";
+import { ArrowLeftRight,LogOut, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,14 +16,14 @@ const SideBar = ({ collapsed, setIsCollapsed, mobileOpen, setMobileOpen }) => {
     }
     return (
         <div className={`
-            fixed top-0 left-0 h-screen bg-primary dark:bg-black flex flex-col justify-between
+            fixed top-0 left-0 h-screen bg-primary flex flex-col justify-between
             transition-all duration-300 ease-in-out z-50 border-r border-gray-100
             ${collapsed ? "w-18" : "w-60"}
             ${mobileOpen ? "translate-x-0 w-[60%]" : "-translate-x-full md:translate-x-0 "}
         `}>
 
             <div>
-                <div className="flex gap-2 items-center mt-6  border-b border-white/10 dark:border-gray-100  pb-4 px-4">
+                <div className="flex gap-2 items-center mt-6  border-b border-white/10  pb-4 px-4">
                     <div className="cursor-pointer shrink-0">
                         <Image src="/images/imperialLogo.png"  alt="Imperial Logo" width={30} height={30} />
                     </div>

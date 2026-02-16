@@ -11,6 +11,8 @@ export const referenceCreationMapper = (userFormData: any, userAccountNumber: st
         account_name: userFormData.accountName,
         account_number: userFormData.accountNumber,
         account_type: userFormData.accountType,
+        comment: userFormData.comment,
+        known_period: userFormData.knownPeriod,
         bank_name: userFormData.bankName,
     };
     Object.entries(fields).forEach(([key, value]) => formData.append(key, value));

@@ -8,7 +8,7 @@ import OtpInput from "@/app/components/ui/otpInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { accountTypes } from "@/app/index/accountTypes";
-import { bvnDataClean, formatTime, maskEmail, maskPhone, removeFromLocalStorage, saveToLocalStorage } from "@/app/utils/reUsableFunction";
+import { bvnDataClean, formatTime, maskEmail, maskPhone, removeFromLocalStorage, saveToLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { CircleCheck, MessageSquareText } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useRef, useState } from "react";
@@ -56,7 +56,7 @@ const BvnValidation: React.FC = () => {
             return;
         }
         setBvnInputError(null);
-        const apiResponse = await verifyUserBvn(accountInformation.bvn)
+        const apiResponse = await verifyUserBvn(accountInformation.bvn, selectedAccount.id);
         if (apiResponse.statusCode === 200) {
             saveToLocalStorage("bearerToken", apiResponse.data.authToken)
             setAccountInformation((prev) => ({ ...prev, bvnData: apiResponse.data }))
@@ -338,7 +338,7 @@ const BvnValidation: React.FC = () => {
                             <MessageSquareText size={18} className="text-primary" />
                         </div>
 
-                        <p className="text-[16px] font-bold pt-2 dark:text-black">
+                        <p className="text-[16px] font-bold pt-2 ">
                             Enter Verification Code
                         </p>
                         <p className="text-xs mb-2 text-gray-500  pt-2 text-center mx-10 ">

@@ -14,8 +14,8 @@ import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { corporateAccountMapper } from "@/app/utils/mapper/corporateAccount";
-import { clearAppState, getFromLocalStorage } from "@/app/utils/reUsableFunction";
-import { STATES_AND_LGAS } from "@/app/utils/stateLocalGovt";
+import { clearAppState, getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
+import { STATES_AND_LGAS } from "@/app/utils/Utility/stateLocalGovt";
 import { CorporateAccountSchema } from "@/app/utils/validationSchema/corporateAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -565,7 +565,7 @@ const CorporateAccount = () => {
                 type="center"
                 cancelIcon={true}
                 title="">
-                <AccountSuccess url="https://corporate.imperialmortgagebank.com/?nav_source=ibs" accountNumber={accountNumber} />
+                <AccountSuccess url="https://corporate.imperialmortgagebank.com/?nav_source=ibs" accountNumber={accountNumber} accountType={`${accountData?.category}  Account`} />
             </Modal>
 
             <AgreementModals

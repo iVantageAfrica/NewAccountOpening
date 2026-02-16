@@ -4,7 +4,7 @@ import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
 import { downloadIndividualAccountForm } from "@/app/utils/formDownload/individualAccount";
-import { cryptoHelper, formatDate } from "@/app/utils/reUsableFunction";
+import { cryptoHelper, formatDate } from "@/app/utils/Utility/reUsableFunction";
 import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
@@ -63,7 +63,7 @@ const IndividualAccount = () => {
                                 <div className="bg-white border-gray-300 border-2 p-2 rounded-full text-gray-400"><User size={15} /> </div>
                                 <div className="grid">
                                     <p className="text-sm opacity-75">Fullname</p>
-                                    <p className="font-bold text-sm opacity-80 capitalize">{state.accountInformation?.lastname} {state.accountInformation?.firstname}</p>
+                                    <p className="font-bold text-sm opacity-80 capitalize">{state.accountInformation?.lastname} {state.accountInformation?.middleName} {state.accountInformation?.firstname}</p>
                                 </div>
                             </div>
                             <div className="gap-2 flex items-center">
@@ -135,6 +135,8 @@ const IndividualAccount = () => {
                                             <InformationText title="Account Name" data={ref?.accountName} />
                                             <InformationText title="Account Number" data={ref?.accountNumber} />
                                             <InformationText title="Account Type" data={ref?.accountType} />
+                                            <InformationText title="Known Period" data={ref?.knownPeriod} />
+                                            <InformationText title="Comment" data={ref?.comment} />
                                             <InformationText
                                                 title="Signature"
                                                 data={ref?.signature || "Not Submitted"}
@@ -166,6 +168,7 @@ const IndividualAccount = () => {
                             onClick={() => downloadIndemnityForm({
                                 firstname: state.accountInformation?.firstname,
                                 lastname: state.accountInformation?.lastname,
+                                middleName: state.accountInformation?.middleName,
                                 email: state.accountInformation?.email,
                                 signature: state.accountInformation?.documents?.signature
                             })}
@@ -176,7 +179,7 @@ const IndividualAccount = () => {
                         </p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><View size={15} /> Review Account</p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><Ban size={15} /> Deactivate Account </p>
-                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black dark:hover:text-white"><UserLock size={15} /> Activate PND</p>
+                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black "><UserLock size={15} /> Activate PND</p>
                     </div>
                 </div>
             </div>

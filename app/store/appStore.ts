@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { decrypt, encrypt } from "../utils/reUsableFunction";
+import { decrypt, encrypt } from "../utils/Utility/reUsableFunction";
 
 type AppStoreType = {
   store: Record<string, unknown>;
