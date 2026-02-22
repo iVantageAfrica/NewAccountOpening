@@ -20,8 +20,17 @@ const InformationText: React.FC<InformationTextProps> = ({ title, data, type }) 
         <div className="grid">
             <p className="text-xs opacity-75">{title}</p>
             <div className="flex items-center gap-2">
-                <p className="font-bold text-xs opacity-75 break-all">{displayData}</p>
-                {type === "file" && data !=='Not Submitted' && (
+                {data === "Not Yet Submitted"
+                    ? (
+
+                        <p className="font-bold text-xs text-red-500 opacity-75 break-all">{displayData}</p>
+                    )
+                    : (
+                        <p className="font-bold text-xs opacity-75 break-all">{displayData}</p>
+
+                    )
+                }
+                {type === "file" && data !== 'Not Yet Submitted' && (
                     <div className="flex items-center gap-2">
                         <button onClick={() => window.open(data, "_blank")} className="text-primary">
                             <Eye size={15} />

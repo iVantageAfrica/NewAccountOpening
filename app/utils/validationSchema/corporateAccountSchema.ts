@@ -39,8 +39,8 @@ export const CorporateAccountSchema = z.object({
         phoneNumber: z
           .string()
           .regex(/^\+?\d{8,15}$/, "Signatory phone number is invalid"),
-        bvn: z.string().max(12, "BVN is too long").optional(),
-        nin: z.string().max(12, "NIN is too long").optional(),
+        bvn: z.string().min(1,"Signatory BVN is required").max(12, "BVN is too long").optional(),
+        nin: z.string().min(1,"Signatory NIN is required").max(12, "NIN is too long").optional(),
       })
     )
     .min(1, "At least one signatory is required"),

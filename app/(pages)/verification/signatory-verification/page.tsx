@@ -47,7 +47,7 @@ const SignatoryVerification = () => {
             <TopBar showArrow={false} description="Finish Setting Up Your Account" headerType="corporate" />
 
             <div className="text-center items-center pt-22 p-6 md:px-14 justify-center">
-                <p className="text-primary font-bold text-lg md:text-2xl">Corporate Account Signatory Information</p>
+                <p className="text-primary font-bold text-lg md:text-2xl">Account Signatory Information</p>
                 <p className="md:w-1/2 mx-auto sm:px-25 text-sm">
                     <span className="opacity-60">As an authorized signatory of </span>
                     <span className="font-bold text-black">{businessName}</span>

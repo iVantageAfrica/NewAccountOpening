@@ -4,7 +4,9 @@ import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadCorporateAccountForm } from "@/app/utils/formDownload/corporateAccount";
 import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
-import { formatDate, formatTitle } from "@/app/utils/Utility/reUsableFunction";
+import { formatDate, formatTitle, toCamelCase } from "@/app/utils/Utility/reUsableFunction";
+import { ACCOUNT_TYPE_DOCUMENTS, DOCUMENT_META } from "@/app/utils/validationSchema/companyDocumentSchema";
+import { getSignatoryFields } from "@/app/utils/validationSchema/directorySignatorySchema";
 import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
@@ -27,6 +29,9 @@ const FetchCorporate = () => {
             }))
         })();
     }, [accountNumber, fetchCorporateAccount]);
+
+    const companyType = state.accountInformation?.companyTypeId;
+    const companyDocuments = state.accountInformation?.companyDocument || {};
 
     return (
         <div>
@@ -61,7 +66,7 @@ const FetchCorporate = () => {
                             Account Information
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 mt-3">
                             <InformationText title="Firstname" data={state.accountInformation?.firstname} />
                             <InformationText title="Middlename" data={state.accountInformation?.middleName} />
                             <InformationText title="Lastname" data={state.accountInformation?.lastname} />
@@ -76,7 +81,7 @@ const FetchCorporate = () => {
                         <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                             Company Information
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 mt-3">
                             <InformationText title="Company Name" data={state.accountInformation?.companyName} />
                             <InformationText title="Registration Number" data={state.accountInformation?.registrationNumber} />
                             <InformationText title="TIN" data={state.accountInformation?.tin} />
@@ -100,7 +105,7 @@ const FetchCorporate = () => {
                                             <p className="pl-4 font-bold text-xs py-2">
                                                 Director {index + 1}
                                             </p>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-2 px-4">
                                                 <InformationText
                                                     title="Full Name"
                                                     data={`${director.firstname} ${director.othername ?? ''} ${director.lastname}`}
@@ -110,21 +115,43 @@ const FetchCorporate = () => {
                                                 <InformationText title="BVN" data={director.bvn} />
                                                 <InformationText title="NIN" data={director.nin} />
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 px-4 mt-2">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 px-4 mt-2 text-xs">
                                                 {Object.entries(director)
-                                                    .filter(
-                                                        ([key, value]) =>
-                                                            typeof value === 'string' &&
-                                                            value.startsWith('http')
+                                                    .filter(([key]) =>
+                                                        ![
+                                                            'firstname',
+                                                            'othername',
+                                                            'lastname',
+                                                            'emailAddress',
+                                                            'phoneNumber',
+                                                            'bvn',
+                                                            'nin',
+                                                            'id'
+                                                        ].includes(key)
                                                     )
-                                                    .map(([key, value]) => (
-                                                        <InformationText
-                                                            key={key}
-                                                            title={formatTitle(key)}
-                                                            data={value}
-                                                            type="file"
-                                                        />
-                                                    ))}
+                                                    .map(([key, value]) => {
+                                                        const isFile = typeof value === 'string' && value.startsWith('http');
+
+                                                        return (
+                                                            <div key={key}>
+                                                                <p className="font-medium opacity-75">
+                                                                    {formatTitle(key)}
+                                                                </p>
+
+                                                                {isFile ? (
+                                                                    <InformationText
+                                                                        title=""
+                                                                        data={value}
+                                                                        type="file"
+                                                                    />
+                                                                ) : (
+                                                                    <p className="text-red-500 font-bold">
+                                                                        NOT YET SUBMITTED
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
                                             </div>
                                         </div>
                                     ))}
@@ -139,88 +166,108 @@ const FetchCorporate = () => {
                                         Signatories
                                     </div>
 
-                                    {state.accountInformation.signatory.map((signatory, index) => (
-                                        <div key={signatory.id ?? index}>
-                                            <p className="pl-4 font-bold text-xs py-2">
-                                                Signatory {index + 1}
-                                            </p>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
-                                                <InformationText title="Name" data={signatory.name} />
-                                                <InformationText title="Email" data={signatory.emailAddress} />
-                                                <InformationText title="Phone" data={signatory.phoneNumber} />
-                                                <InformationText title="BVN" data={signatory.bvn} />
-                                                <InformationText title="NIN" data={signatory.nin} />
+                                    {state.accountInformation.signatory.map((signatory, index) => {
+                                        const requiredFields = getSignatoryFields(companyType);
+
+                                        return (
+                                            <div key={signatory.id ?? index}>
+                                                <p className="pl-4 font-bold text-xs py-2">
+                                                    Signatory {index + 1}
+                                                </p>
+
+                                                {/* Basic Info */}
+                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-2 px-4">
+                                                    <InformationText title="Name" data={signatory.name} />
+                                                    <InformationText title="Email" data={signatory.emailAddress} />
+                                                    <InformationText title="Phone" data={signatory.phoneNumber} />
+                                                    <InformationText title="BVN" data={signatory.bvn} />
+                                                    <InformationText title="NIN" data={signatory.nin} />
+                                                </div>
+
+                                                {/* Required + Optional Files Based On Company Type */}
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 px-4 mt-2">
+                                                    {requiredFields.map((field) => {
+                                                        const camelKey = toCamelCase(field.name);
+                                                        const value = signatory?.[camelKey];
+                                                        return (
+                                                            <div key={field.name}>
+                                                                 <InformationText title={field.label} data={value || "Not Yet Submitted"} type="file" />
+                                                               
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
+                                        );
+                                    })}
+                                </>
+                            )}
+
+                        <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
+                            Bank Account Reference
+                        </div>
+                        {state.accountInformation?.referee?.length > 0
+                            ?
+                            (
+                                <>
 
 
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 px-4 mt-2">
-                                                {Object.entries(signatory)
-                                                    .filter(
-                                                        ([key, value]) =>
-                                                            typeof value === 'string' &&
-                                                            value.startsWith('http')
-                                                    )
-                                                    .map(([key, value]) => (
-                                                        <InformationText
-                                                            key={key}
-                                                            title={formatTitle(key)}
-                                                            data={value}
-                                                            type="file"
-                                                        />
-                                                    ))}
+                                    {state.accountInformation.referee.map((ref, index) => (
+                                        <div key={index}>
+                                            <p className="pl-4 font-bold text-xs py-2">Referee {index + 1}</p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-2 px-4">
+                                                <InformationText title="Name" data={ref?.name} />
+                                                <InformationText title="Mobile" data={ref?.mobileNumber} />
+                                                <InformationText title="Email" data={ref?.emailAddress} />
+                                                <InformationText title="Bank Name" data={ref?.bankName || "Not Yet Submitted"} />
+                                                <InformationText title="Account Name" data={ref?.accountName || "Not Yet Submitted"} />
+                                                <InformationText title="Account Number" data={ref?.accountNumber || "Not Yet Submitted"} />
+                                                <InformationText title="Account Type" data={ref?.accountType || "Not Yet Submitted"} />
+                                                <InformationText title="Known Period" data={ref?.knownPeriod || "Not Yet Submitted"} />
+                                                <InformationText title="Comment" data={ref?.comment || "Not Yet Submitted"} />
+                                                <InformationText title="Signature" data={ref?.signature || "Not Yet Submitted"} type="file" />
                                             </div>
                                         </div>
                                     ))}
                                 </>
-                            )}
+                            )
+                            :
+                            (
+                                <p className="font-bold text-red-500 pl-5">Not Yet Submitted</p>
+                            )
 
-                        {state.accountInformation?.referee?.length > 0 && (
-                            <>
-                                <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
-                                    Bank Account Reference
-                                </div>
-
-                                {state.accountInformation.referee.map((ref, index) => (
-                                    <div key={index}>
-                                        <p className="pl-4 font-bold text-xs py-2">Referee {index + 1}</p>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
-                                            <InformationText title="Name" data={ref?.name} />
-                                            <InformationText title="Mobile" data={ref?.mobileNumber} />
-                                            <InformationText title="Email" data={ref?.emailAddress} />
-                                            <InformationText title="Bank Name" data={ref?.bankName} />
-                                            <InformationText title="Account Name" data={ref?.accountName} />
-                                            <InformationText title="Account Number" data={ref?.accountNumber} />
-                                            <InformationText title="Account Type" data={ref?.accountType} />
-                                            <InformationText title="Known Period" data={ref?.knownPeriod} />
-                                            <InformationText title="Comment" data={ref?.comment} />
-                                            <InformationText title="Signature" data={ref?.signature || "Not Submitted"} type="file" />
-                                        </div>
-                                    </div>
-                                ))}
-                            </>
-                        )}
-
+                        }
                         <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                             Company Documents Submitted
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-3">
-                            {state.accountInformation?.companyDocument &&
-                                Object.entries(state.accountInformation?.companyDocument)
-                                    .filter(
-                                        ([key, value]) =>
-                                            value !== null &&
-                                            value !== '' &&
-                                            key !== 'id'
-                                    )
-                                    .map(([key, value]) => (
-                                        <InformationText
-                                            key={key}
-                                            title={formatTitle(key)}
-                                            data={value}
-                                            type="file"
-                                        />
-                                    ))}
 
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-3">
+                            {companyType && ACCOUNT_TYPE_DOCUMENTS[companyType]?.length > 0 ? (
+
+                                ACCOUNT_TYPE_DOCUMENTS[companyType].map((docKey) => {
+                                    const camelKey = toCamelCase(docKey);
+                                    const value = companyDocuments?.[camelKey];
+
+                                    const isFile =
+                                        typeof value === "string" && value.startsWith("http");
+
+                                    const meta = DOCUMENT_META[docKey];
+
+                                    return (
+                                        <InformationText
+                                            key={docKey}
+                                            title={meta?.label || docKey}
+                                            data={isFile ? value : "NOT YET SUBMITTED"}
+                                            type={isFile ? "file" : "text"}
+                                        />
+                                    );
+                                })
+
+                            ) : (
+                                <p className="font-bold text-red-500 pl-5 -mt-2">
+                                    Not Yet Submitted
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -247,7 +294,7 @@ const FetchCorporate = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

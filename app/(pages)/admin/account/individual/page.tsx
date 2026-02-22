@@ -108,45 +108,68 @@ const IndividualAccount = () => {
                             <InformationText title="Next of Kin Address" data={state.accountInformation?.nextOfKinAddress} />
                         </div>
 
-                        {state.accountInformation?.referee?.length > 0 && (
-                            <>
-                                <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
-                                    Bank Account Reference
-                                </div>
-
-                                <p
-                                    className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
-                                    onClick={copyReferenceLink}
-                                >
-                                    New Reference Link
-                                </p>
-
-                                {state.accountInformation.referee.map((ref, index) => (
-                                    <div key={index}>
-                                        <p className="pl-4 font-bold text-xs pt-4">
-                                            Referee {index + 1}
-                                        </p>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
-                                            <InformationText title="Name" data={ref?.name} />
-                                            <InformationText title="Mobile" data={ref?.mobileNumber} />
-                                            <InformationText title="Email" data={ref?.emailAddress} />
-                                            <InformationText title="Bank Name" data={ref?.bankName} />
-                                            <InformationText title="Account Name" data={ref?.accountName} />
-                                            <InformationText title="Account Number" data={ref?.accountNumber} />
-                                            <InformationText title="Account Type" data={ref?.accountType} />
-                                            <InformationText title="Known Period" data={ref?.knownPeriod} />
-                                            <InformationText title="Comment" data={ref?.comment} />
-                                            <InformationText
-                                                title="Signature"
-                                                data={ref?.signature || "Not Submitted"}
-                                                type="file"
-                                            />
-                                        </div>
+                        {
+                            accountType === 'Current' && (
+                                <>
+                                    <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
+                                        Bank Account Reference
                                     </div>
-                                ))}
-                            </>
-                        )}
+                                    {state.accountInformation?.referee?.length > 0
+                                        ?
+                                        (
+                                            <>
+                                                <p
+                                                    className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
+                                                    onClick={copyReferenceLink}
+                                                >
+                                                    New Reference Link
+                                                </p>
+
+                                                {state.accountInformation.referee.map((ref, index) => (
+                                                    <div key={index}>
+                                                        <p className="pl-4 font-bold text-xs pt-4">
+                                                            Referee {index + 1}
+                                                        </p>
+
+                                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
+                                                            <InformationText title="Name" data={ref?.name} />
+                                                            <InformationText title="Mobile" data={ref?.mobileNumber} />
+                                                            <InformationText title="Email" data={ref?.emailAddress} />
+                                                            <InformationText title="Bank Name" data={ref?.bankName || "Not Yet Submitted"} />
+                                                            <InformationText title="Account Name" data={ref?.accountName || "Not Yet Submitted"} />
+                                                            <InformationText title="Account Number" data={ref?.accountNumber || "Not Yet Submitted"} />
+                                                            <InformationText title="Account Type" data={ref?.accountType || "Not Yet Submitted"} />
+                                                            <InformationText title="Known Period" data={ref?.knownPeriod || "Not Yet Submitted"} />
+                                                            <InformationText title="Comment" data={ref?.comment || "Not Yet Submitted"} />
+                                                            <InformationText
+                                                                title="Signature"
+                                                                data={ref?.signature || "Not Yet Submitted"}
+                                                                type="file"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        )
+                                        : (
+                                            <div className="flex justify-between">
+                                                <p className="font-bold text-red-500 pl-5 text-sm">
+                                                    Not Yet Submitted
+                                                </p>
+                                                <p
+                                                    className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
+                                                    onClick={copyReferenceLink}
+                                                >
+                                                    New Reference Link
+                                                </p>
+                                            </div>
+                                        )
+
+                                    }
+                                </>
+                            )
+                        }
+
 
                         <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                             Documents

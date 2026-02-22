@@ -338,7 +338,7 @@ const CorporateAccount = () => {
                                 <div className="">
                                     <h3 className="font-bold px-4">Director Information</h3>
                                     {fields.map((field, index) => (
-                                        <div key={field.id} className="px-4 pb-4 pt-2 rounded grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-5">
+                                        <div key={field.id} className="px-4 pb-4 pt-2 rounded grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
                                             <Controller
                                                 name={`director.${index}.lastname`}
                                                 control={control}
@@ -418,7 +418,7 @@ const CorporateAccount = () => {
                                     {signatoryFields.map((field, index) => (
                                         <div
                                             key={field.id}
-                                            className="px-4 pb-4 pt-2 rounded grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-5"
+                                            className="px-4 pb-4 pt-2 rounded grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5"
                                         >
                                             <Controller
                                                 name={`signatory.${index}.name`}
@@ -466,6 +466,7 @@ const CorporateAccount = () => {
                                                     <Input
                                                         {...field}
                                                         type="number"
+                                                        required
                                                         labelName={`Signatory ${index + 1} BVN`}
                                                         inputError={errors.signatory?.[index]?.bvn?.message}
                                                     />
@@ -479,6 +480,7 @@ const CorporateAccount = () => {
                                                     <Input
                                                         {...field}
                                                         type="number"
+                                                        required
                                                         labelName={`Signatory ${index + 1} NIN`}
                                                         inputError={errors.signatory?.[index]?.nin?.message}
                                                     />
@@ -565,7 +567,7 @@ const CorporateAccount = () => {
                 type="center"
                 cancelIcon={true}
                 title="">
-                <AccountSuccess url="https://corporate.imperialmortgagebank.com/?nav_source=ibs" accountNumber={accountNumber} accountType={`${accountData?.category}  Account`} />
+                <AccountSuccess url="https://corporate.imperialmortgagebank.com/?nav_source=ibs" accountNumber={accountNumber} accountType={`${accountData?.category}`} />
             </Modal>
 
             <AgreementModals

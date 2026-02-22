@@ -23,6 +23,8 @@ export const formatTime = (seconds: number): string => {
   return `${min}:${sec}`;
 };
 
+export const toCamelCase = (str: string) =>
+    str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
 
 export const formatDate = (dateString?: string, options?: Intl.DateTimeFormatOptions) => {
   if (!dateString) return "-";

@@ -105,7 +105,7 @@ const CompanyDocument = () => {
                                 render={({ field }) => (
                                     <Input {...field}
                                         required
-                                        labelName="Referee 1 Fullname"
+                                        labelName="Referee 1 Full name"
                                         inputError={errors.referee1Name?.message} />
                                 )} />
                             <Controller name="referee1Email"
@@ -133,7 +133,7 @@ const CompanyDocument = () => {
                                 render={({ field }) => (
                                     <Input {...field}
                                         required
-                                        labelName="Referee 2 Fullname"
+                                        labelName="Referee 2 Full name"
                                         inputError={errors.referee2Name?.message} />
                                 )} />
                             <Controller name="referee2Email"

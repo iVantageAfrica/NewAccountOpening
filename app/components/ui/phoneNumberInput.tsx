@@ -85,7 +85,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
 
       <div className="flex border border-gray-300 rounded overflow-hidden">
         <select
-          className="hidden md:block px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[180px]"
+          className="hidden lg:block px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[180px]"
           value={countryCode}
           onChange={(e) => handleCountryChange(e.target.value)}
         >
@@ -97,7 +97,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
         </select>
 
         <select
-          className="block md:hidden px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[77px]"
+          className="block lg:hidden px-3 py-2 bg-gray-100 text-sm border-r border-gray-300 outline-none w-[77px]"
           value={countryCode}
           onChange={(e) => handleCountryChange(e.target.value)}
         >
