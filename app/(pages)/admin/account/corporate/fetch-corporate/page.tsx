@@ -92,6 +92,7 @@ const FetchCorporate = () => {
                             <InformationText title="State" data={state.accountInformation?.state} />
                             <InformationText title="Local Government" data={state.accountInformation?.lga} />
                             <InformationText title="Address" data={state.accountInformation?.companyAddress} />
+                            <InformationText title="Account Officer" data={state.accountInformation?.accountOfficer} />
                         </div>
 
                         {state.accountInformation?.directory &&
