@@ -44,6 +44,8 @@ export const companyDocumentMapper = (userFormData: any, accountNumber: string) 
         "nipc_certificate",
         "business_permit",
         "due_diligence",
+        "scuml_certificate",
+        "passport"
     ];
 
     fileFields.forEach((field) => {

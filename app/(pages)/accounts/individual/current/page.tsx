@@ -51,6 +51,7 @@ const IndividualAccount = () => {
             nextOfKinName: "",
             nextOfKinAddress: "",
             nextOfKinRelationship: "",
+            accountOfficer: "",
             nextOfKinPhone: "",
             validId: null,
             signature: null,
@@ -165,7 +166,7 @@ const IndividualAccount = () => {
                                             ]} />
                                     )}
                                 />
-                                     <Controller name="employer"
+                                <Controller name="employer"
                                     control={control}
                                     render={({ field }) => (
                                         <Input {...field}
@@ -245,7 +246,7 @@ const IndividualAccount = () => {
                                             labelName="City"
                                             inputError={errors.city?.message} />
                                     )} />
-               
+
 
                                 <Controller
                                     name="state"
@@ -296,6 +297,15 @@ const IndividualAccount = () => {
                                             required
                                             labelName="Next of Kin Phone Number"
                                             inputError={errors.nextOfKinPhone?.message} />
+                                    )}
+                                />
+                                <Controller
+                                    name="accountOfficer"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            labelName="Account Officer / Referer"
+                                            inputError={errors.accountOfficer?.message} />
                                     )}
                                 />
                             </div>

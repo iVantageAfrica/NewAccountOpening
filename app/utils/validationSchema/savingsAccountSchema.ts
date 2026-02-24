@@ -12,6 +12,7 @@ export const savingsAccountSchema = z.object({
   houseNumber: z.string().min(1, "House Number is required").max(20, "House Number is too long"),
   street: z.string().min(1, "Street is required").max(50, "Street is too long"),
   city: z.string().min(1, "City is required").max(30, "City is too long"),
+  accountOfficer: z.string().max(60, "Account Officer is too long").optional(),
   state: z.string().min(1, "State is required").max(30, "State is too long"),
   lga: z.string().min(1, "Local Government is required").max(30, "Local Government is too long"),
   origin: z.string().min(1, "State of origin is required").max(30, "State of origin is too long"),

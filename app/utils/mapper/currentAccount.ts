@@ -13,6 +13,7 @@ export const currentAccountMapper = (userFormData: any, bvn: string) => {
         street: userFormData.street,
         city: userFormData.city,
         state: userFormData.state,
+        account_officer: userFormData.accountOfficer,
         origin: userFormData.origin,
         lga: userFormData.lga,
         next_of_kin_name: userFormData.nextOfKinName,

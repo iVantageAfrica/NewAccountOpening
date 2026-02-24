@@ -30,6 +30,8 @@ const baseSchema = z.object({
     nipc_certificate: fileOptional,
     business_permit: fileOptional,
     due_diligence: fileOptional,
+    scuml_certificate: fileOptional,
+    passport: fileOptional
 });
 
 export const buildCompanyDocumentSchema = (accountTypeId: number) =>
@@ -51,14 +53,18 @@ export type CompanyDocumentPayload = z.infer<typeof baseSchema>;
 
 
 export const ACCOUNT_TYPE_DOCUMENTS: Record<number, string[]> = {
-    1: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
+    1: ["cac", "partnership_deed","board_resolution", "scuml_certificate", "tin"],
     2: ["cac", "property_declaration", "signatory_mandate"],
     3: ["cac", "partnership_deed", "partnership_resolution", "tin"],
     4: ["cac", "constitution", "society_resolution", "principal_list"],
     5: ["cac", "trust_deed", "trustee_resolution", "trustee_list"],
     6: ["cac", "nipc_certificate", "business_permit", "cac_co2", "due_diligence"],
-    7: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
+    7: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form","tin","scuml_certificate"],
     8: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
+    9: ["cac", "scuml_certificate", "constitution","society_resolution","principal_list"],
+    10: ["cac", "scuml_certificate", "trust_deed", "trustee_resolution","trustee_list"],
+    11: ["nipc_certificate", "business_permit","cac","passport","due_diligence"],
+    12: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form","tin","scuml_certificate"],
 };
 
 export const DOCUMENT_META: Record<
@@ -75,7 +81,7 @@ export const DOCUMENT_META: Record<
     signatory_mandate: { label: "Signatory Mandate", description: "Authorization letter" },
     partnership_deed: { label: "Partnership Deed", description: "Partnership deed" },
     partnership_resolution: { label: "Partnership Resolution", description: "Partners resolution" },
-    tin: { label: "TIN", description: "Tax Identification Number" },
+    tin: { label: "TIN", description: "TIN Document" },
     constitution: { label: "Constitution", description: "Organization constitution" },
     society_resolution: { label: "Society Resolution", description: "Society resolution" },
     principal_list: { label: "Principal Officers", description: "List of principal officers" },
@@ -85,4 +91,6 @@ export const DOCUMENT_META: Record<
     nipc_certificate: { label: "NIPC Certificate", description: "NIPC certificate" },
     business_permit: { label: "Business Permit", description: "Business permit" },
     due_diligence: { label: "Due Diligence", description: "Enhanced due diligence" },
+    scuml_certificate: {label: "SCUML Certificate", description: "SCUML Certificate"},
+    passport: {label: "Passport", description: "Passport"}
 };

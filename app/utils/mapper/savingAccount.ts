@@ -15,6 +15,7 @@ export const savingsAccountMapper = (userFormData: any, bvn: string) => {
         state: userFormData.state,
         origin: userFormData.origin,
         lga: userFormData.lga,
+        account_officer: userFormData.accountOfficer,
         next_of_kin_name: userFormData.nextOfKinName,
         next_of_kin_phone_number: userFormData.nextOfKinPhone,
         next_of_kin_address: userFormData.nextOfKinAddress,

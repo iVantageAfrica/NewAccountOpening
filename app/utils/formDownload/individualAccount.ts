@@ -53,6 +53,7 @@ export interface AccountInformation {
   nextOfKinName?: string;
   nextOfKinRelationship?: string;
   nextOfKinPhoneNumber?: string;
+  accountOfficer?: string;
   nextOfKinAddress?: string;
   referee?: Referee[];
   documents?: Documents;
@@ -128,6 +129,7 @@ export const downloadIndividualAccountForm = (
       ["Phone Number", accountInformation.phoneNumber || "-"],
       ["Email Address", accountInformation.email || "-"],
       ["Debit Card Requested", accountInformation.debitCard ? "YES" : "NO"],
+      ["Account Officer", accountInformation.accountOfficer || "-"],
     ],
     theme: "grid",
     headStyles: tableHeadStyle,

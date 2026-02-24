@@ -281,7 +281,8 @@ const FetchCorporate = () => {
                                 lastname: state.accountInformation?.lastname,
                                 email: state.accountInformation?.email,
                                 signature: state.accountInformation?.documents?.signature,
-                                companyName: state.accountInformation?.companyName
+                                companyName: state.accountInformation?.companyName,
+                                accountNumber: state.accountInformation?.accountNumber
                             })}
                             className="inline-flex gap-3 cursor-pointer text-sm items-center hover:text-primary"
                         >

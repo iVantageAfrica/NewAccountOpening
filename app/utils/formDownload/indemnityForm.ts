@@ -13,6 +13,7 @@ interface AccountInformation {
   email?: string;
   signature?: string;
   companyName?: string;
+  accountNumber?: string;
 }
 
 const loadImageAsBase64 = async (url: string): Promise<string> => {
@@ -74,10 +75,15 @@ export const downloadIndemnityForm = async (
     40,
     100
   );
+  doc.text(
+  `ACCOUNT NUMBER: ${accountInformation.accountNumber || "-"}`,
+  40,
+  115
+);
 
   doc.setDrawColor(...BRAND_COLOR);
   doc.setLineWidth(0.5);
-  doc.line(40, 110, PAGE_WIDTH - 40, 110);
+  doc.line(40, 120, PAGE_WIDTH - 20, 118);
 
   const content = `
 Imperial Homes Mortgage Bank

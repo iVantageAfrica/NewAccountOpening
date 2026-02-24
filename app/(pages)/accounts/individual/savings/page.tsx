@@ -50,6 +50,7 @@ const SavingsAccount = () => {
             street: "",
             city: "",
             state: "",
+            accountOfficer: "",
             nextOfKinName: "",
             nextOfKinAddress: "",
             nextOfKinRelationship: "",
@@ -297,6 +298,15 @@ const SavingsAccount = () => {
                                             required
                                             labelName="Next of Kin Phone Number"
                                             inputError={errors.nextOfKinPhone?.message} />
+                                    )}
+                                />
+                                <Controller
+                                    name="accountOfficer"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            labelName="Account Officer / Referer"
+                                            inputError={errors.accountOfficer?.message} />
                                     )}
                                 />
                             </div>

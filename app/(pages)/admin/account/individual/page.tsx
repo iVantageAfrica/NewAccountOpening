@@ -5,6 +5,7 @@ import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
 import { downloadIndividualAccountForm } from "@/app/utils/formDownload/individualAccount";
 import { cryptoHelper, formatDate } from "@/app/utils/Utility/reUsableFunction";
+import { stat } from "fs";
 import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
@@ -106,6 +107,7 @@ const IndividualAccount = () => {
                             <InformationText title="Next of Kin Relationship" data={state.accountInformation?.nextOfKinRelationship} />
                             <InformationText title="Next of Kin Phone" data={state.accountInformation?.nextOfKinPhoneNumber} />
                             <InformationText title="Next of Kin Address" data={state.accountInformation?.nextOfKinAddress} />
+                            <InformationText title="Account Officer" data={state.accountInformation?.accountOfficer} />
                         </div>
 
                         {
@@ -193,7 +195,8 @@ const IndividualAccount = () => {
                                 lastname: state.accountInformation?.lastname,
                                 middleName: state.accountInformation?.middleName,
                                 email: state.accountInformation?.email,
-                                signature: state.accountInformation?.documents?.signature
+                                signature: state.accountInformation?.documents?.signature,
+                                accountNumber: state.accountInformation?.accountNumber
                             })}
                             className="inline-flex gap-3 cursor-pointer text-sm items-center hover:text-primary"
                         >

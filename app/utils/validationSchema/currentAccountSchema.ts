@@ -19,6 +19,7 @@ export const currentAccountSchema = z.object({
   nextOfKinAddress: z.string().min(1, "Next of Kin Address is required").max(150, "Next of Kin Address is too long"),
   nextOfKinRelationship: z.string().min(1, "Next of Kin Relationship is required").max(50, "Next of Kin Relationship is too long"),
   nextOfKinPhone: z.string().regex(/^\+?\d{8,15}$/, "Next of Kin Phone is invalid"),
+  accountOfficer: z.string().max(60, "Account Officer is too long").optional(),
 
   validId: fileSchema("Valid ID is required"),
   signature: fileSchema("Signature is required"),
