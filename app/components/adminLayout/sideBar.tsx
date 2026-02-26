@@ -1,5 +1,6 @@
 "use client";
 import { Navigation } from "@/app/components/adminLayout/navigation";
+import { SideBarProps } from "@/app/utils/Utility/Interfaces";
 import { clearAppState } from "@/app/utils/Utility/reUsableFunction";
 import { ArrowLeftRight,LogOut, X } from "lucide-react";
 import Image from "next/image";
@@ -7,7 +8,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
-const SideBar = ({ collapsed, setIsCollapsed, mobileOpen, setMobileOpen }) => {
+const SideBar:React.FC<SideBarProps>  = ({ collapsed, setIsCollapsed, mobileOpen, setMobileOpen }) => {
     const pathname = usePathname();
     const router = useRouter();
     const logOut = () =>{

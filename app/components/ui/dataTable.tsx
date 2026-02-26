@@ -6,37 +6,36 @@ import autoTable from "jspdf-autotable";
 import { MoveLeft, MoveRight } from "lucide-react";
 import Image from "next/image";
 
-interface Column {
-    key: string;
+interface Column<T> {
+    key: keyof T;
     label: string;
-    cellClassName?: string | ((value: any, row: any, rowIndex: number) => string);
+    cellClassName?: string | ((value: T[keyof T], row: T, rowIndex: number) => string);
 }
 
-interface DataTableProps<T extends Record<string, any>> {
+interface DataTableProps<T> {
     data: T[];
     tableTitle?: string;
     searchPlaceholder?: string;
-    entriesPerPage?: number;
+    entriesPerPage?: number | "all";
     tableHeight?: number;
-    columns?: Column[];
+    columns?: Column<T>[];
     onRowClick?: (row: T) => void;
     renderActions?: (row: T) => React.ReactNode;
     onSearchChange?: (query: string) => void;
     onLengthChange?: (length: number | "all") => void;
     onPageChange?: (direction: "next" | "prev") => void;
-
     nextUrl?: string | null;
     prevUrl?: string | null;
 }
 
-const DataTable = <T extends Record<string, any>>({
+const DataTable = <T extends Record<string, unknown>>({
     data = [],
     tableTitle,
     searchPlaceholder = "Search...",
     entriesPerPage = 10,
     tableHeight = 430,
     onRowClick,
-    columns = null,
+    columns,
     renderActions,
     onSearchChange,
     onLengthChange,
@@ -46,18 +45,17 @@ const DataTable = <T extends Record<string, any>>({
 }: DataTableProps<T>) => {
     const [searchText, setSearchText] = useState("");
     const [entryPerPage, setEntryPerPage] = useState(entriesPerPage);
-    const [isSNDescending, setIsSNDescending] = useState(false);
     const [showColumnDropdown, setShowColumnDropdown] = useState(false);
     const [localPage, setLocalPage] = useState(1);
     const localEntriesPerPage = 10;
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const headers: Column[] =
-        columns ?? (data[0] ? Object.keys(data[0]).map((k) => ({ key: k, label: k })) : []);
+    const headers: Column<T>[] =
+        columns ?? (data[0] ? Object.keys(data[0]).map((k) => ({ key: k as keyof T, label: k })) : []);
     const [visibleColumns, setVisibleColumns] = useState(headers.map((h) => h.key));
 
-    const toggleColumnVisibility = (key: string) =>
+    const toggleColumnVisibility = (key: keyof T) =>
         setVisibleColumns((prev) =>
             prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
         );
@@ -93,7 +91,7 @@ const DataTable = <T extends Record<string, any>>({
         const csv = Papa.unparse(
             data.map((row) =>
                 headers.reduce<Record<string, string>>(
-                    (acc, h) => ({ ...acc, [h.label]: row[h.key] }),
+                    (acc, h) => ({ ...acc, [h.label]: String(row[h.key] ?? '') }),
                     {}
                 )
             )
@@ -110,15 +108,13 @@ const DataTable = <T extends Record<string, any>>({
         const doc = new jsPDF();
         autoTable(doc, {
             head: [headers.map((h) => h.label)],
-            body: data.map((row) => headers.map((h) => row[h.key])),
+            body: data.map((row) => headers.map((h) => String(row[h.key] ?? ''))),
         });
         doc.save(`${tableTitle?.replace(/ /g, "_").toLowerCase()}.pdf`);
     };
 
     const isLocalPagination = !prevUrl && !nextUrl;
     const paginatedData = isLocalPagination ? data.slice((localPage - 1) * localEntriesPerPage, localPage * localEntriesPerPage) : data;
-    const startNumber = isLocalPagination ? (localPage - 1) * localEntriesPerPage + 1 : 1;
-    const endNumber = isLocalPagination ? (localPage - 1) * localEntriesPerPage + paginatedData.length : data.length;
 
     return (
         <div className="p-4 rounded shadow-md shadow-black/20 ">
@@ -156,7 +152,7 @@ const DataTable = <T extends Record<string, any>>({
                                 Select columns to display
                             </p>
                             {headers.map((h) => (
-                                <label key={h.key} className="flex items-center space-x-2 mb-1">
+                                <label key={String(h.key)} className="flex items-center space-x-2 mb-1">
                                     <input
                                         type="checkbox"
                                         checked={visibleColumns.includes(h.key)}
@@ -214,7 +210,7 @@ const DataTable = <T extends Record<string, any>>({
                                         {headers.filter(h => visibleColumns.includes(h.key)).map(({ key, cellClassName }, ci) => {
                                             const val = row[key];
                                             const cls = typeof cellClassName === "function" ? cellClassName(val, row, idx) : cellClassName || "";
-                                            return <td key={ci} className={`text-start py-4 px-6 text-xs ${cls}`}>{val}</td>
+                                            return <td key={ci} className={`text-start py-4 px-6 text-xs ${cls}`}>{String(val ?? '')}</td>
                                         })}
                                         {renderActions && <td className="text-start py-4 px-6 text-xs">{renderActions(row)}</td>}
                                     </tr>
@@ -275,7 +271,7 @@ const DataTable = <T extends Record<string, any>>({
             ) : (
                 <div className="flex flex-col items-center justify-center text-center text-gray-500 min-h-[60vh] px-4">
                     <Image src="/images/noData.png" alt="noData" width={400} height={400} />
-                    <p className="w-full">It looks like you don't have any records yet. Once data is available, it will show up here.</p>
+                    <p className="w-full">It looks like you don&apos;t have any records yet. Once data is available, it will show up here.</p>
                 </div>
             )}
         </div>

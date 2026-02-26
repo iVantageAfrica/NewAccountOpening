@@ -3,14 +3,16 @@ import React from "react";
 
 interface CountryOption { label: string; code: string; }
 
-interface PhoneNumberInputProps {
+
+interface PhoneNumberInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
   name: string;
   labelName?: string;
   required?: boolean;
   inputError?: string | null;
   countries?: CountryOption[];
   defaultCountryCode?: string;
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
 }
 
@@ -58,13 +60,12 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
     { label: "🇺🇸 United States", code: "+1" },
   ],
   defaultCountryCode = "+234",
-  value,
+  value ="",
   onChange,
 }) => {
 
-  const countryCode = countries.find(c => value.startsWith(c.code))?.code || defaultCountryCode;
-
-  const phone = value.replace(countryCode, "").replace(/\D/g, "");
+ const countryCode = countries.find(c => value?.startsWith(c.code))?.code || defaultCountryCode;
+const phone = (value || "").replace(countryCode, "").replace(/\D/g, "");
 
   const handlePhoneChange = (val: string) => {
     const clean = val.replace(/\D/g, "");

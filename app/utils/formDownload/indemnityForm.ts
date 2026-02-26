@@ -2,7 +2,7 @@
 
 import jsPDF from "jspdf";
 
-const BRAND_COLOR = [222, 79, 1];
+const BRAND_COLOR: [number, number, number] = [222, 79, 1];
 const BANK_NAME = "Imperial Homes Mortgage Bank Limited";
 const LOGO_PATH = "/images/imperialLogo.png";
 
@@ -52,7 +52,8 @@ export const downloadIndemnityForm = async (
   const PAGE_HEIGHT = doc.internal.pageSize.getHeight();
   let yPos = 120;
 
-  doc.setFillColor(...BRAND_COLOR);
+
+  doc.setFillColor(...(BRAND_COLOR as [number, number, number]));
   doc.rect(0, 0, PAGE_WIDTH, 80, "F");
 
   try {

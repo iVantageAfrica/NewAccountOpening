@@ -3,6 +3,7 @@ import DashboardStatCard from "@/app/components/ui/dashboardCard";
 import DataTable from "@/app/components/ui/dataTable";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { CustomerCurrentAccount, SavingsAccountState } from "@/app/utils/Utility/Interfaces";
 import { Eye, UserCheck, UserCog, UserPen, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -10,7 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 const SavingsAccount = () => {
     const router = useRouter();
     const { savingsAccountList, savingsAccountSummary, loading } = useApiEndPoints();
-    const [state, setState] = useState({
+    const [state, setState] = useState<SavingsAccountState>({
         customerSavingsAccount: [],
         dashboardSummary: {},
         totalRecords: 0,
@@ -40,21 +41,24 @@ const SavingsAccount = () => {
         setState((prev) => ({ ...prev, dashboardSummary: summaryResult }))
     }, [savingsAccountSummary]);
 
+
     useEffect(() => {
         (async () => {
             await dashboardSummary();
-            await fetchSavingsAccount(state.currentPage, state.searchQuery, state.entriesPerPage);
+            const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+            await fetchSavingsAccount(state.currentPage, state.searchQuery, perPage);
         })();
-    }, [state.currentPage, state.searchQuery, state.entriesPerPage, dashboardSummary, fetchSavingsAccount]);
+    }, [state.currentPage, state.searchQuery, state.entriesPerPage, state.totalRecords,dashboardSummary, fetchSavingsAccount]);
 
 
     const handlePageChange = (direction: "next" | "prev") => {
-        if (direction === "next" && state.nextUrl) 
-            fetchSavingsAccount(undefined, state.searchQuery, state.entriesPerPage, state.nextUrl);
-        if (direction === "prev" && state.prevUrl) 
-            fetchSavingsAccount(undefined, state.searchQuery, state.entriesPerPage, state.prevUrl);
-    };
+         const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
 
+        if (direction === "next" && state.nextUrl) 
+            fetchSavingsAccount(undefined, state.searchQuery, perPage, state.nextUrl);
+        if (direction === "prev" && state.prevUrl) 
+            fetchSavingsAccount(undefined, state.searchQuery, perPage, state.prevUrl);
+    };
 
     return (
         <div>
@@ -95,7 +99,7 @@ const SavingsAccount = () => {
                     { key: "status", label: "Status" },
                     { key: "createdAt", label: "DATE" },
                 ]}
-                renderActions={(row: any) => (
+                renderActions={(row: CustomerCurrentAccount) => (
                     <button onClick={() => router.replace('/admin/account/individual/?account=' + btoa(row.accountNumber)+'&type='+btoa('Savings'))}
                         className="px-3 py-1 hover:bg-primary hover:text-white cursor-pointer rounded text-xs gap-1 flex items-center text-primary border border-primary"
                     >
@@ -106,7 +110,7 @@ const SavingsAccount = () => {
                 prevUrl={state.prevUrl}
                 entriesPerPage={state.entriesPerPage}
                 onPageChange={handlePageChange}
-                onSearchChange={(query) => {
+            onSearchChange={(query) => {
                     setState((prev) => ({...prev, searchQuery: query, currentPage:1}));
                 }}
                 onLengthChange={(length) => {

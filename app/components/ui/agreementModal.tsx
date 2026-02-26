@@ -175,10 +175,10 @@ const AgreementModals: React.FC<AgreementModalsProps> = ({
 
                         <p className="font-bold text-black">1. INTRODUCTION</p>
                         <p>
-                            These Unified Terms and Conditions ("Terms") govern the operation of
+                            These Unified Terms and Conditions (&quot;Terms&quot;) govern the operation of
                             Individual and Corporate Accounts maintained with{" "}
                             <span className="font-bold text-black">Imperial Homes Mortgage Bank Limited</span>{" "}
-                            ("the Bank"). By opening and operating an account with the Bank, the Customer
+                            (&quot;the Bank&quot;). By opening and operating an account with the Bank, the Customer
                             (whether an individual, joint account holder, or corporate entity) agrees to be
                             bound by these Terms as may be amended by the Bank from time to time. Where
                             applicable, specific provisions shall apply distinctly to Individual Accounts

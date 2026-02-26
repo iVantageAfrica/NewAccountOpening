@@ -2,7 +2,7 @@ import React from "react";
 
 interface DashboardStatCardProps {
   label: string;
-  value: string | number;
+  value?: string | number;
   icon: React.ReactNode;
   iconBg?: string;
   iconColor?: string;

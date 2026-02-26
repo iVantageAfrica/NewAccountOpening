@@ -13,45 +13,33 @@ import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { BvnData } from "@/app/utils/Utility/Interfaces";
 import { corporateAccountMapper } from "@/app/utils/mapper/corporateAccount";
 import { clearAppState, getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { STATES_AND_LGAS } from "@/app/utils/Utility/stateLocalGovt";
 import { CorporateAccountSchema } from "@/app/utils/validationSchema/corporateAccountSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form";
+import { z } from "zod";
 
-const CorporateAccount = () => {
+function CorporateAccountContent() {
     useAccountGuard();
+    type FormData = z.infer<typeof CorporateAccountSchema>;
     const router = useRouter();
     const param = useSearchParams();
     const accountData = JSON.parse(atob(param.get("account") || ""));
     const { createCorporateAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
-    const bvnData = getFromLocalStorage("bvnData");
+    const bvnData = getFromLocalStorage("bvnData") as BvnData | null;
     const [activeStep, setActiveStep] = React.useState(3);
     const [activeAgreementModal, setActiveAgreementModal] =
         React.useState<"indemnity" | "terms" | null>(null);
 
 
-    const directorCountMap: Record<string, number> = {
-        "1": 2, // Limited Partnership
-        "2": 2, // Unlimited Company
-        "3": 2, // Public Limited Company (PLC)
-        "4": 2, // Incorporated Trustee
-        "5": 2, // Company Limited by Guarantee (CLG)
-        "6": 2, // Limited Liability Partnership (LLP)
-        "7": 1, // Limited Liability Company (LTD)
-        "8": 1, // Business Name / Sole Proprietorship
-        "9": 2, // Clubs, Societies & Associations
-        "10": 2, // NGOs / Foundation / Trusts
-        "11": 1, // Foreign-Owned / Foreign-Controlled Entities
-        "12": 1, // Franchise
-    };
-
-    const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(CorporateAccountSchema),
         defaultValues: {
             companyName: "",
@@ -70,14 +58,25 @@ const CorporateAccount = () => {
             debitCard: false,
             acceptTerms: false,
             indemnityAgreement: false,
-            signatory: [{ name: "", validId: null, signature: null, utilityBill: null, passportPhoto: null }]
+            signatory: [{ name: "", emailAddress: "", phoneNumber: "", bvn: "", nin: "" }]
         }
     });
-    const selectedCompanyType = watch("companyType");
-    const selectedSignatoriesCount = watch("signatories");
+
+    const selectedCompanyType = useWatch({ control, name: "companyType" });
+    const selectedSignatoriesCount = useWatch({ control, name: "signatories" });
+    const selectedState = useWatch({ control, name: "state" });
+
+    const { fields, append, remove } = useFieldArray({ control, name: "director" });
+    const { fields: signatoryFields, append: appendSignatory, remove: removeSignatory } = useFieldArray({ control, name: "signatory" });
 
     React.useEffect(() => {
         if (!selectedCompanyType) return;
+
+        const directorCountMap: Record<string, number> = {
+            "1": 2, "2": 2, "3": 2, "4": 2, "5": 2, "6": 2,
+            "7": 1, "8": 1, "9": 2, "10": 2, "11": 1, "12": 1,
+        };
+
         const requiredCount = directorCountMap[selectedCompanyType] ?? 0;
         const currentLength = fields.length;
 
@@ -90,7 +89,8 @@ const CorporateAccount = () => {
                 remove(fields.length - 1 - i);
             }
         }
-    }, [selectedCompanyType]);
+    }, [selectedCompanyType, append, remove, fields.length]);
+
 
     React.useEffect(() => {
         if (!selectedSignatoriesCount) {
@@ -103,41 +103,22 @@ const CorporateAccount = () => {
 
         if (requiredCount > currentCount) {
             for (let i = 0; i < requiredCount - currentCount; i++) {
-                appendSignatory({
-                    name: "",
-                    emailAddress: "",
-                    phoneNumber: "",
-                    bvn: "",
-                    nin: "",
-                });
+                appendSignatory({ name: "", emailAddress: "", phoneNumber: "", bvn: "", nin: "" });
             }
         } else if (requiredCount < currentCount) {
             for (let i = 0; i < currentCount - requiredCount; i++) {
                 removeSignatory(signatoryFields.length - 1 - i);
             }
         }
-    }, [selectedSignatoriesCount]);
-
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "director",
-    });
-
-    const { fields: signatoryFields, append: appendSignatory, remove: removeSignatory } = useFieldArray({
-        control,
-        name: "signatory",
-    });
-
-       const selectedState = useWatch({
-        control,
-        name: "state",
-    });
+    }, [selectedSignatoriesCount, appendSignatory, removeSignatory, signatoryFields.length]);
 
     const lgaOptions =
         STATES_AND_LGAS.find(s => s.state === selectedState)?.lgas || [];
 
+
     const onSubmit = async (data: FormData) => {
-        const payload = corporateAccountMapper(data, bvnData.bvn, accountData.id);
+        const payload = corporateAccountMapper(data, bvnData!.bvn, accountData.id);
+        console.log(payload)
         const apiResponse = await createCorporateAccount(payload);
         if (apiResponse.statusCode === 200) {
             setSuccessModal(true);
@@ -193,7 +174,7 @@ const CorporateAccount = () => {
                                         <Input {...field}
                                             required
                                             labelName="Company Registration Number"
-                                            inputError={errors.businessName?.message} />
+                                            inputError={errors.registrationNumber?.message} />
                                     )}
                                 />
                                 <Controller
@@ -260,7 +241,7 @@ const CorporateAccount = () => {
                                             inputError={errors.businessEmailAddress?.message} />
                                     )} />
 
-                                             <Controller
+                                <Controller
                                     name="state"
                                     control={control}
                                     render={({ field }) => (
@@ -278,7 +259,7 @@ const CorporateAccount = () => {
                                 />
 
 
-                                    <Controller
+                                <Controller
                                     name="lga"
                                     control={control}
                                     render={({ field }) => (
@@ -304,7 +285,7 @@ const CorporateAccount = () => {
                                     )} />
 
 
-                             
+
 
                                 <Controller name="accountOfficer"
                                     control={control}
@@ -578,4 +559,11 @@ const CorporateAccount = () => {
     );
 }
 
-export default CorporateAccount;
+
+export default function CorporateAccount() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <CorporateAccountContent />
+        </Suspense>
+    );
+}

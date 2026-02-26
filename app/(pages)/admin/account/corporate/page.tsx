@@ -3,6 +3,7 @@ import DashboardStatCard from "@/app/components/ui/dashboardCard";
 import DataTable from "@/app/components/ui/dataTable";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { CorporateAccountState, CustomerCorporateAccount } from "@/app/utils/Utility/Interfaces";
 import { Eye, UserCheck, UserCog, UserPen, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -10,7 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 const CorporateAccount = () => {
     const router = useRouter();
     const { corporateAccountList, corporateAccountSummary, loading } = useApiEndPoints();
-    const [state, setState] = useState({
+    const [state, setState] = useState<CorporateAccountState>({
         customerCorporateAccount: [],
         dashboardSummary: {},
         totalRecords: 0,
@@ -23,7 +24,8 @@ const CorporateAccount = () => {
 
     const fetchCorporateAccount = useCallback(
         async (page = 1, search = "", perPage = 10, pageUrl?: string) => {
-            const { data = [], pagination = {} } = await corporateAccountList(page.toString(), search, perPage.toString(), pageUrl);
+            const perPageNo = typeof perPage === "string" && perPage === "all" ? 0 : perPage;
+            const { data = [], pagination = {} } = await corporateAccountList(page.toString(), search, perPageNo.toString(), pageUrl);
             setState((prev) => ({
                 ...prev,
                 customerCorporateAccount: data,
@@ -43,18 +45,21 @@ const CorporateAccount = () => {
     useEffect(() => {
         (async () => {
             await dashboardSummary();
-            await fetchCorporateAccount(state.currentPage, state.searchQuery, state.entriesPerPage);
+            const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+            await fetchCorporateAccount(state.currentPage, state.searchQuery, perPage);
         })();
-    }, [state.currentPage, state.searchQuery, state.entriesPerPage, dashboardSummary, fetchCorporateAccount]);
+    }, [state.currentPage, state.searchQuery, state.entriesPerPage,state.totalRecords, dashboardSummary, fetchCorporateAccount]);
 
 
-    const handlePageChange = (direction: "next" | "prev") => {
-        if (direction === "next" && state.nextUrl) 
-            fetchCorporateAccount(undefined, state.searchQuery, state.entriesPerPage, state.nextUrl);
-        if (direction === "prev" && state.prevUrl) 
-            fetchCorporateAccount(undefined, state.searchQuery, state.entriesPerPage, state.prevUrl);
-    };
+const handlePageChange = (direction: "next" | "prev") => {
+    const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
 
+    if (direction === "next" && state.nextUrl)
+        fetchCorporateAccount(undefined, state.searchQuery, perPage, state.nextUrl);
+
+    if (direction === "prev" && state.prevUrl)
+        fetchCorporateAccount(undefined, state.searchQuery, perPage, state.prevUrl);
+};
 
     return (
         <div>
@@ -83,7 +88,7 @@ const CorporateAccount = () => {
                     value={state.dashboardSummary?.pendingAccount} />
             </div>
 
-            <DataTable
+            <DataTable 
                 tableTitle="Customer list"
                 data={state.customerCorporateAccount}
                 columns={[
@@ -96,7 +101,7 @@ const CorporateAccount = () => {
                     { key: "status", label: "Status" },
                     { key: "createdAt", label: "DATE" },
                 ]}
-                renderActions={(row: any) => (
+                renderActions={(row: CustomerCorporateAccount) => (
                     <button onClick={() => router.replace('/admin/account/corporate/fetch-corporate/?account=' + btoa(row.accountNumber)+'&type='+btoa('Corporate'))}
                         className="px-3 py-1 hover:bg-primary hover:text-white cursor-pointer rounded text-xs gap-1 flex items-center text-primary border border-primary"
                     >

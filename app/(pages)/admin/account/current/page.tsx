@@ -3,6 +3,7 @@ import DashboardStatCard from "@/app/components/ui/dashboardCard";
 import DataTable from "@/app/components/ui/dataTable";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { CurrentAccountState, CustomerCurrentAccount } from "@/app/utils/Utility/Interfaces";
 import { Eye, UserCheck, UserCog, UserPen, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -10,7 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 const CurrentAccount = () => {
     const router = useRouter();
     const { currentAccountList, currentAccountSummary, loading } = useApiEndPoints();
-    const [state, setState] = useState({
+    const [state, setState] = useState<CurrentAccountState>({
         customerCurrentAccount: [],
         dashboardSummary: {},
         totalRecords: 0,
@@ -43,16 +44,19 @@ const CurrentAccount = () => {
     useEffect(() => {
         (async () => {
             await dashboardSummary();
-            await fetchCurrentAccount(state.currentPage, state.searchQuery, state.entriesPerPage);
+            const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+            await fetchCurrentAccount(state.currentPage, state.searchQuery, perPage);
         })();
-    }, [state.currentPage, state.searchQuery, state.entriesPerPage, dashboardSummary, fetchCurrentAccount]);
+    }, [state.currentPage, state.searchQuery, state.entriesPerPage, state.totalRecords,dashboardSummary, fetchCurrentAccount]);
 
 
     const handlePageChange = (direction: "next" | "prev") => {
+         const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+
         if (direction === "next" && state.nextUrl) 
-            fetchCurrentAccount(undefined, state.searchQuery, state.entriesPerPage, state.nextUrl);
+            fetchCurrentAccount(undefined, state.searchQuery, perPage, state.nextUrl);
         if (direction === "prev" && state.prevUrl) 
-            fetchCurrentAccount(undefined, state.searchQuery, state.entriesPerPage, state.prevUrl);
+            fetchCurrentAccount(undefined, state.searchQuery, perPage, state.prevUrl);
     };
 
 
@@ -95,7 +99,7 @@ const CurrentAccount = () => {
                     { key: "status", label: "Status" },
                     { key: "createdAt", label: "DATE" },
                 ]}
-                renderActions={(row: any) => (
+                renderActions={(row: CustomerCurrentAccount) => (
                     <button onClick={() => router.replace('/admin/account/individual/?account=' + btoa(row.accountNumber)+'&type='+btoa('Current'))}
                         className="px-3 py-1 hover:bg-primary hover:text-white cursor-pointer rounded text-xs gap-1 flex items-center text-primary border border-primary"
                     >

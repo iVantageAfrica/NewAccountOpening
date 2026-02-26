@@ -10,8 +10,9 @@ export const maskEmail = (email: string) => {
   return `***${name.slice(-4)}@${domain}`;
 };
 
-export const formatTitle = (key: any) =>
-  key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase());
+
+export const formatTitle = (key: string) =>
+  key.replace(/([A-Z])/g, ' $1').replace(/^./, (c: string) => c.toUpperCase());
 
 export function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
@@ -24,7 +25,7 @@ export const formatTime = (seconds: number): string => {
 };
 
 export const toCamelCase = (str: string) =>
-    str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
+  str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
 
 export const formatDate = (dateString?: string, options?: Intl.DateTimeFormatOptions) => {
   if (!dateString) return "-";
@@ -60,7 +61,7 @@ export const encrypt = (data: unknown): string => {
 };
 
 export const decrypt = (cipher: string): string => {
-   try {
+  try {
     const bytes = CryptoJS.AES.decrypt(cipher, SECRET_KEY);
     const decryptedStr = bytes.toString(CryptoJS.enc.Utf8);
     return JSON.parse(decryptedStr);
@@ -70,26 +71,27 @@ export const decrypt = (cipher: string): string => {
   }
 };
 
-export const clearAppState = () =>{
-    localStorage.clear();
-    sessionStorage.clear();
+export const clearAppState = () => {
+  localStorage.clear();
+  sessionStorage.clear();
 }
 
 export function bvnDataClean(bvnData: Record<string, any>) {
-    const { phone_number, bvn, email, lastname, middle_name,firstname,gender, nin, date_of_birth,address } = bvnData;
-    const dataClean = { 
-      phoneNumber:phone_number, 
-      bvn:bvn, 
-      emailAddress:email, 
-      lastName:lastname, 
-      middleName:middle_name, 
-      firstName:firstname, 
-      gender, 
-      nin:nin,
-      dateOfBirth:date_of_birth,
-      address:address };
-      saveToLocalStorage("bvnData", dataClean)
-} 
+  const { phone_number, bvn, email, lastname, middle_name, firstname, gender, nin, date_of_birth, address } = bvnData;
+  const dataClean = {
+    phoneNumber: phone_number,
+    bvn: bvn,
+    emailAddress: email,
+    lastName: lastname,
+    middleName: middle_name,
+    firstName: firstname,
+    gender,
+    nin: nin,
+    dateOfBirth: date_of_birth,
+    address: address
+  };
+  saveToLocalStorage("bvnData", dataClean)
+}
 
 
 const hour = new Date().getHours();
@@ -98,19 +100,19 @@ export const timeOfDay =
   hour >= 5 && hour < 12
     ? "Good Morning"
     : hour >= 12 && hour < 17
-    ? "Good Afternoon"
-    : "Good Evening";
+      ? "Good Afternoon"
+      : "Good Evening";
 
 
 export const saveToLocalStorage = <T>(key: string, data: T): void => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem(key, encrypt(data));
+  if (typeof window === "undefined") return;
+  localStorage.setItem(key, encrypt(data));
 };
 
 export const getFromLocalStorage = <T>(key: string): T | null => {
-    if (typeof window === "undefined") return null;
-    const value = localStorage.getItem(key);
-    return value ? decrypt(value) as T : null;
+  if (typeof window === "undefined") return null;
+  const value = localStorage.getItem(key);
+  return value ? decrypt(value) as T : null;
 };
 
 export const removeFromLocalStorage = (key: string): void => {
@@ -125,8 +127,9 @@ const key = CryptoJS.enc.Base64.parse(
 );
 
 export const cryptoHelper = {
-  encrypt: (text) => {
+  encrypt: (text: string | null) => {
     try {
+      if (!text) return null;
       const iv = CryptoJS.lib.WordArray.random(16);
       const encrypted = CryptoJS.AES.encrypt(text, key, { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
       return CryptoJS.enc.Base64.stringify(iv.concat(encrypted.ciphertext));
@@ -134,12 +137,32 @@ export const cryptoHelper = {
       return null;
     }
   },
-  decrypt: (base64) => {
+  // decrypt: (base64:string|null) => {
+  //    if (!base64) return null;
+  //   try {
+  //     const raw = CryptoJS.enc.Base64.parse(base64);
+  //     const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4), 16);
+  //     const cipher = CryptoJS.lib.WordArray.create(raw.words.slice(4));
+  //     const decrypted = CryptoJS.AES.decrypt({ ciphertext: cipher }, key, { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+  //     return decrypted.toString(CryptoJS.enc.Utf8);
+  //   } catch {
+  //     return null;
+  //   }
+  // }
+  decrypt: (base64: string | null) => {
+    if (!base64) return null;
     try {
+
       const raw = CryptoJS.enc.Base64.parse(base64);
       const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4), 16);
-      const cipher = CryptoJS.lib.WordArray.create(raw.words.slice(4));
-      const decrypted = CryptoJS.AES.decrypt({ ciphertext: cipher }, key, { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+      const cipher = CryptoJS.lib.WordArray.create(raw.words.slice(4), raw.sigBytes - 16);
+      const cipherParams = CryptoJS.lib.CipherParams.create({ ciphertext: cipher });
+      const decrypted = CryptoJS.AES.decrypt(cipherParams, key, {
+        iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      });
+
       return decrypted.toString(CryptoJS.enc.Utf8);
     } catch {
       return null;

@@ -9,19 +9,19 @@ import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { ACCOUNT_TYPE_DOCUMENTS, buildCompanyDocumentSchema, CompanyDocumentPayload, DOCUMENT_META } from "@/app/utils/validationSchema/companyDocumentSchema";
 import { companyDocumentMapper } from "@/app/utils/mapper/companyDocumentMapper";
 import Modal from "@/app/components/ui/modal";
 import Image from "next/image";
 
 
-const CompanyDocument = () => {
+function CompanyDocumentContent () {
     const param = useSearchParams();
     const router = useRouter();
     const [successModal, setSuccessModal] = useState(false);
     const { loading, businessDocumentSubmission } = useApiEndPoints();
-    const accountNumber = cryptoHelper.decrypt(param.get("acc"));
+    const accountNumber = cryptoHelper.decrypt(param.get("acc")) ?? "";
     const accountTypeId = Number(cryptoHelper.decrypt(param.get("ty")) ?? 0);
     const businessName = cryptoHelper.decrypt(param.get("bsNa"));
 
@@ -42,20 +42,45 @@ const CompanyDocument = () => {
         }
     });
 
-    const requiredDocs = ACCOUNT_TYPE_DOCUMENTS[accountTypeId] || [];
+    const fileFields = [
+        "cac","memart", "cac_co2", "cac_co7","board_resolution","declaration_form", "property_declaration","signatory_mandate", "partnership_deed","partnership_resolution",
+        "tin","constitution","society_resolution", "principal_list","trust_deed", "trustee_resolution", "trustee_list", "nipc_certificate","business_permit",
+        "due_diligence", "scuml_certificate", "passport",
+    ] as const;
+    type FileFieldKeys = (typeof fileFields)[number];
+
+    const setOptionalFileNull = (data: CompanyDocumentPayload, key: FileFieldKeys) => {
+        data[key] = null;
+    };
     const onSubmit = async (data: CompanyDocumentPayload) => {
-        Object.keys(DOCUMENT_META).forEach((doc) => {
-            if (!requiredDocs.includes(doc)) {
-                data[doc as keyof CompanyDocumentPayload] = null;
+        const payload: CompanyDocumentPayload = { ...data };
+        fileFields.forEach((field) => {
+            if (!ACCOUNT_TYPE_DOCUMENTS[accountTypeId]?.includes(field)) {
+                setOptionalFileNull(payload, field);
             }
         });
 
-        const payload = companyDocumentMapper(data, accountNumber);
-        const apiResponse = await businessDocumentSubmission(payload);
+        const formData = companyDocumentMapper(payload, accountNumber);
+        const apiResponse = await businessDocumentSubmission(formData);
         if (apiResponse.statusCode === 200) {
-            setSuccessModal(true)
+            setSuccessModal(true);
         }
     };
+
+    const requiredDocs = ACCOUNT_TYPE_DOCUMENTS[accountTypeId] || [];
+    // const onSubmit = async (data: CompanyDocumentPayload) => {
+    //     Object.keys(DOCUMENT_META).forEach((doc) => {
+    //         if (!requiredDocs.includes(doc)) {
+    //             data[doc as keyof CompanyDocumentPayload] = null;
+    //         }
+    //     });
+
+    //     const payload = companyDocumentMapper(data, accountNumber);
+    //     const apiResponse = await businessDocumentSubmission(payload);
+    //     if (apiResponse.statusCode === 200) {
+    //         setSuccessModal(true)
+    //     }
+    // };
 
 
     return (
@@ -80,7 +105,7 @@ const CompanyDocument = () => {
                             {requiredDocs.map((doc) => (
                                 <Controller
                                     key={doc}
-                                    name={doc as any}
+                                    name={doc as keyof CompanyDocumentPayload}
                                     control={control}
                                     render={({ field, fieldState }) => (
                                         <FileUploadInput
@@ -89,6 +114,7 @@ const CompanyDocument = () => {
                                             labelName={DOCUMENT_META[doc].label}
                                             description={DOCUMENT_META[doc].description}
                                             inputError={fieldState.error?.message}
+                                            value={field.value as File | null}
                                             onFileChange={(file) => field.onChange(file)}
                                         />
                                     )}
@@ -166,6 +192,7 @@ const CompanyDocument = () => {
 
             <Modal size="sm"
                 title=""
+                cancelIcon={false}
                 isVisible={successModal}
                 type="center"
                 onClose={() => router.replace("/")}>
@@ -186,4 +213,10 @@ const CompanyDocument = () => {
     );
 }
 
-export default CompanyDocument;
+export default function CompanyDocument() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <CompanyDocumentContent />
+        </Suspense>
+    );
+}

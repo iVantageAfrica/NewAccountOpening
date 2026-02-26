@@ -3,13 +3,14 @@ import DashboardStatCard from "@/app/components/ui/dashboardCard";
 import DataTable from "@/app/components/ui/dataTable";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { CardRequestState } from "@/app/utils/Utility/Interfaces";
 import { CardSim } from "lucide-react";
 import React from "react";
 
 const CardRequest = () => {
     const { debitCardRequest, loading } = useApiEndPoints();
-    const [state, setState] = React.useState({
-        cardRequests: [],
+    const [state, setState] = React.useState<CardRequestState>({
+        cardRequests: { data: [], summary: {} },
         totalRecords: 0,
         currentPage: 1,
         entriesPerPage: 10,

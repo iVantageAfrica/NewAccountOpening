@@ -1,7 +1,12 @@
 import { z } from "zod";
 const fileSchema = (label: string) =>
-  z.instanceof(File, { message: `${label}` })
-   .refine(f => f.size > 0, { message: `${label}`  });
+     z
+    .instanceof(File, { message: `${label}` })
+    .nullable()
+    .refine((f) => f !== null && f.size > 0, {
+      message: `${label}`,
+    });
+
 
 export const bankAccountReferenceSubmissionSchema = z.object({
     bankName: z.string().min(1, "Bank Name is required").max(100, "Bank Name is too long"),

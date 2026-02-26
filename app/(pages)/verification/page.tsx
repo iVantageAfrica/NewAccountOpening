@@ -11,9 +11,9 @@ import { accountTypes } from "@/app/index/accountTypes";
 import { bvnDataClean, formatTime, maskEmail, maskPhone, removeFromLocalStorage, saveToLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { CircleCheck, MessageSquareText } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { Suspense, useRef, useState } from "react";
 
-const BvnValidation: React.FC = () => {
+function BvnValidationContent(){
     const { verifyUserBvn, loading, resendBVNOTPCode, otpVerification } = useApiEndPoints();
     const router = useRouter();
     const param = useSearchParams();
@@ -378,4 +378,10 @@ const BvnValidation: React.FC = () => {
     );
 }
 
-export default BvnValidation;
+export default function BvnValidation() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <BvnValidationContent />
+        </Suspense>
+    );
+}

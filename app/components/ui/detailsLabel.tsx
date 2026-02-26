@@ -2,7 +2,7 @@ import React from "react";
 
 interface DetailsLabelProps {
     title: string;
-    value: string;
+    value?: string;
 }
 
 const DetailsLabel:React.FC<DetailsLabelProps> = ({title, value}) => {

@@ -7,6 +7,7 @@ import { Navigation } from "../../components/adminLayout/navigation";
 import { usePathname } from "next/navigation";
 import { useAdminGuard } from "../types/administrativeGuard";
 import { getFromLocalStorage, timeOfDay } from "@/app/utils/Utility/reUsableFunction";
+import { AdminData } from "@/app/utils/Utility/Interfaces";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     useAdminGuard();
@@ -14,7 +15,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const pathname = usePathname();
     const current = Navigation.find((item) => item.path === pathname);
-    const adminData = getFromLocalStorage("adminDetails");
+    const adminData = getFromLocalStorage("adminDetails") as AdminData | null;
 
     return (
         <div className="flex h-screen">

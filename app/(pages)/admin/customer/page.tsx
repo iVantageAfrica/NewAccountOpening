@@ -7,11 +7,12 @@ import DashboardStatCard from "@/app/components/ui/dashboardCard";
 import { User } from "lucide-react";
 import Modal from "@/app/components/ui/modal";
 import { useRouter } from "next/navigation";
+import { CustomerAccountState } from "@/app/utils/Utility/Interfaces";
 
 const CustomerAccount = () => {
   const router = useRouter();
   const { listAllCustomer, loading, customerSummaryList } = useApiEndPoints();
-  const [state, setState] = useState({
+  const [state, setState] = useState<CustomerAccountState>({
     customerList: [],
     summary: {},
     totalRecords: 0,
@@ -46,15 +47,18 @@ const CustomerAccount = () => {
   useEffect(() => {
     (async () => {
       await fetchSummary();
-      await fetchCustomers(state.currentPage, state.searchQuery, state.entriesPerPage);
+      const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+      await fetchCustomers(state.currentPage, state.searchQuery, perPage);
     })();
-  }, [state.currentPage, state.searchQuery, state.entriesPerPage, fetchSummary, fetchCustomers]);
+  }, [state.currentPage, state.searchQuery, state.entriesPerPage,state.totalRecords, fetchSummary, fetchCustomers]);
 
   const handlePageChange = (direction: "next" | "prev") => {
+    const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+
     if (direction === "next" && state.nextUrl)
-      fetchCustomers(undefined, state.searchQuery, state.entriesPerPage, state.nextUrl);
+      fetchCustomers(undefined, state.searchQuery, perPage, state.nextUrl);
     if (direction === "prev" && state.prevUrl)
-      fetchCustomers(undefined, state.searchQuery, state.entriesPerPage, state.prevUrl);
+      fetchCustomers(undefined, state.searchQuery, perPage, state.prevUrl);
   };
 
 
@@ -98,10 +102,12 @@ const CustomerAccount = () => {
 
 
       <Modal
+        subTitle=""
         isVisible={state.customerDetailModal}
         title={`${state.customerDetails?.firstname ?? ""} ${state.customerDetails?.lastname ?? ""}`}
         size="sm"
-        type="left"
+        type="side"
+        cancelIcon={true}
         onClose={() => setState((prev) => ({ ...prev, customerDetailModal: false }))}
       >
         <div>

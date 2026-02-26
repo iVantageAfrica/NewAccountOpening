@@ -8,7 +8,6 @@ const BRAND_COLOR = [222, 79, 1]; // #DE4F01
 const BANK_NAME = "Imperial Homes Mortgage Bank Limited";
 const LOGO_PATH = "/images/imperialLogo.png";
 
-
 /* =======================
    TYPES
 ======================= */
@@ -69,51 +68,49 @@ export const downloadIndividualAccountForm = (
   accountInformation: AccountInformation,
   accountType: string
 ) => {
-  const doc = new jsPDF({
-    orientation: "p",
-    unit: "pt",
-    format: "a4",
-  });
+  const doc = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
 
   doc.setFont("times");
 
   const PAGE_WIDTH = doc.internal.pageSize.getWidth();
   let yPos = 120;
 
-  const tableHeadStyle = { fillColor: BRAND_COLOR, textColor: 255 };
+  const tableHeadStyle = { fillColor: BRAND_COLOR as [number, number, number], textColor: 255 };
+  
   const tableFont = { fontSize: 11, font: "times" };
 
-  doc.setFillColor(...BRAND_COLOR);
+  // Header rectangle
+  doc.setFillColor(BRAND_COLOR[0], BRAND_COLOR[1], BRAND_COLOR[2]);
   doc.rect(0, 0, PAGE_WIDTH, 70, "F");
 
+  // Logo
   const logo = new Image();
   logo.src = LOGO_PATH;
   doc.addImage(logo, "PNG", 40, 15, 45, 45);
 
+  // Bank name & title
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
   doc.text(BANK_NAME, 100, 38);
-
   doc.setFontSize(11);
   doc.text("Account Opening Form", 100, 56);
 
+  // Account info text
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(12);
-  doc.text(`ACCOUNT TYPE: ${accountType} Account `, 40, 100);
-
+  doc.text(`ACCOUNT TYPE: ${accountType} Account`, 40, 100);
   doc.setFontSize(11);
   doc.text(`STATUS: ${accountInformation.status || "-"}`, 40, 115);
   doc.text(`DATE: ${formatDateTime(accountInformation.createdAt) || "-"}`, 260, 115);
-  // dashed separator
-  doc.setDrawColor(222, 79, 1);
+
+  // Separator line
+  doc.setDrawColor(BRAND_COLOR[0], BRAND_COLOR[1], BRAND_COLOR[2]);
   doc.setLineWidth(0.5);
-  doc.setLineDash([4, 4], 0);
-  doc.setDrawColor(222, 79, 1, 0.4);
   doc.line(40, 125, PAGE_WIDTH - 40, 125);
-  doc.setLineDash([]);
+
   yPos = 145;
 
-
+  // Account Information Table
   autoTable(doc, {
     startY: yPos,
     head: [["Account Information", ""]],
@@ -137,9 +134,8 @@ export const downloadIndividualAccountForm = (
   });
 
   yPos = (doc as any).lastAutoTable.finalY + 20;
-  doc.setTextColor(0, 0, 0);
 
-
+  // Personal Information Table
   autoTable(doc, {
     startY: yPos,
     head: [["Personal Information", ""]],
@@ -164,24 +160,24 @@ export const downloadIndividualAccountForm = (
 
   yPos = (doc as any).lastAutoTable.finalY + 20;
 
+  // Referees Table
   if (accountInformation.referee?.length) {
-
     autoTable(doc, {
       startY: yPos,
       head: [["Bank Account Reference"]],
       body: [],
       theme: "plain",
       headStyles: {
-        fillColor: BRAND_COLOR,
+        fillColor: BRAND_COLOR as [number, number, number],
         textColor: 255,
         fontSize: 12,
         font: "times",
         halign: "left",
-        cellPadding: 6,
+        cellPadding: 6
       },
     });
 
-    yPos = (doc as any).lastAutoTable.finalY +0;
+    yPos = (doc as any).lastAutoTable.finalY;
     const ref1 = accountInformation.referee[0] || {};
     const ref2 = accountInformation.referee[1] || {};
 
@@ -200,28 +196,20 @@ export const downloadIndividualAccountForm = (
       theme: "grid",
       headStyles: tableHeadStyle,
       styles: tableFont,
-      columnStyles: {
-        0: { cellWidth: 150 },
-      },
+      columnStyles: { 0: { cellWidth: 150 } },
     });
 
     yPos = (doc as any).lastAutoTable.finalY + 20;
   }
 
+  // Footer on all pages
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(10);
     doc.setTextColor(150);
-    doc.text(
-      `Generated on ${new Date().toLocaleDateString()}`,
-      40,
-      doc.internal.pageSize.getHeight() - 30
-    );
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 40, doc.internal.pageSize.getHeight() - 30);
   }
 
-
-  doc.save(
-    `${accountInformation.firstname}-${accountInformation.accountNumber || "User"}.pdf`
-  );
+  doc.save(`${accountInformation.firstname}-${accountInformation.accountNumber || "User"}.pdf`);
 };

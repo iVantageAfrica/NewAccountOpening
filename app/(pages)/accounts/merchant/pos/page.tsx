@@ -11,6 +11,7 @@ import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { BvnData } from "@/app/utils/Utility/Interfaces";
 import { posAccountMapper } from "@/app/utils/mapper/posAccount";
 import { getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { PosMerchantAccountSchema } from "@/app/utils/validationSchema/posMerchantAccountSchema";
@@ -19,13 +20,15 @@ import { Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
 
 const POSMerchantAccount = () => {
     const router = useRouter();
+    type FormData = z.infer<typeof PosMerchantAccountSchema>;
     const { createPosMerchantAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
-    const bvnData = getFromLocalStorage("bvnData");
+    const bvnData = getFromLocalStorage("bvnData") as BvnData | null;
     const [activeStep, setActiveStep] = React.useState(2);
     const [cacFileName, setCacFileName] = React.useState("");
 
@@ -59,7 +62,7 @@ const POSMerchantAccount = () => {
 
     const onSubmit = async (data: FormData) => {
         console.log("I am here")
-        const payload = posAccountMapper(data, bvnData.bvn)
+        const payload = posAccountMapper(data, bvnData!.bvn)
         const apiResponse = await createPosMerchantAccount(payload)
         if (apiResponse.statusCode === 200) {
             setSuccessModal(true)
@@ -293,7 +296,7 @@ const POSMerchantAccount = () => {
                 type="center"
                 cancelIcon={true}
                 title="">
-                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} />
+                <AccountSuccess url="https://ibs.imperialmortgagebank.com/login" accountNumber={accountNumber} accountType="" />
             </Modal>
         </div>
     );

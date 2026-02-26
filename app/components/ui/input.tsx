@@ -15,6 +15,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onFormChange?: (name: string, value: string) => void;
 }
 
+
 const formatAmount = (value: string) => {
   const numeric = value.replace(/[^\d.]/g, "");
   const [intPart, decimal] = numeric.split(".");
@@ -30,6 +31,18 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProp
     const [value, setValue] = React.useState(props.value || "");
     const [showPassword, setShowPassword] = React.useState(false);
 
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //   let newValue = e.target.value;
+    //   if (newValue.length > maxLength) newValue = newValue.slice(0, maxLength);
+
+    //   if (type === "amount") newValue = formatAmount(newValue);
+    //   else if (type === "number") newValue = newValue.replace(/\D/g, "");
+
+    //   setValue(newValue);
+    //   onFormChange?.(name, newValue);
+    //   props.onChange?.(e as any);
+    // };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       let newValue = e.target.value;
       if (newValue.length > maxLength) newValue = newValue.slice(0, maxLength);
@@ -39,7 +52,14 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProp
 
       setValue(newValue);
       onFormChange?.(name, newValue);
-      props.onChange?.(e as any);
+
+      if (type === "textarea") {
+        const textareaOnChange = props.onChange as React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
+        textareaOnChange?.(e as React.ChangeEvent<HTMLTextAreaElement>);
+      } else {
+        const inputOnChange = props.onChange as React.ChangeEventHandler<HTMLInputElement> | undefined;
+        inputOnChange?.(e as React.ChangeEvent<HTMLInputElement>);
+      }
     };
 
     return (
@@ -53,7 +73,6 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProp
         <div className="relative w-full">
           {type === "textarea" ? (
             <textarea
-              {...props}
               ref={ref as React.Ref<HTMLTextAreaElement>}
               name={name}
               value={value}

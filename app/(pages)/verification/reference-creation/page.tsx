@@ -16,15 +16,17 @@ import { Book, User } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import z from "zod";
 
-const AccountReferenceCreation = () => {
+function AccountReferenceCreationContent() {
+     type FormData = z.infer<typeof accountReferenceCreationSchema>;
     const param = useSearchParams();
     const router = useRouter();
     const { loading, accountReferenceCreation } = useApiEndPoints();
     const [successModal, setSuccessModal] = useState(false);
-    const accountNumber = cryptoHelper.decrypt(param.get("acc"));
+    const accountNumber = cryptoHelper.decrypt(param.get("acc")) ??"";
     const accountType = cryptoHelper.decrypt(param.get("accType"));
     const accountName = cryptoHelper.decrypt(param.get("accName"));
 
@@ -214,6 +216,7 @@ const AccountReferenceCreation = () => {
                 title=""
                 isVisible={successModal}
                 type="center"
+                cancelIcon={false}
                 onClose={() => router.replace("/")}>
                 <div className="flex flex-col justify-center items-center">
                     <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />
@@ -240,4 +243,10 @@ const AccountReferenceCreation = () => {
     );
 };
 
-export default AccountReferenceCreation;
+export default function AccountReferenceCreation() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <AccountReferenceCreationContent />
+        </Suspense>
+    );
+}

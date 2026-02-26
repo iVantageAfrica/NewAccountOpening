@@ -1,31 +1,31 @@
-export const directorySignatoryMapper = (userFormData: any, id: string, type: string) => {
-    const formData = new FormData();
-    formData.append("type", type);
-    formData.append("directorySignatoryId", id);
 
-    const optionalFiles = [
-        "signature",
-        "passport",
-        "valid_id",
-        "proof_of_address",
-        "specimen_signature",
-        "partnership_deed",
-        "mode_of_operation",
-        "joint_mandate",
-        "board_approve"
-    ];
 
-    optionalFiles.forEach((field) => {
-        if (userFormData[field] instanceof File) {
-            formData.append(field, userFormData[field]);
-        }
+export const directorySignatoryMapper = <
+  T extends Record<string, File | null>
+>(
+  userFormData: T,
+  id: string,
+  type: string,
+  optionalFilesData?: Record<string, File | null>
+) => {
+  const formData = new FormData();
+  formData.append("type", type);
+  formData.append("directorySignatoryId", id);
+
+  (Object.keys(userFormData) as (keyof T)[]).forEach((key) => {
+    const value = userFormData[key];
+    if (value instanceof File) {
+      formData.append(key as string, value);
+    }
+  });
+
+  if (optionalFilesData) {
+    Object.entries(optionalFilesData).forEach(([key, file]) => {
+      if (file instanceof File) {
+        formData.append(key, file);
+      }
     });
+  }
 
-    Object.entries(userFormData).forEach(([key, value]) => {
-        if (!optionalFiles.includes(key) && value !== undefined && value !== null) {
-            formData.append(key, value);
-        }
-    });
-
-    return formData;
+  return formData;
 };

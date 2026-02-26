@@ -1,7 +1,11 @@
-import { optional, z } from "zod";
+import {  z } from "zod";
 const fileSchema = (label: string) =>
-  z.instanceof(File, { message: `${label}` })
-   .refine(f => f.size > 0, { message: `${label}`  });
+     z
+    .instanceof(File, { message: `${label}` })
+    .nullable()
+    .refine((f) => f !== null && f.size > 0, {
+      message: `${label}`,
+    });
 
 export const currentAccountSchema = z.object({
   mothersMaidenName: z.string().min(1, "Mother's Maiden Name is required").max(100, "Mother's Maiden Name is too long"),

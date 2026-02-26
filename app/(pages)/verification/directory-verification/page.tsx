@@ -9,18 +9,21 @@ import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { directorySchema } from "@/app/utils/validationSchema/directorySchema";
 import { directorySignatoryMapper } from "@/app/utils/mapper/directorySignatoryMapper";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Modal from "@/app/components/ui/modal";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import React from "react";
+import z from "zod";
 
 
-const DirectoryVerification = () => {
+function DirectoryVerificationContent() {
+     type FormData = z.infer<typeof directorySchema>;
     const param = useSearchParams();
      const router = useRouter();
     const { loading, updateDirectorySignatorySubmission } = useApiEndPoints();
     const [successModal, setSuccessModal] = useState(false);
-    const directoryId = cryptoHelper.decrypt(param.get("id"));
+    const directoryId = cryptoHelper.decrypt(param.get("id")) ??"";
     const directoryName = cryptoHelper.decrypt(param.get("na"));
     const businessName = cryptoHelper.decrypt(param.get("buNa"));
 
@@ -31,6 +34,7 @@ const DirectoryVerification = () => {
             signature: null,
             valid_id: null,
             passport: null,
+            
         }
     });
     const onSubmit = async (data: FormData) => {
@@ -115,6 +119,7 @@ const DirectoryVerification = () => {
                     title=""
                     isVisible={successModal}
                     type="center"
+                     cancelIcon={false}
                     onClose={() => router.replace("/")}>
                     <div className="flex flex-col justify-center items-center">
                         <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />
@@ -134,4 +139,11 @@ const DirectoryVerification = () => {
     );
 }
 
-export default DirectoryVerification;
+
+export default function DirectoryVerification() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <DirectoryVerificationContent />
+        </Suspense>
+    );
+}

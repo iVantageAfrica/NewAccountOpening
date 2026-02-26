@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const fileOptional = z.instanceof(File).optional().nullable();
+const fileOptional = z.union([z.instanceof(File), z.null()]).optional();
 
 const baseSchema = z.object({
     referee1Name: z.string().min(1, "Referee 1 Name is required").max(50, "Referee 1 Name is too long"),
@@ -39,32 +39,32 @@ export const buildCompanyDocumentSchema = (accountTypeId: number) =>
         const requiredDocs = ACCOUNT_TYPE_DOCUMENTS[accountTypeId] || [];
 
         requiredDocs.forEach((doc) => {
-            if (!data[doc]) {
+            const key = doc as keyof CompanyDocumentPayload;
+            if (!data[key]) {
                 ctx.addIssue({
-                    path: [doc],
-                   message: `${doc.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} is required`,
+                    path: [key],
+                    message: `${key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} is required`,
                     code: z.ZodIssueCode.custom,
                 });
             }
         });
     });
-
 export type CompanyDocumentPayload = z.infer<typeof baseSchema>;
 
 
 export const ACCOUNT_TYPE_DOCUMENTS: Record<number, string[]> = {
-    1: ["cac", "partnership_deed","board_resolution", "scuml_certificate", "tin"],
+    1: ["cac", "partnership_deed", "board_resolution", "scuml_certificate", "tin"],
     2: ["cac", "property_declaration", "signatory_mandate"],
     3: ["cac", "partnership_deed", "partnership_resolution", "tin"],
     4: ["cac", "constitution", "society_resolution", "principal_list"],
     5: ["cac", "trust_deed", "trustee_resolution", "trustee_list"],
     6: ["cac", "nipc_certificate", "business_permit", "cac_co2", "due_diligence"],
-    7: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form","tin","scuml_certificate"],
+    7: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form", "tin", "scuml_certificate"],
     8: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form"],
-    9: ["cac", "scuml_certificate", "constitution","society_resolution","principal_list"],
-    10: ["cac", "scuml_certificate", "trust_deed", "trustee_resolution","trustee_list"],
-    11: ["nipc_certificate", "business_permit","cac","passport","due_diligence"],
-    12: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form","tin","scuml_certificate"],
+    9: ["cac", "scuml_certificate", "constitution", "society_resolution", "principal_list"],
+    10: ["cac", "scuml_certificate", "trust_deed", "trustee_resolution", "trustee_list"],
+    11: ["nipc_certificate", "business_permit", "cac", "passport", "due_diligence"],
+    12: ["cac", "memart", "cac_co2", "cac_co7", "board_resolution", "declaration_form", "tin", "scuml_certificate"],
 };
 
 export const DOCUMENT_META: Record<
@@ -91,6 +91,6 @@ export const DOCUMENT_META: Record<
     nipc_certificate: { label: "NIPC Certificate", description: "NIPC certificate" },
     business_permit: { label: "Business Permit", description: "Business permit" },
     due_diligence: { label: "Due Diligence", description: "Enhanced due diligence" },
-    scuml_certificate: {label: "SCUML Certificate", description: "SCUML Certificate"},
-    passport: {label: "Passport", description: "Passport"}
+    scuml_certificate: { label: "SCUML Certificate", description: "SCUML Certificate" },
+    passport: { label: "Passport", description: "Passport" }
 };

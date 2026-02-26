@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, ReactNode } from "react";
+import React, { useState, useCallback, ReactNode, useEffect } from "react";
 
 type ToastOptions = {
   id?: number;
@@ -10,14 +10,16 @@ type ToastOptions = {
   leaving?: boolean;
 };
 
-let toastCallback: ((options: Omit<ToastOptions, "id">) => void) | null = null;
+// useRef to hold the latest callback
+const toastCallbackRef = { current: null as null | ((options: Omit<ToastOptions, "id">) => void) };
+
+// Exported toast function
 export const toast = (options: Omit<ToastOptions, "id">) => {
-  toastCallback?.(options);
+  toastCallbackRef.current?.(options);
 };
 
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastOptions[]>([]);
-
   const toastFn = useCallback((options: Omit<ToastOptions, "id">) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, ...options }]);
@@ -35,17 +37,18 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }, 9000);
   }, []);
 
-  toastCallback = toastFn;
+  // Update the ref once after mount
+  useEffect(() => {
+    toastCallbackRef.current = toastFn;
+  }, [toastFn]);
 
   return (
     <>
       {children}
       <div className="fixed top-6 right-5 flex flex-col gap-2 z-50">
         {toasts.map((t) => {
-          // Background & text based on type
           const bgColor = t.type === "success" ? "bg-green-600" : "bg-red-600";
           const textColor = "text-white";
-
           const animationClass = t.leaving ? "animate-slide-out" : "animate-slide-in";
 
           return (

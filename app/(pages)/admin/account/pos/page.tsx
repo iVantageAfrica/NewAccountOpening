@@ -3,6 +3,7 @@ import DashboardStatCard from "@/app/components/ui/dashboardCard";
 import DataTable from "@/app/components/ui/dataTable";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { CustomerCorporateAccount, POSAccountState } from "@/app/utils/Utility/Interfaces";
 import { Eye, UserCheck, UserCog, UserPen, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -10,7 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 const POSAccount = () => {
     const router = useRouter();
     const { posAccountList, posAccountSummary, loading } = useApiEndPoints();
-    const [state, setState] = useState({
+    const [state, setState] = useState<POSAccountState>({
         customerPosAccount: [],
         dashboardSummary: {},
         totalRecords: 0,
@@ -23,7 +24,8 @@ const POSAccount = () => {
 
     const fetchPosAccount = useCallback(
         async (page = 1, search = "", perPage = 10, pageUrl?: string) => {
-            const { data = [], pagination = {} } = await posAccountList(page.toString(), search, perPage.toString(), pageUrl);
+            const perPageNo = typeof perPage === "string" && perPage === "all" ? 0 : perPage;
+            const { data = [], pagination = {} } = await posAccountList(page.toString(), search, perPageNo.toString(), pageUrl);
             setState((prev) => ({
                 ...prev,
                 customerPosAccount: data,
@@ -43,16 +45,19 @@ const POSAccount = () => {
     useEffect(() => {
         (async () => {
             await dashboardSummary();
-            await fetchPosAccount(state.currentPage, state.searchQuery, state.entriesPerPage);
+            const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+            await fetchPosAccount(state.currentPage, state.searchQuery, perPage);
         })();
-    }, [state.currentPage, state.searchQuery, state.entriesPerPage, dashboardSummary, fetchPosAccount]);
+    }, [state.currentPage, state.searchQuery, state.entriesPerPage,state.totalRecords, dashboardSummary, fetchPosAccount]);
 
 
     const handlePageChange = (direction: "next" | "prev") => {
-        if (direction === "next" && state.nextUrl) 
-            fetchPosAccount(undefined, state.searchQuery, state.entriesPerPage, state.nextUrl);
-        if (direction === "prev" && state.prevUrl) 
-            fetchPosAccount(undefined, state.searchQuery, state.entriesPerPage, state.prevUrl);
+         const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
+
+        if (direction === "next" && state.nextUrl)
+            fetchPosAccount(undefined, state.searchQuery, perPage, state.nextUrl);
+        if (direction === "prev" && state.prevUrl)
+            fetchPosAccount(undefined, state.searchQuery, perPage, state.prevUrl);
     };
 
 
@@ -96,8 +101,8 @@ const POSAccount = () => {
                     { key: "status", label: "Status" },
                     { key: "createdAt", label: "DATE" },
                 ]}
-                renderActions={(row: any) => (
-                    <button onClick={() => router.replace('/admin/account/corporate/fetch-corporate/?account=' + btoa(row.accountNumber)+'&type='+btoa('POS Merchant'))}
+                renderActions={(row: CustomerCorporateAccount) => (
+                    <button onClick={() => router.replace('/admin/account/corporate/fetch-corporate/?account=' + btoa(row.accountNumber) + '&type=' + btoa('POS Merchant'))}
                         className="px-3 py-1 hover:bg-primary hover:text-white cursor-pointer rounded text-xs gap-1 flex items-center text-primary border border-primary"
                     >
                         <Eye size={14} /> View
@@ -108,10 +113,10 @@ const POSAccount = () => {
                 entriesPerPage={state.entriesPerPage}
                 onPageChange={handlePageChange}
                 onSearchChange={(query) => {
-                    setState((prev) => ({...prev, searchQuery: query, currentPage:1}));
+                    setState((prev) => ({ ...prev, searchQuery: query, currentPage: 1 }));
                 }}
                 onLengthChange={(length) => {
-                    setState((prev) =>({...prev, entriesPerPage: length, currentPage:1}));
+                    setState((prev) => ({ ...prev, entriesPerPage: length, currentPage: 1 }));
                 }}
             />
         </div>

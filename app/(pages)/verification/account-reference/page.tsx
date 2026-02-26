@@ -6,16 +6,16 @@ import PhoneNumberInput from "@/app/components/ui/phoneNumberInput";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { cryptoHelper } from "@/app/utils/Utility/reUsableFunction";
-import { BankAccountReferencePayload, bankAccountReferenceSchema } from "@/app/utils/validationSchema/bankAccountReferenceSchema";
+import { BankAccountReferenceFormInputs, bankAccountReferenceSchema } from "@/app/utils/validationSchema/bankAccountReferenceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Book, User } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-const AccountReference = () => {
+function AccountReferenceContent() {
     const param = useSearchParams();
     const router = useRouter();
     const { loading, addBankAccountReference } = useApiEndPoints();
@@ -23,7 +23,7 @@ const AccountReference = () => {
     const accountNumber = cryptoHelper.decrypt(param.get("acc"));
     const accountTypeId = cryptoHelper.decrypt(param.get("ty"));
     const accountName = cryptoHelper.decrypt(param.get("acNa"));
-    const { control, handleSubmit, formState: { errors } } = useForm<BankAccountReferencePayload>({
+    const { control, handleSubmit, formState: { errors } } = useForm<BankAccountReferenceFormInputs>({
         resolver: zodResolver(bankAccountReferenceSchema),
         defaultValues: {
             referee1Name: "",
@@ -36,17 +36,30 @@ const AccountReference = () => {
             referee2Phone: "",
         }
     });
-    const onSubmit = async (data: BankAccountReferencePayload) => {
-        const payloadData = ({
+
+    const onSubmit = async (data: BankAccountReferenceFormInputs) => {
+        const payloadData = {
             account_type_id: Number(accountTypeId),
             account_number: accountNumber,
             account_name: accountName,
-            ...data,
-        });
+            referee: [
+                {
+                    name: data.referee1Name,
+                    email_address: data.referee1Email,
+                    mobile_number: data.referee1Mobile,
+                    phone_number: data.referee1Phone ?? null,
+                },
+                {
+                    name: data.referee2Name,
+                    email_address: data.referee2Email,
+                    mobile_number: data.referee2Mobile,
+                    phone_number: data.referee2Phone ?? null,
+                },
+            ],
+        };
+
         const apiResponse = await addBankAccountReference(payloadData);
-        if(apiResponse.statusCode === 200) {
-            setSuccessModal(true)
-        }
+        if (apiResponse.statusCode === 200) setSuccessModal(true);
     };
 
     return (
@@ -99,7 +112,7 @@ const AccountReference = () => {
                                         control={control}
                                         render={({ field }) => (
                                             <Input {...field}
-                                            required
+                                                required
                                                 labelName="Referee 1 Email Address"
                                                 inputError={errors.referee1Email?.message} />
                                         )} />
@@ -108,18 +121,18 @@ const AccountReference = () => {
                                         control={control}
                                         render={({ field }) => (
                                             <PhoneNumberInput {...field}
-                                            required
+                                                required
                                                 labelName="Referee 1 Mobile Number"
                                                 inputError={errors.referee1Mobile?.message} />
                                         )}
                                     />
-                                    </div>
-                                     <div className="px-3 md:px-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                </div>
+                                <div className="px-3 md:px-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                     <Controller name="referee2Name"
                                         control={control}
                                         render={({ field }) => (
                                             <Input {...field}
-                                            required
+                                                required
                                                 labelName="Referee 2 Name"
                                                 inputError={errors.referee2Name?.message} />
                                         )} />
@@ -127,7 +140,7 @@ const AccountReference = () => {
                                         control={control}
                                         render={({ field }) => (
                                             <Input {...field}
-                                            required
+                                                required
                                                 labelName="Referee 2 Email Address"
                                                 inputError={errors.referee2Email?.message} />
                                         )} />
@@ -136,7 +149,7 @@ const AccountReference = () => {
                                         control={control}
                                         render={({ field }) => (
                                             <PhoneNumberInput {...field}
-                                            required
+                                                required
                                                 labelName="Referee 2 Mobile Number"
                                                 inputError={errors.referee2Mobile?.message} />
                                         )}
@@ -153,23 +166,26 @@ const AccountReference = () => {
             </div>
             <Modal size="sm"
                 title=""
-                 isVisible={successModal}
-                 type="center"
-                 onClose={()=>router.replace("/")}>
+                subTitle=""
+                cancelIcon={false}
+                isVisible={successModal}
+                type="center"
+                onClose={() => router.replace("/")}>
                 <div className="flex flex-col justify-center items-center">
                     <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />
                     <p className="text-primary font-bold text-lg md:text-2xl pb-2 pt-6">Reference Submitted!</p>
 
                     <div className="mx-6  flex items-center justify-center flex-col text-center">
                         <p className="text-black/50 md:text-[14px] pb-6">Your account reference has been submitted successfully. The referees you provided will be notified to verify your information. Thank you.</p>
-                     
+
                     </div>
 
-                  
+
                 </div>
             </Modal>
 
-             <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black">
+
+            <footer className="bg-secondary text-center items-center flex flex-col text-xs py-4 gap-2 border-t border-black">
                 <p>Copyright © Imperial Homes Mortgage Bank</p>
                 <p>
                     Licensed by the Central Bank of Nigeria. All deposits are insured by Nigeria Deposit Insurance
@@ -179,5 +195,10 @@ const AccountReference = () => {
         </div>
     );
 };
-
-export default AccountReference;
+export default function AccountReference() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <AccountReferenceContent />
+        </Suspense>
+    );
+}

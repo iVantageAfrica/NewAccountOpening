@@ -4,18 +4,18 @@ import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
 import { downloadIndividualAccountForm } from "@/app/utils/formDownload/individualAccount";
+import { IndividualAccountData } from "@/app/utils/Utility/Interfaces";
 import { cryptoHelper, formatDate } from "@/app/utils/Utility/reUsableFunction";
-import { stat } from "fs";
 import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
-const IndividualAccount = () => {
+function IndividualAccountContent()  {
     const { loading, fetchIndividualAccount } = useApiEndPoints();
     const param = useSearchParams();
     const accountNumber = atob(param.get("account") || "");
     const accountType = atob(param.get("type") || "");
-    const [state, setState] = React.useState({
+    const [state, setState] = React.useState<{ accountInformation: IndividualAccountData }>({
         accountInformation: {}
     })
 
@@ -116,7 +116,7 @@ const IndividualAccount = () => {
                                     <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                                         Bank Account Reference
                                     </div>
-                                    {state.accountInformation?.referee?.length > 0
+                                    {state.accountInformation?.referee?.length && state.accountInformation.referee.length > 0
                                         ?
                                         (
                                             <>
@@ -213,4 +213,12 @@ const IndividualAccount = () => {
     );
 }
 
-export default IndividualAccount;
+
+
+export default function IndividualAccount() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <IndividualAccountContent />
+        </Suspense>
+    );
+}

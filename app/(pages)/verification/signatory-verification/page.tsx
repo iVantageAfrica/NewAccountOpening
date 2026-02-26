@@ -8,19 +8,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { directorySignatoryMapper } from "@/app/utils/mapper/directorySignatoryMapper";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { alwaysRequiredFields, directorySignatorySchema, getSignatoryFields } from "@/app/utils/validationSchema/directorySignatorySchema";
 import Modal from "@/app/components/ui/modal";
 import Image from "next/image";
+import z from "zod";
 
 
-const SignatoryVerification = () => {
+function SignatoryVerificationContent() {
+     type FormData = z.infer<typeof directorySignatorySchema>;
     const param = useSearchParams();
     const router = useRouter();
     const { loading, updateDirectorySignatorySubmission } = useApiEndPoints();
     const [successModal, setSuccessModal] = useState(false);
-    const signatoryId = cryptoHelper.decrypt(param.get("id"));
-    const businessTypeId = cryptoHelper.decrypt(param.get("cmTy"));
+    const signatoryId = cryptoHelper.decrypt(param.get("id")) ?? "";
+    const businessTypeId = cryptoHelper.decrypt(param.get("cmTy")) ?? "";
     const signatoryName = cryptoHelper.decrypt(param.get("na"));
     const businessName = cryptoHelper.decrypt(param.get("buNa"));
     const allFields = getSignatoryFields(businessTypeId);
@@ -67,7 +69,7 @@ const SignatoryVerification = () => {
                             {allFields.map(field => (
                                 <Controller
                                     key={field.name}
-                                    name={field.name}
+                                    name={field.name as keyof FormData}
                                     control={control}
                                     render={({ field: controllerField }) => (
                                         <FileUploadInput
@@ -75,7 +77,7 @@ const SignatoryVerification = () => {
                                             required={alwaysRequiredFields.some(f => f.name === field.name)}
                                             fileType=".pdf,.jpg,.jpeg,.png,.docx"
                                             description={field.description}
-                                            inputError={errors[field.name]?.message}
+                                            inputError={errors[field.name as keyof FormData]?.message}
                                             labelName={field.label}
                                             onFileChange={(file) => controllerField.onChange(file)}
                                         />
@@ -96,6 +98,7 @@ const SignatoryVerification = () => {
                     title=""
                     isVisible={successModal}
                     type="center"
+                    cancelIcon={false}
                     onClose={() => router.replace("/")}>
                     <div className="flex flex-col justify-center items-center">
                         <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />
@@ -114,4 +117,11 @@ const SignatoryVerification = () => {
     );
 }
 
-export default SignatoryVerification;
+
+export default function SignatoryVerification() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <SignatoryVerificationContent />
+        </Suspense>
+    );
+}

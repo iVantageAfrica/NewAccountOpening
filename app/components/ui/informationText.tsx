@@ -3,7 +3,7 @@ import React from "react";
 
 interface InformationTextProps {
     title: string;
-    data: string;
+    data?: string;
     type?: string;
 }
 
@@ -14,7 +14,9 @@ const InformationText: React.FC<InformationTextProps> = ({ title, data, type }) 
         const shortName = name.length > 25 ? name.slice(0, 25) + "..." : name;
         return shortName + (ext || "");
     };
-    const displayData = type === "file" ? formatFileName(data) : data;
+
+
+    const displayData = type === "file" ? formatFileName(data ?? "") : data ?? "Not Yet Submitted";
 
     return (
         <div className="grid">

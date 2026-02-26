@@ -15,10 +15,12 @@ import { Book, User } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import z from "zod";
 
-const AccountReferenceSubmission = () => {
+function AccountReferenceSubmissionContent () {
+     type FormData = z.infer<typeof bankAccountReferenceSubmissionSchema>;
     const param = useSearchParams();
     const router = useRouter();
     const { loading, accountReferenceSubmission } = useApiEndPoints();
@@ -26,7 +28,7 @@ const AccountReferenceSubmission = () => {
     const accountNumber = cryptoHelper.decrypt(param.get("acc"));
     const accountTypeId = cryptoHelper.decrypt(param.get("ty"));
     const accountName = cryptoHelper.decrypt(param.get("acNa"));
-    const referenceId = cryptoHelper.decrypt(param.get("refId"));
+    const referenceId = cryptoHelper.decrypt(param.get("refId")) ?? "";
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(bankAccountReferenceSubmissionSchema),
@@ -183,6 +185,7 @@ const AccountReferenceSubmission = () => {
             <Modal size="sm"
                 title=""
                 isVisible={successModal}
+                cancelIcon={false}
                 type="center"
                 onClose={() => router.replace("/")}>
                 <div className="flex flex-col justify-center items-center">
@@ -210,4 +213,11 @@ const AccountReferenceSubmission = () => {
     );
 };
 
-export default AccountReferenceSubmission;
+
+export default function AccountReferenceSubmission() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+            <AccountReferenceSubmissionContent />
+        </Suspense>
+    );
+}

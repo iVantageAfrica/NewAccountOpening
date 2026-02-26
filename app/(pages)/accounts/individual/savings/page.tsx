@@ -14,6 +14,7 @@ import PrimaryButton from "@/app/components/ui/primaryButton";
 import RadioButton from "@/app/components/ui/radioButton";
 import Select from "@/app/components/ui/selectInput";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { BvnData } from "@/app/utils/Utility/Interfaces";
 import { savingsAccountMapper } from "@/app/utils/mapper/savingAccount";
 import { clearAppState, getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { STATES_AND_LGAS } from "@/app/utils/Utility/stateLocalGovt";
@@ -22,14 +23,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
+import { z } from "zod";
 
 const SavingsAccount = () => {
     useAccountGuard();
+    type FormData = z.infer<typeof savingsAccountSchema>;
     const router = useRouter();
     const { createIndividualAccount, loading } = useApiEndPoints();
     const [successModal, setSuccessModal] = React.useState(false);
     const [accountNumber, setAccountNumber] = React.useState("");
-    const bvnData = getFromLocalStorage("bvnData");
+    const bvnData = getFromLocalStorage("bvnData") as BvnData | null;;
     const [activeStep, setActiveStep] = React.useState(0);
     const [activeAgreementModal, setActiveAgreementModal] =
         React.useState<"indemnity" | "terms" | null>(null);
@@ -39,7 +42,6 @@ const SavingsAccount = () => {
         resolver: zodResolver(savingsAccountSchema),
         defaultValues: {
             mothersMaidenName: "",
-            secondaryPhone: "",
             phoneNumber: "",
             employmentStatus: "",
             employer: "",
@@ -95,7 +97,7 @@ const SavingsAccount = () => {
     const lgaOptions =
         STATES_AND_LGAS.find(s => s.state === selectedState)?.lgas || [];
     const onSubmit = async (data: FormData) => {
-        const payload = savingsAccountMapper(data, bvnData.bvn)
+        const payload = savingsAccountMapper(data, bvnData!.bvn)
         const apiResponse = await createIndividualAccount(payload)
         if (apiResponse.statusCode === 200) {
             setSuccessModal(true)

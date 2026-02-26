@@ -55,7 +55,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
 };
 
 interface AccordionProps {
-  children: React.ReactElement<AccordionItemProps>[];
+  children: React.ReactElement<AccordionItemProps> | React.ReactElement<AccordionItemProps>[]
   onChangeStep?: (step: number) => void;
   activeIndex?: number | null;
 }

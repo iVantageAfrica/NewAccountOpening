@@ -4,7 +4,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatDateTime } from "../Utility/reUsableFunction";
 
-const BRAND_COLOR = [222, 79, 1];
+const BRAND_COLOR: [number, number, number] = [222, 79, 1];
 const BANK_NAME = "Imperial Homes Mortgage Bank Limited";
 const LOGO_PATH = "/images/imperialLogo.png";
 
