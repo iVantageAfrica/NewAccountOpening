@@ -5,6 +5,9 @@ import { ToastProvider } from "./components/toast/useToast";
 export const metadata: Metadata = {
   title: "Account Opening",
   description: "Powered by iVantage",
+  icons: {
+    icon: "/images/imperialLogo.png",
+  }
 };
 
 export default function RootLayout({
