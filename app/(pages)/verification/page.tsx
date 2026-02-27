@@ -361,7 +361,7 @@ function BvnValidationContent(){
                             <>Request new OTP in <span className="text-primary font-bold">{formatTime(timer)}</span></>
                         ) : (
                             <>
-                                Didn't receive the code?{" "}
+                                Didn&apos;t receive the code?{" "}
                                 <span
                                     className="text-primary cursor-pointer font-bold"
                                     onClick={resendOTP}
