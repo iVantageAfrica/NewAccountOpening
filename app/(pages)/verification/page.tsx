@@ -11,9 +11,9 @@ import { accountTypes } from "@/app/index/accountTypes";
 import { bvnDataClean, formatTime, maskEmail, maskPhone, removeFromLocalStorage, saveToLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { CircleCheck, MessageSquareText } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 
-function BvnValidationContent(){
+function BvnValidationContent() {
     const { verifyUserBvn, loading, resendBVNOTPCode, otpVerification } = useApiEndPoints();
     const router = useRouter();
     const param = useSearchParams();
@@ -21,6 +21,7 @@ function BvnValidationContent(){
     const [otp, setOtp] = useState("");
     const accountData = atob(param.get("account") || "");
     const selectedAccount = JSON.parse(accountData);
+    console.log(selectedAccount)
     const selectedAccountRequirements = accountTypes.find((account) => account.id === selectedAccount.id);
     const [consentModal, setConsentModal] = useState(true);
     const [verificationModal, setVerificationModal] = useState(false);
@@ -97,6 +98,12 @@ function BvnValidationContent(){
             router.push(routeMap[routeKey]);
         }
     };
+
+    useEffect(() => {
+        if (selectedAccount?.id === 3 || selectedAccount?.id === 4) {
+            router.push("/");
+        }
+    }, [selectedAccount, router]);
 
 
     return (
@@ -342,7 +349,7 @@ function BvnValidationContent(){
                             Enter Verification Code
                         </p>
                         <p className="text-xs mb-2 text-gray-500  pt-2 text-center mx-10 ">
-                            We've sent a 6-digit code to your registered  email address ending
+                            We&apos;ve sent a 6-digit code to your registered  email address ending
                             in <span className="text-black">{maskEmail(accountInformation.bvnData?.emailAddress || "")} </span>
                             or phone number ending with <span className="text-black">{maskPhone(accountInformation.bvnData?.phoneNumber)} </span>
                         </p>
