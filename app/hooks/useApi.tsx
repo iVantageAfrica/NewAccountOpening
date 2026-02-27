@@ -19,7 +19,7 @@ export function useApi<T = any>() {
       setLoading(true);
       setError(null);
       try {
-        const url = `/api/proxy?endpoint=${encodeURIComponent(endpoint)}`;
+        const url = `/apt/proxy?endpoint=${encodeURIComponent(endpoint)}`;
         const response = await fetch(url, {
           method,
           headers: {

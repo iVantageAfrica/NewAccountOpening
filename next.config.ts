@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
+  // output: "export",
+
   devIndicators: false,
 
   eslint: {
@@ -10,6 +12,6 @@ const nextConfig = {
   experimental: {
     disableDevOverlay: true,
   },
-} as unknown as NextConfig;
+}as unknown as NextConfig;
 
 export default nextConfig;
