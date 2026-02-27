@@ -185,7 +185,7 @@ function AccountReferenceSubmissionContent () {
             <Modal size="sm"
                 title=""
                 isVisible={successModal}
-                cancelIcon={false}
+                cancelIcon={true}
                 type="center"
                 onClose={() => router.replace("/")}>
                 <div className="flex flex-col justify-center items-center">

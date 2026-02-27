@@ -106,11 +106,13 @@ const Modal: React.FC<ModalProps> = ({
           <span className="text-primary font-semibold text-md truncate w-[95%]">
             {title} {subTitle}
           </span>
+            {cancelIcon && (
           <CircleX
             size={16}
             className="cursor-pointer text-primary"
             onClick={onClose}
           />
+              )}
         </div>
 
     

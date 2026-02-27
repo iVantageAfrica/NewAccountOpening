@@ -167,7 +167,7 @@ function AccountReferenceContent() {
             <Modal size="sm"
                 title=""
                 subTitle=""
-                cancelIcon={false}
+                cancelIcon={true}
                 isVisible={successModal}
                 type="center"
                 onClose={() => router.replace("/")}>

@@ -192,7 +192,7 @@ function CompanyDocumentContent () {
 
             <Modal size="sm"
                 title=""
-                cancelIcon={false}
+                cancelIcon={true}
                 isVisible={successModal}
                 type="center"
                 onClose={() => router.replace("/")}>

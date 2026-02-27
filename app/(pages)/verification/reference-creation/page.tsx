@@ -216,7 +216,7 @@ function AccountReferenceCreationContent() {
                 title=""
                 isVisible={successModal}
                 type="center"
-                cancelIcon={false}
+                cancelIcon={true}
                 onClose={() => router.replace("/")}>
                 <div className="flex flex-col justify-center items-center">
                     <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />

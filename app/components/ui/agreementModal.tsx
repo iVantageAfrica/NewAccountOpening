@@ -26,7 +26,7 @@ const AgreementModals: React.FC<AgreementModalsProps> = ({
             onClose={onClose}
             size="md"
             type="side"
-            cancelIcon={false}
+            cancelIcon={true}
             title={activeModal ? titleMap[activeModal] : ""}
         >
             <div>
