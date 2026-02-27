@@ -100,7 +100,7 @@ function BvnValidationContent() {
     };
 
     useEffect(() => {
-        if (selectedAccount?.id === 3 || selectedAccount?.id === 4) {
+        if (selectedAccount?.id === 3) {
             router.push("/");
         }
     }, [selectedAccount, router]);

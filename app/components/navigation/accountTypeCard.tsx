@@ -83,6 +83,7 @@ export default function AccountTypeCard({ accounts }: Props) {
                 </p>
                 {group.map((account) => {
                   const isOpen = openAccountId === account.id || !isMulti;
+                  const isDisabled = account.id === 3
 
                   return (
                     <div key={account.id} className="overflow-hidden">
@@ -146,6 +147,7 @@ export default function AccountTypeCard({ accounts }: Props) {
 
                                   <PrimaryButton
                                     icon={<ArrowRight size={15} />}
+                                    disabled={isDisabled}
                                     onClick={() => continueHandler(account)}
                                   >
                                     Continue
