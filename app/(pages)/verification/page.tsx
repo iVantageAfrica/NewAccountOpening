@@ -21,7 +21,6 @@ function BvnValidationContent() {
     const [otp, setOtp] = useState("");
     const accountData = atob(param.get("account") || "");
     const selectedAccount = JSON.parse(accountData);
-    console.log(selectedAccount)
     const selectedAccountRequirements = accountTypes.find((account) => account.id === selectedAccount.id);
     const [consentModal, setConsentModal] = useState(true);
     const [verificationModal, setVerificationModal] = useState(false);
