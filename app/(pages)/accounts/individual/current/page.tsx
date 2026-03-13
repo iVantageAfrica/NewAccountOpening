@@ -41,6 +41,7 @@ const IndividualAccount = () => {
         defaultValues: {
             mothersMaidenName: "",
             phoneNumber: "",
+            emailAddress: bvnData?.emailAddress,
             employmentStatus: "",
             employer: "",
             maritalStatus: "",
@@ -149,8 +150,18 @@ const IndividualAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
-                                            labelName="Phone Number"
+                                            labelName="CurrentPhone Number"
                                             inputError={errors.phoneNumber?.message} />
+                                    )}
+                                />
+                                    <Controller
+                                    name="emailAddress"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            labelName="Current Email Address"
+                                            required
+                                            inputError={errors.emailAddress?.message} />
                                     )}
                                 />
 

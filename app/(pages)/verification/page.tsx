@@ -66,8 +66,9 @@ function BvnValidationContent() {
     }
 
     const resendOTP = async () => {
-        const userEmailAddress = accountInformation.bvnData.emailAddress;
-        const apiResponse = await resendBVNOTPCode(userEmailAddress)
+        const email = accountInformation.bvnData.emailAddress?.trim();
+        const identifier = email ? email : accountInformation.bvnData.phoneNumber;
+        const apiResponse = await resendBVNOTPCode(identifier)
         if (apiResponse.statusCode === 200) {
             saveToLocalStorage("bearerToken", apiResponse.data)
             startTimer()
@@ -347,10 +348,35 @@ function BvnValidationContent() {
                         <p className="text-[16px] font-bold pt-2 ">
                             Enter Verification Code
                         </p>
-                        <p className="text-xs mb-2 text-gray-500  pt-2 text-center mx-10 ">
-                            We&apos;ve sent a 6-digit code to your registered  email address ending
-                            in <span className="text-black">{maskEmail(accountInformation.bvnData?.emailAddress || "")} </span>
-                            or phone number ending with <span className="text-black">{maskPhone(accountInformation.bvnData?.phoneNumber)} </span>
+            
+                        <p className="text-xs mb-2 text-gray-500 pt-2 text-center mx-10">
+                            {accountInformation.bvnData?.emailAddress?.trim() &&
+                                accountInformation.bvnData?.phoneNumber ? (
+                                <>
+                                    We&apos;ve sent a 6-digit code to your registered email address ending in{" "}
+                                    <span className="text-black">
+                                        {maskEmail(accountInformation.bvnData?.emailAddress)}
+                                    </span>{" "}
+                                    or phone number ending with{" "}
+                                    <span className="text-black">
+                                        {maskPhone(accountInformation.bvnData?.phoneNumber)}
+                                    </span>
+                                </>
+                            ) : accountInformation.bvnData?.emailAddress?.trim() ? (
+                                <>
+                                    We&apos;ve sent a 6-digit code to your registered email address ending in{" "}
+                                    <span className="text-black">
+                                        {maskEmail(accountInformation.bvnData?.emailAddress)}
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    We&apos;ve sent a 6-digit code to your registered phone number ending with{" "}
+                                    <span className="text-black">
+                                        {maskPhone(accountInformation.bvnData?.phoneNumber)}
+                                    </span>
+                                </>
+                            )}
                         </p>
                         <div className="overflow-hidden mb-5 mt-2 mx-1">
                             <OtpInput length={6} onChange={(value) => { setOtp(value) }} />

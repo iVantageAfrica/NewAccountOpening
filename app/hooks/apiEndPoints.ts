@@ -11,8 +11,8 @@ export const useApiEndPoints = () => {
         return response
     }, [request]);
 
-    const resendBVNOTPCode = useCallback(async (email: string) => {
-        const response = await request(`utility/request-otp?emailAddress=${email}&purpose=BVN`)
+    const resendBVNOTPCode = useCallback(async (identifier: string) => {
+        const response = await request(`utility/request-otp?identifier=${identifier}&purpose=BVN`)
         return response
     }, [request])
 

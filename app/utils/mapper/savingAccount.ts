@@ -9,6 +9,7 @@ export const savingsAccountMapper = (userFormData: any, bvn: string) => {
         employment_status: userFormData.employmentStatus,
         employer: userFormData.employer,
         marital_status: userFormData.maritalStatus,
+        email_address: userFormData.emailAddress,
         house_number: userFormData.houseNumber,
         street: userFormData.street,
         city: userFormData.city,

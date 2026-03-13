@@ -6,6 +6,7 @@ export const currentAccountMapper = (userFormData: any, bvn: string) => {
         account_type_id: '1',
         mother_maiden_name: userFormData.mothersMaidenName,
         phone_number: userFormData.phoneNumber,
+        email_address: userFormData.emailAddress,
         employment_status: userFormData.employmentStatus,
         employer: userFormData.employer,
         marital_status: userFormData.maritalStatus,
