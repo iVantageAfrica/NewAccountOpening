@@ -5,7 +5,7 @@ import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import { downloadCorporateAccountForm } from "@/app/utils/formDownload/corporateAccount";
 import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
 import { CorporateAccount } from "@/app/utils/Utility/Interfaces";
-import { formatDate, formatTitle, toCamelCase } from "@/app/utils/Utility/reUsableFunction";
+import { cryptoHelper, formatDate, formatTitle, toCamelCase } from "@/app/utils/Utility/reUsableFunction";
 import { ACCOUNT_TYPE_DOCUMENTS, DOCUMENT_META } from "@/app/utils/validationSchema/companyDocumentSchema";
 import { getSignatoryFields } from "@/app/utils/validationSchema/directorySignatorySchema";
 import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
@@ -27,6 +27,23 @@ function FetchCorporateContent() {
 
     const companyType = accountInformation?.companyTypeId;
     const companyDocuments = accountInformation?.companyDocument || {};
+
+    const copyReferenceLink = async () => {
+            const url = new URL(
+                "/verification/reference-creation",
+                window.location.origin
+            );
+            url.searchParams.set("acc", cryptoHelper.encrypt(accountNumber) ?? "");
+            url.searchParams.set("accType", cryptoHelper.encrypt(accountType) ?? "");
+            url.searchParams.set(
+                "accName",
+                cryptoHelper.encrypt(
+                    `${accountInformation?.companyName ?? ""}`.trim()
+                ) ?? ""
+            );
+            await navigator.clipboard.writeText(url.toString());
+            alert("Reference URL Copied!");
+        };
 
     return (
         <div>
@@ -201,7 +218,7 @@ function FetchCorporateContent() {
                             Bank Account Reference
                         </div>
 
-                        {accountInformation?.referee?.length ? (
+                        {/* {accountInformation?.referee?.length ? (
                             accountInformation.referee.map((ref, index) => (
                                 <div key={index}>
                                     <p className="pl-4 font-bold text-xs py-2">Referee {index + 1}</p>
@@ -221,7 +238,61 @@ function FetchCorporateContent() {
                             ))
                         ) : (
                             <p className="font-bold text-red-500 pl-5">Not Yet Submitted</p>
-                        )}
+                        )} */}
+
+
+                        {accountInformation?.referee?.length && accountInformation.referee.length > 0
+                            ?
+                            (
+                                <>
+                                    <p
+                                        className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
+                                        onClick={copyReferenceLink}
+                                    >
+                                        New Reference Link
+                                    </p>
+
+                                    {accountInformation.referee.map((ref, index) => (
+                                        <div key={index}>
+                                            <p className="pl-4 font-bold text-xs pt-4">
+                                                Referee {index + 1}
+                                            </p>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-y-2 px-4">
+                                                <InformationText title="Name" data={ref?.name} />
+                                                <InformationText title="Mobile" data={ref?.mobileNumber} />
+                                                <InformationText title="Email" data={ref?.emailAddress} />
+                                                <InformationText title="Bank Name" data={ref?.bankName || "Not Yet Submitted"} />
+                                                <InformationText title="Account Name" data={ref?.accountName || "Not Yet Submitted"} />
+                                                <InformationText title="Account Number" data={ref?.accountNumber || "Not Yet Submitted"} />
+                                                <InformationText title="Account Type" data={ref?.accountType || "Not Yet Submitted"} />
+                                                <InformationText title="Known Period" data={ref?.knownPeriod || "Not Yet Submitted"} />
+                                                <InformationText title="Comment" data={ref?.comment || "Not Yet Submitted"} />
+                                                <InformationText
+                                                    title="Signature"
+                                                    data={ref?.signature || "Not Yet Submitted"}
+                                                    type="file"
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            )
+                            : (
+                                <div className="flex justify-between">
+                                    <p className="font-bold text-red-500 pl-5 text-sm">
+                                        Not Yet Submitted
+                                    </p>
+                                    <p
+                                        className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
+                                        onClick={copyReferenceLink}
+                                    >
+                                        New Reference Link
+                                    </p>
+                                </div>
+                            )
+
+                        }
 
                         <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                             Company Documents Submitted
