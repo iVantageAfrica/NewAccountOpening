@@ -55,7 +55,7 @@ export interface AccountInformation {
   accountOfficer?: string;
   nextOfKinAddress?: string;
   referee?: Referee[];
-  documents?: Documents;
+  documents?: Documents[];
   status?: string;
   createdAt?: string;
 }

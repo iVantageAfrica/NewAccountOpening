@@ -10,7 +10,7 @@ import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "luci
 import { useSearchParams } from "next/navigation";
 import React, { Suspense } from "react";
 
-function IndividualAccountContent()  {
+function IndividualAccountContent() {
     const { loading, fetchIndividualAccount } = useApiEndPoints();
     const param = useSearchParams();
     const accountNumber = atob(param.get("account") || "");
@@ -29,22 +29,24 @@ function IndividualAccountContent()  {
         })();
     }, [accountNumber, fetchIndividualAccount]);
 
-    const copyReferenceLink = async () => {
-        const url = new URL(
-            "/verification/reference-creation",
-            window.location.origin
-        );
-        url.searchParams.set("acc", cryptoHelper.encrypt(accountNumber) ?? "");
-        url.searchParams.set("accType", cryptoHelper.encrypt(accountType) ?? "");
-        url.searchParams.set(
-            "accName",
-            cryptoHelper.encrypt(
-                `${state.accountInformation?.lastname ?? ""} ${state.accountInformation?.firstname ?? ""}`.trim()
-            ) ?? ""
-        );
+    const copyLink = async (path: string, successMessage: string) => {
+        const url = new URL(path, window.location.origin);
+
+        const encryptedAcc = cryptoHelper.encrypt(accountNumber) ?? "";
+        const encryptedType = cryptoHelper.encrypt(accountType) ?? "";
+        const encryptedName = cryptoHelper.encrypt(
+            `${state.accountInformation?.lastname ?? ""} ${state.accountInformation?.firstname ?? ""}`.trim()
+        ) ?? "";
+
+        url.searchParams.set("acc", encryptedAcc);
+        url.searchParams.set("accType", encryptedType);
+        url.searchParams.set("accName", encryptedName);
+
         await navigator.clipboard.writeText(url.toString());
-        alert("Reference URL Copied!");
+        alert(successMessage);
     };
+    const copyReferenceLink = () => copyLink("/verification/reference-creation", "Reference URL Copied!");
+    const copyAccountDocumentLink = () => copyLink("/verification/account-document-submission", "Account Document URL Copied!");
 
     return (
         <div>
@@ -176,16 +178,55 @@ function IndividualAccountContent()  {
                         <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                             Documents
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-3">
-                            <InformationText title="Passport" data={state.accountInformation?.documents?.passport || "Not Submitted"} type="file" />
-                            <InformationText title="Valid Id" data={state.accountInformation?.documents?.validId || "Not Submitted"} type="file" />
-                            <InformationText title="Signature" data={state.accountInformation?.documents?.signature || "Not Submitted"} type="file" />
-                            <InformationText title="Utility Bill" data={state.accountInformation?.documents?.utilityBill || "Not Submitted"} type="file" />
-                        </div>
+                        {state.accountInformation?.documents?.length && state.accountInformation.documents.length > 0
+                            ?
+                            (
+                                <>
+                                    <p
+                                        className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
+                                        onClick={copyAccountDocumentLink}
+                                    >
+                                        New Document Link
+                                    </p>
+
+                                    {state.accountInformation.documents.map((ref, index) => (
+                                        <div key={index}>
+                                            <p className="pl-4 font-bold text-xs">
+                                                Document {index + 1} 
+                                            </p>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-2 mb-4">
+                                                <InformationText title="Passport" data={ref?.passport || "Not Submitted"} type="file" />
+                                                <InformationText title="Valid Id" data={ref?.validId || "Not Submitted"} type="file" />
+                                                <InformationText title="Signature" data={ref?.signature || "Not Submitted"} type="file" />
+                                                <InformationText title="Utility Bill" data={ref?.utilityBill || "Not Submitted"} type="file" />
+                                                 <InformationText title="Submitted On" data={ref?.createdAt || "Not Submitted"} type="text" />
+                                                
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            )
+                            : (
+                                <div className="flex justify-between">
+                                    <p className="font-bold text-red-500 pl-5 text-sm">
+                                        Not Yet Submitted
+                                    </p>
+                                    <p
+                                        className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2"
+                                        onClick={copyAccountDocumentLink}
+                                    >
+                                        New Document Link
+                                    </p>
+                                </div>
+                            )
+
+                        }
+  
                     </div>
 
                 </div>
-                <div className="w-full md:w-[30%] order-1 md:order-2 mt-4 md:mt-0">
+                <div className="w-full md:w-[30%] order-1 md:order-2 mt-4 md:mt-0 md:sticky md:top-20 self-start">
                     <p className="bg-primary text-white rounded p-2 font-bold text-center items-center">Actions & Operations</p>
                     <div className="pt-4 ps-3 grid gap-3">
                         <p onClick={() => downloadIndividualAccountForm(state.accountInformation, accountType)} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Download size={15} /> Download Information</p>
@@ -195,7 +236,7 @@ function IndividualAccountContent()  {
                                 lastname: state.accountInformation?.lastname,
                                 middleName: state.accountInformation?.middleName,
                                 email: state.accountInformation?.email,
-                                signature: state.accountInformation?.documents?.signature,
+                                signature: state.accountInformation?.documents?.[0]?.signature,
                                 accountNumber: state.accountInformation?.accountNumber
                             })}
                             className="inline-flex gap-3 cursor-pointer text-sm items-center hover:text-primary"

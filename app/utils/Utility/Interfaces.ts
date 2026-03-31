@@ -186,8 +186,8 @@ export interface IndividualAccountData {
     validId?: string;
     signature?: string;
     utilityBill?: string;
-    [key: string]: string | undefined;
-  };
+    createdAt?: string;
+  }[];
 }
 
 export interface POSAccountState {

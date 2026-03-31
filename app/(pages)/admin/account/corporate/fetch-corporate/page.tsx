@@ -329,7 +329,7 @@ function FetchCorporateContent() {
                     </div>
 
                 </div>
-                <div className="w-full md:w-[30%] order-1 md:order-2 mt-4 md:mt-0">
+                <div className="w-full md:w-[30%] order-1 md:order-2 mt-4 md:mt-0 md:sticky md:top-20 self-start">
                     <p className="bg-primary text-white rounded p-2 font-bold text-center items-center">Actions & Operations</p>
                     <div className="pt-4 ps-3 grid gap-3">
                         <p onClick={() => downloadCorporateAccountForm(accountInformation, accountType)} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Download size={15} /> Download Information</p>         <p

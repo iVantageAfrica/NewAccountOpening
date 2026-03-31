@@ -215,6 +215,11 @@ export const useApiEndPoints = () => {
         return response;
     }, [request]);
 
+    const accountDocumentAddition = useCallback(async (data: any) => {
+        const response = await request("account/account-document-addition", "POST", data);
+        return response;
+    }, [request]);
+
 
     const updateDirectorySignatorySubmission = useCallback(async (data: any) => {
         const response = await request("account/update-directory-signatory-information", "POST", data);
@@ -254,6 +259,7 @@ export const useApiEndPoints = () => {
         corporateAccountSummary,
         corporateAccountList,
         posAccountList,
-        fetchCorporateAccount
+        fetchCorporateAccount,
+        accountDocumentAddition
     }
 }
