@@ -144,6 +144,7 @@ export interface CurrentAccountState {
 
 export interface IndividualAccountData {
   firstname?: string;
+  accountTypeId?: string | number;
   lastname?: string;
   middleName?: string;
   bvn?: string;
@@ -186,6 +187,26 @@ export interface IndividualAccountData {
     validId?: string;
     signature?: string;
     utilityBill?: string;
+    createdAt?: string;
+  }[];
+  accountUpdates?: {
+    motherMaidenName?: string;
+    phoneNumber?: string;
+    emailAddress?: string;
+    employmentStatus?: string;
+    employer?: string;
+    accountOfficer?: string;
+    maritalStatus?: string;
+    houseNumber?: string;
+    street?: string;
+    city?: string;
+    state?: string;
+    origin?: string;
+    lga?: string;
+    nextOfKinName?: string;
+    nextOfKinAddress?: string;
+    nextOfKinPhoneNumber?: string;
+    nextOfKinRelationship?: string;
     createdAt?: string;
   }[];
 }
@@ -279,7 +300,7 @@ export interface CustomerDetails {
   savingsAccountNumber?: string;
   currentAccountNumber?: string;
   corporateAccountNumber?: string;
-  [key: string]: string | number | undefined; 
+  [key: string]: string | number | undefined;
 }
 
 export interface AdminData {

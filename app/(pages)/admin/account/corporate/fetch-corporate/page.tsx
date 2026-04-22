@@ -348,7 +348,7 @@ function FetchCorporateContent() {
                         </p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><View size={15} /> Review Account</p>
                         <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><Ban size={15} /> Deactivate Account </p>
-                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black"><UserLock size={15} /> Activate PND</p>
+                        {/* <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black"><UserLock size={15} /> Activate PND</p> */}
                     </div>
                 </div>
             </div>

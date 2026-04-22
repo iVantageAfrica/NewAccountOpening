@@ -22,7 +22,7 @@ function AccountReferenceContent() {
     const [successModal, setSuccessModal] = useState(false);
     const accountNumber = cryptoHelper.decrypt(param.get("acc"));
     const accountTypeId = cryptoHelper.decrypt(param.get("ty"));
-    const accountName = cryptoHelper.decrypt(param.get("acNa"));
+    const accountName = cryptoHelper.decrypt(param.get("accName"));
     const { control, handleSubmit, formState: { errors } } = useForm<BankAccountReferenceFormInputs>({
         resolver: zodResolver(bankAccountReferenceSchema),
         defaultValues: {

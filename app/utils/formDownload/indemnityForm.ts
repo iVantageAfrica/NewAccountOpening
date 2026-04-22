@@ -14,13 +14,18 @@ interface AccountInformation {
   signature?: string;
   companyName?: string;
   accountNumber?: string;
+  signatureDate?: string;
 }
 
 const loadImageAsBase64 = async (url: string): Promise<string> => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Image fetch failed");
-  }
+  if (url.startsWith("data:")) return url;
+  const fetchUrl = url.startsWith("http")
+    ? `/api/proxy-image?url=${encodeURIComponent(url)}`
+    : url;
+
+  const response = await fetch(fetchUrl);
+
+  if (!response.ok) throw new Error("Image fetch failed");
 
   const blob = await response.blob();
 
@@ -149,26 +154,29 @@ By selecting “I Agree” and proceeding, I/we confirm that:
 
   yPos += 20;
 
-  if (accountInformation.signature) {
-    try {
-      const signatureBase64 = await loadImageAsBase64(
-        accountInformation.signature
-      );
-      doc.text("Signature:", 40, yPos);
-      doc.addImage(signatureBase64, "PNG", 40, yPos + 10, 160, 55);
-      yPos += 70;
-    } catch {
-      doc.text("Signature: Unable to load signature image", 40, yPos + 20);
-      yPos += 40;
-    }
-  } else {
-    doc.text("Signature: Not Submitted", 40, yPos + 20);
-    yPos += 40;
+if (accountInformation.signature) {
+  try {
+    const signatureBase64 = await loadImageAsBase64(accountInformation.signature);
+    doc.text("Signature:", 40, yPos);
+    doc.addImage(signatureBase64, "PNG", 40, yPos + 10, 160, 55);
+    yPos += 70;
+  } catch (error) {
+    console.error("Signature load error:", error);
+    // Draw a placeholder box instead
+    doc.text("Signature:", 40, yPos);
+    doc.setDrawColor(200, 200, 200);
+    doc.rect(40, yPos + 10, 160, 55);
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text("Signature image could not be loaded", 45, yPos + 40);
+    doc.setTextColor(0, 0, 0);
+    yPos += 70;
   }
+}
 
   doc.setFont("times", "normal");
   doc.setFontSize(10);
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, 40, yPos);
+  doc.text(`Date: ${accountInformation.signatureDate || new Date().toLocaleDateString()}`, 40, yPos+=10);
 
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
@@ -178,7 +186,7 @@ By selecting “I Agree” and proceeding, I/we confirm that:
     doc.text(
       `Generated on ${new Date().toLocaleString()}`,
       40,
-      PAGE_HEIGHT - 25
+      PAGE_HEIGHT + 25
     );
   }
 

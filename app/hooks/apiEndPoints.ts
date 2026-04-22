@@ -68,7 +68,7 @@ export const useApiEndPoints = () => {
         return response.data;
     }, [request]);
 
-       const posAccountSummary = useCallback(async () => {
+    const posAccountSummary = useCallback(async () => {
         const response = await request("admin/pos-account-summary");
         return response.data;
     }, [request]);
@@ -158,7 +158,7 @@ export const useApiEndPoints = () => {
         [request]
     )
 
-        const posAccountList = useCallback(
+    const posAccountList = useCallback(
         async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
             let queryParams = "";
             if (pageUrl) {
@@ -229,7 +229,17 @@ export const useApiEndPoints = () => {
     const businessDocumentSubmission = useCallback(async (data: any) => {
         const response = await request("account/submit-corporate-account-document", "POST", data);
         return response;
-    }, [request])
+    }, [request]);
+
+    const individualAccountUpdate = useCallback(async (data: any) => {
+        const response = await request("account/individual-account-update", "POST", data);
+        return response;
+    }, [request]);
+
+    const accountUpdateLink = useCallback(async (data: any) => {
+        const response = await request("admin/account-update-link", "POST", data);
+        return response;
+    }, [request]);
 
 
     return {
@@ -260,6 +270,8 @@ export const useApiEndPoints = () => {
         corporateAccountList,
         posAccountList,
         fetchCorporateAccount,
-        accountDocumentAddition
+        accountDocumentAddition,
+        individualAccountUpdate,
+        accountUpdateLink
     }
 }

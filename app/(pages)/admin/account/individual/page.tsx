@@ -6,12 +6,12 @@ import { downloadIndemnityForm } from "@/app/utils/formDownload/indemnityForm";
 import { downloadIndividualAccountForm } from "@/app/utils/formDownload/individualAccount";
 import { IndividualAccountData } from "@/app/utils/Utility/Interfaces";
 import { cryptoHelper, formatDate } from "@/app/utils/Utility/reUsableFunction";
-import { Ban, BookUser, Clock, Download, File, User, UserLock, View } from "lucide-react";
+import { Ban, BookUser, Clock, Download, File, FilePlusIcon, Mail, User, View } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { Suspense } from "react";
 
 function IndividualAccountContent() {
-    const { loading, fetchIndividualAccount } = useApiEndPoints();
+    const { loading, fetchIndividualAccount, accountUpdateLink } = useApiEndPoints();
     const param = useSearchParams();
     const accountNumber = atob(param.get("account") || "");
     const accountType = atob(param.get("type") || "");
@@ -33,13 +33,13 @@ function IndividualAccountContent() {
         const url = new URL(path, window.location.origin);
 
         const encryptedAcc = cryptoHelper.encrypt(accountNumber) ?? "";
-        const encryptedType = cryptoHelper.encrypt(accountType) ?? "";
+        const encryptedAccountTypeId = cryptoHelper.encrypt(state.accountInformation?.accountTypeId?.toString() ?? "") ?? "";
         const encryptedName = cryptoHelper.encrypt(
             `${state.accountInformation?.lastname ?? ""} ${state.accountInformation?.firstname ?? ""}`.trim()
         ) ?? "";
 
         url.searchParams.set("acc", encryptedAcc);
-        url.searchParams.set("accType", encryptedType);
+        url.searchParams.set("ty", encryptedAccountTypeId);
         url.searchParams.set("accName", encryptedName);
 
         await navigator.clipboard.writeText(url.toString());
@@ -47,6 +47,21 @@ function IndividualAccountContent() {
     };
     const copyReferenceLink = () => copyLink("/verification/reference-creation", "Reference URL Copied!");
     const copyAccountDocumentLink = () => copyLink("/verification/account-document-submission", "Account Document URL Copied!");
+    const copyProfileUpdateLink = () => copyLink("/accounts/update", "Profile Update URL Copied!");
+
+    const sendNotification = async (type: string) => {
+        const payload = {
+            account_number: state.accountInformation?.accountNumber,
+            account_type_id: state.accountInformation?.accountTypeId?.toString(),
+            notification_type: type
+        }
+        const apiResponse = await accountUpdateLink(payload)
+        if (apiResponse.statusCode === 200) {
+            alert(`${type} notification sent successfully!`)
+        } else {
+            alert(`Failed to send ${type} notification., ${apiResponse.message}`)
+        }
+    }
 
     return (
         <div>
@@ -96,7 +111,11 @@ function IndividualAccountContent() {
                         <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
                             Personal Information
                         </div>
+                        <p className="text-xs text-right text-primary font-bold cursor-pointer px-4 pt-2" onClick={copyProfileUpdateLink}>
+                            Profile Update Link
+                        </p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 mt-3">
+
                             <InformationText title="Mother Maiden Name" data={state.accountInformation?.motherMaidenName} />
                             <InformationText title="Current Phone Number" data={state.accountInformation?.mobilePhoneNumber} />
                             <InformationText title="Marital Status" data={state.accountInformation?.maritalStatus} />
@@ -111,6 +130,44 @@ function IndividualAccountContent() {
                             <InformationText title="Next of Kin Address" data={state.accountInformation?.nextOfKinAddress} />
                             <InformationText title="Account Officer" data={state.accountInformation?.accountOfficer} />
                         </div>
+
+                        {(state.accountInformation?.accountUpdates?.length ?? 0) > 0 && (
+                            <>
+                                <div className="bg-gray-100 text-black/70 rounded w-full px-4 py-1 text-sm font-bold mt-8">
+                                    Updated Personal Information
+                                </div>
+
+                                {state.accountInformation?.accountUpdates?.map((update, index) => (
+                                    <div key={index} className="mt-4">
+                                        <div className="text-xs text-gray-500 px-4 mb-2">
+                                            Update {index + 1}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
+
+                                            <InformationText title="Mother Maiden Name" data={update?.motherMaidenName} />
+                                            <InformationText title="Phone Number" data={update?.phoneNumber} />
+                                            <InformationText title="Marital Status" data={update?.maritalStatus} />
+                                            <InformationText title="Employment Status" data={update?.employmentStatus} />
+                                            <InformationText title="Employer" data={update?.employer} />
+                                            <InformationText title="State of Origin" data={update?.origin} />
+                                            <InformationText title="Local Government" data={update?.lga} />
+
+                                            <InformationText
+                                                title="Current House Address"
+                                                data={`${update?.houseNumber || ''} ${update?.street || ''}, ${update?.city || ''}, ${update?.state || ''}`}
+                                            />
+                                            <InformationText title="Next of Kin" data={update?.nextOfKinName} />
+                                            <InformationText title="Next of Kin Relationship" data={update?.nextOfKinRelationship} />
+                                            <InformationText title="Next of Kin Phone" data={update?.nextOfKinPhoneNumber} />
+                                            <InformationText title="Account Officer" data={update?.accountOfficer} />
+                                            <InformationText title="Next of Kin Address" data={update?.nextOfKinAddress} />
+                                            <InformationText title="Submitted On" data={update?.createdAt} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
 
                         {
                             accountType === 'Current' && (
@@ -192,7 +249,7 @@ function IndividualAccountContent() {
                                     {state.accountInformation.documents.map((ref, index) => (
                                         <div key={index}>
                                             <p className="pl-4 font-bold text-xs">
-                                                Document {index + 1} 
+                                                Document {index + 1}
                                             </p>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mt-2 mb-4">
@@ -200,8 +257,8 @@ function IndividualAccountContent() {
                                                 <InformationText title="Valid Id" data={ref?.validId || "Not Submitted"} type="file" />
                                                 <InformationText title="Signature" data={ref?.signature || "Not Submitted"} type="file" />
                                                 <InformationText title="Utility Bill" data={ref?.utilityBill || "Not Submitted"} type="file" />
-                                                 <InformationText title="Submitted On" data={ref?.createdAt || "Not Submitted"} type="text" />
-                                                
+                                                <InformationText title="Submitted On" data={ref?.createdAt || "Not Submitted"} type="text" />
+
                                             </div>
                                         </div>
                                     ))}
@@ -222,7 +279,7 @@ function IndividualAccountContent() {
                             )
 
                         }
-  
+
                     </div>
 
                 </div>
@@ -237,16 +294,17 @@ function IndividualAccountContent() {
                                 middleName: state.accountInformation?.middleName,
                                 email: state.accountInformation?.email,
                                 signature: state.accountInformation?.documents?.[0]?.signature,
-                                accountNumber: state.accountInformation?.accountNumber
+                                accountNumber: state.accountInformation?.accountNumber,
+                                signatureDate: state.accountInformation?.createdAt,
                             })}
                             className="inline-flex gap-3 cursor-pointer text-sm items-center hover:text-primary"
                         >
                             <File size={15} />
                             Download Indemnity Form
                         </p>
-                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><View size={15} /> Review Account</p>
-                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><Ban size={15} /> Deactivate Account </p>
-                        <p className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center text-primary hover:text-black "><UserLock size={15} /> Activate PND</p>
+                        <p onClick={() => sendNotification("Account Update")} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Mail size={15} /> Send Account Update Mail</p>
+                        <p onClick={() => sendNotification("Document Update")} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center  hover:text-primary "><FilePlusIcon size={15} /> Send Document Upload Mail</p>
+                        <p onClick={() => sendNotification("Bank Account Referee Update")} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><User size={15} /> Send Bank Account Referee Mail</p>
                     </div>
                 </div>
             </div>

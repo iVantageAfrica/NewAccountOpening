@@ -1,13 +1,6 @@
 import {  z } from "zod";
-const fileSchema = (label: string) =>
-     z
-    .instanceof(File, { message: `${label}` })
-    .nullable()
-    .refine((f) => f !== null && f.size > 0, {
-      message: `${label}`,
-    });
 
-export const currentAccountSchema = z.object({
+export const accountUpdateSchema = z.object({
   mothersMaidenName: z.string().min(1, "Mother's Maiden Name is required").max(100, "Mother's Maiden Name is too long"),
   phoneNumber: z.string().regex(/^\+?\d{8,15}$/, "Phone number is invalid").optional().or(z.literal("")),
   emailAddress: z.string().email("Invalid email address").min(1, "Email address is required").max(100, "Email address is too long"),
@@ -25,14 +18,6 @@ export const currentAccountSchema = z.object({
   nextOfKinRelationship: z.string().min(1, "Next of Kin Relationship is required").max(50, "Next of Kin Relationship is too long"),
   nextOfKinPhone: z.string().regex(/^\+?\d{8,15}$/, "Next of Kin Phone is invalid"),
   accountOfficer: z.string().max(60, "Account Officer is too long").optional(),
-
-  validId: fileSchema("Valid ID is required"),
-  signature: fileSchema("Signature is required"),
-  utilityBill: fileSchema("Utility Bill is required"),
-  passportPhoto: fileSchema("Passport Photo is required"),
-
-  debitCard: z.boolean(),
-  acceptTerms: z.boolean().refine(val => val, "You must accept the terms and agreement"),
-  indemnityAgreement:z.boolean().refine(val => val, "You must agree to the indemnity agreement")
 });
 
+export type AccountUpdateFormInputs = z.infer<typeof accountUpdateSchema>;

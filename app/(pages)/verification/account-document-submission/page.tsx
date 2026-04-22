@@ -23,7 +23,7 @@ function AccountDocumentSubmissionContent() {
     const { loading, accountDocumentAddition } = useApiEndPoints();
     const [successModal, setSuccessModal] = useState(false);
     const accountNumber = cryptoHelper.decrypt(param.get("acc")) ??"";
-    const accountType = cryptoHelper.decrypt(param.get("accType"));
+    const accountTypeId = cryptoHelper.decrypt(param.get("ty"));
     const accountName = cryptoHelper.decrypt(param.get("accName"));
 
 
@@ -65,7 +65,7 @@ function AccountDocumentSubmissionContent() {
                         <div className="border border-gray-300 rounded-b-lg py-3 px-4 border-t-0">
                             <div className="grid mb-2">
                                 <span className="text-sm md:text-base font-bold opacity-70">Account Type</span>
-                                <span className="text-sm ml-4 -mt-1">{accountType} Account</span>
+                                    <span className="text-sm ml-4 -mt-1">{accountTypeId === '1' ? "Current"  : accountTypeId === '2' ? "Savings" : "Corporate"} Account</span>
                             </div>
                             <div className="grid mb-2">
                                 <span className="text-sm md:text-base font-bold opacity-70">Account Number</span>
