@@ -304,7 +304,11 @@ function IndividualAccountContent() {
                         </p>
                         <p onClick={() => sendNotification("Account Update")} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary"><Mail size={15} /> Send Account Update Mail</p>
                         <p onClick={() => sendNotification("Document Update")} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center  hover:text-primary "><FilePlusIcon size={15} /> Send Document Upload Mail</p>
-                        <p onClick={() => sendNotification("Bank Account Referee Update")} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary "><User size={15} /> Send Bank Account Referee Mail</p>
+                         {
+                            accountType === 'Current' && (
+                            <p onClick={() => sendNotification("Bank Account Referee Update")} className="inline-flex gap-3 cursor-pointer text-sm overflow-none items-center hover:text-primary ">
+                                <User size={15} /> Send Bank Account Referee Mail</p>
+                            )}
                     </div>
                 </div>
             </div>
