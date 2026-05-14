@@ -310,10 +310,10 @@ function AccountUpdateContent() {
                 onClose={() => router.replace("/")}>
                 <div className="flex flex-col justify-center items-center">
                     <Image src="/images/success.png" alt="Imperial Logo" width={90} height={40} />
-                    <p className="text-primary font-bold text-lg md:text-2xl pb-2 pt-6">Reference Submitted!</p>
+                    <p className="text-primary font-bold text-lg md:text-2xl pb-2 pt-6">Account Update Submitted!</p>
 
                     <div className="mx-6  flex items-center justify-center flex-col text-center">
-                        <p className="text-black/50 md:text-[14px] pb-6">Your account reference has been submitted successfully. The referees you provided will be notified to verify your information. Thank you.</p>
+                        <p className="text-black/50 md:text-[14px] pb-6">Your account update has been completed successfully. The referees you provided will be notified to verify your information. Thank you.</p>
 
                     </div>
 
@@ -334,7 +334,7 @@ function AccountUpdateContent() {
 };
 export default function AccountReference() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account reference...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading account update...</div>}>
             <AccountUpdateContent />
         </Suspense>
     );

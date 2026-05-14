@@ -3,6 +3,7 @@ export const currentAccountMapper = (userFormData: any, bvn: string) => {
 
     const fields: Record<string, any> = {
         bvn: bvn,
+        nin: userFormData.nin,
         account_type_id: '1',
         mother_maiden_name: userFormData.mothersMaidenName,
         phone_number: userFormData.phoneNumber,

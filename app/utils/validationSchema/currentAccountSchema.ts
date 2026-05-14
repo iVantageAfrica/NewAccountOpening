@@ -8,6 +8,7 @@ const fileSchema = (label: string) =>
     });
 
 export const currentAccountSchema = z.object({
+  nin: z.string().min(1, "NIN is required").max(20, "NIN is too long"),
   mothersMaidenName: z.string().min(1, "Mother's Maiden Name is required").max(100, "Mother's Maiden Name is too long"),
   phoneNumber: z.string().regex(/^\+?\d{8,15}$/, "Phone number is invalid").optional().or(z.literal("")),
   emailAddress: z.string().email("Invalid email address").min(1, "Email address is required").max(100, "Email address is too long"),

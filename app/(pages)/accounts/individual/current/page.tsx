@@ -39,6 +39,7 @@ const IndividualAccount = () => {
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(currentAccountSchema),
         defaultValues: {
+             nin: bvnData?.nin || "",
             mothersMaidenName: "",
             phoneNumber: "",
             emailAddress: bvnData?.emailAddress,
@@ -136,6 +137,27 @@ const IndividualAccount = () => {
                             </div>
                             <div className="px-3 md:px-6 py-4 md:py-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                 <Controller
+                                    name="nin"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            type="number"
+                                            labelName="National Identification Number (NIN)"
+                                            inputError={errors.nin?.message} />
+                                    )}
+                                />
+                                <Controller
+                                    name="mothersMaidenName"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Input {...field}
+                                            required
+                                            labelName="Mother's Maiden Name"
+                                            inputError={errors.mothersMaidenName?.message} />
+                                    )}
+                                />
+                                <Controller
                                     name="mothersMaidenName"
                                     control={control}
                                     render={({ field }) => (
@@ -154,7 +176,7 @@ const IndividualAccount = () => {
                                             inputError={errors.phoneNumber?.message} />
                                     )}
                                 />
-                                    <Controller
+                                <Controller
                                     name="emailAddress"
                                     control={control}
                                     render={({ field }) => (
