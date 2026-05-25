@@ -181,6 +181,7 @@ export interface IndividualAccountData {
     knownPeriod?: string;
     comment?: string;
     signature?: string;
+    address?: string;
   }[];
   documents?: {
     passport?: string;

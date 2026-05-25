@@ -21,12 +21,12 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
 function AccountReferenceCreationContent() {
-     type FormData = z.infer<typeof accountReferenceCreationSchema>;
+    type FormData = z.infer<typeof accountReferenceCreationSchema>;
     const param = useSearchParams();
     const router = useRouter();
     const { loading, accountReferenceCreation } = useApiEndPoints();
     const [successModal, setSuccessModal] = useState(false);
-    const accountNumber = cryptoHelper.decrypt(param.get("acc")) ??"";
+    const accountNumber = cryptoHelper.decrypt(param.get("acc")) ?? "";
     const accountName = cryptoHelper.decrypt(param.get("accName"));
     const accountTypeId = cryptoHelper.decrypt(param.get("ty"));
 
@@ -42,6 +42,7 @@ function AccountReferenceCreationContent() {
             accountType: "",
             knownPeriod: "",
             comment: "",
+            address: "",
             accountNumber: "",
             signature: null,
         }
@@ -75,7 +76,7 @@ function AccountReferenceCreationContent() {
                         <div className="border border-gray-300 rounded-b-lg py-3 px-4 border-t-0">
                             <div className="grid mb-2">
                                 <span className="text-sm md:text-base font-bold opacity-70">Account Type</span>
-                                    <span className="text-sm ml-4 -mt-1">{accountTypeId === '1' ? "Current"  : accountTypeId === '2' ? "Savings" : "Corporate"} Account</span>
+                                <span className="text-sm ml-4 -mt-1">{accountTypeId === '1' ? "Current" : accountTypeId === '2' ? "Savings" : "Corporate"} Account</span>
                             </div>
                             <div className="grid mb-2">
                                 <span className="text-sm md:text-base font-bold opacity-70">Account Number</span>
@@ -111,6 +112,7 @@ function AccountReferenceCreationContent() {
                                                 labelName="Email Address"
                                                 inputError={errors.email?.message} />
                                         )} />
+
                                     <Controller
                                         name="mobile"
                                         control={control}
@@ -121,6 +123,15 @@ function AccountReferenceCreationContent() {
                                                 inputError={errors.mobile?.message} />
                                         )}
                                     />
+
+                                    <Controller name="address"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Input {...field}
+                                                required
+                                                labelName="Home Address"
+                                                inputError={errors.address?.message} />
+                                        )} />
                                     <Controller name="accountName"
                                         control={control}
                                         render={({ field }) => (
@@ -180,6 +191,9 @@ function AccountReferenceCreationContent() {
                                                 type="text"
                                                 inputError={errors.knownPeriod?.message} />
                                         )} />
+                                       <div>
+
+                                       </div>
                                     <Controller name="comment"
                                         control={control}
                                         render={({ field }) => (

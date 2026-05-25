@@ -19,8 +19,8 @@ import { Suspense, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
-function AccountReferenceSubmissionContent () {
-     type FormData = z.infer<typeof bankAccountReferenceSubmissionSchema>;
+function AccountReferenceSubmissionContent() {
+    type FormData = z.infer<typeof bankAccountReferenceSubmissionSchema>;
     const param = useSearchParams();
     const router = useRouter();
     const { loading, accountReferenceSubmission } = useApiEndPoints();
@@ -39,6 +39,7 @@ function AccountReferenceSubmissionContent () {
             accountNumber: "",
             knownPeriod: "",
             comment: "",
+            address: "",
             signature: null,
         }
     });
@@ -140,6 +141,15 @@ function AccountReferenceSubmissionContent () {
                                                 ]} />
                                         )}
                                     />
+                                    <Controller name="address"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Input {...field}
+                                                required
+                                                labelName="Home Address"
+                                                type="text"
+                                                inputError={errors.address?.message} />
+                                        )} />
                                     <Controller name="knownPeriod"
                                         control={control}
                                         render={({ field }) => (
@@ -149,7 +159,7 @@ function AccountReferenceSubmissionContent () {
                                                 type="text"
                                                 inputError={errors.knownPeriod?.message} />
                                         )} />
-                                    <p></p>
+
                                     <Controller name="comment"
                                         control={control}
                                         render={({ field }) => (
@@ -194,7 +204,7 @@ function AccountReferenceSubmissionContent () {
 
                     <div className="mx-6  flex items-center justify-center flex-col text-center">
                         <p className="text-black/50 md:text-[14px] pb-6"> Your reference information has been submitted successfully. We appreciate
-    your time and support. The bank will review the details provided.</p>
+                            your time and support. The bank will review the details provided.</p>
 
                     </div>
 

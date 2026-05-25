@@ -15,5 +15,6 @@ export const bankAccountReferenceSubmissionSchema = z.object({
     signature: fileSchema("Signature is required"),
     knownPeriod: z.string().min(1, "Known Period is required").max(50, "Known Period is too long"),
     comment: z.string().min(1, "Comment is required").max(1000, "Comment is too long"),
+    address:z.string().min(1, "Address is required").max(200, "Address is too long"),
     accountNumber: z.string().min(1, "Account Number is required").max(10, "Invalid Account Number"),
 })

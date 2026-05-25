@@ -9,6 +9,7 @@ export const referenceSubmissionMapper = (userFormData: any, refereeId: string) 
         account_number: userFormData.accountNumber,
         account_type: userFormData.accountType,
         bank_name: userFormData.bankName,
+        address: userFormData.address,
         known_period: userFormData.knownPeriod,
         comment: userFormData.comment,
     };

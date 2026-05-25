@@ -202,6 +202,8 @@ function IndividualAccountContent() {
                                                             <InformationText title="Account Type" data={ref?.accountType || "Not Yet Submitted"} />
                                                             <InformationText title="Known Period" data={ref?.knownPeriod || "Not Yet Submitted"} />
                                                             <InformationText title="Comment" data={ref?.comment || "Not Yet Submitted"} />
+
+                                                            <InformationText title="Address" data={ref?.address || "Not Yet Submitted"} />
                                                             <InformationText
                                                                 title="Signature"
                                                                 data={ref?.signature || "Not Yet Submitted"}
