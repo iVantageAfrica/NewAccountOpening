@@ -34,7 +34,7 @@ export default function DynamicSignatories({ control, errors }: Props) {
   const fileTypes: Record<string, string> = {
   validId: ".pdf,.jpg,.jpeg,.png",
   signature: "image/png,image/jpeg",
-  utilityBill: ".pdf,.doc,.docx",
+  utilityBill: ".pdf,.doc,.docx,image/jpeg,image/png",
   passportPhoto: "image/jpeg,image/png"
 };
 

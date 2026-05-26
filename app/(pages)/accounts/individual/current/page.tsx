@@ -158,16 +158,6 @@ const IndividualAccount = () => {
                                     )}
                                 />
                                 <Controller
-                                    name="mothersMaidenName"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Input {...field}
-                                            required
-                                            labelName="Mother's Maiden Name"
-                                            inputError={errors.mothersMaidenName?.message} />
-                                    )}
-                                />
-                                <Controller
                                     name="phoneNumber"
                                     control={control}
                                     render={({ field }) => (
@@ -354,7 +344,7 @@ const IndividualAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput
                                             required
-                                            fileType=".pdf,.doc,.docx"
+                                            fileType=".pdf,.doc,.docx,image/jpeg,image/png"
                                             inputError={errors.validId?.message}
                                             description="Upload a copy of your National ID, Driver’s License, or International Passport"
                                             {...field} labelName="Valid ID Document" onFileChange={(file) => field.onChange(file)} />
@@ -378,7 +368,7 @@ const IndividualAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
-                                            fileType=".pdf,.doc,.docx"
+                                            fileType=".pdf,.doc,.docx,image/jpeg,image/png"
                                             inputError={errors.utilityBill?.message}
                                             description="Upload a copy of your LAWMA Bill, or Task Force or Electricity Receipt"
                                             labelName="Utility Bill" onFileChange={(file) => field.onChange(file)} />

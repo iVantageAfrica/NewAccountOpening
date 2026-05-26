@@ -346,7 +346,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput
                                             required
-                                            fileType=".pdf,.doc,.docx"
+                                            fileType=".pdf,.doc,.docx,image/jpeg,image/png"
                                             inputError={errors.validId?.message}
                                             description="Upload a copy of your National ID, Driver’s License, or International Passport"
                                             {...field} labelName="Valid ID Document" onFileChange={(file) => field.onChange(file)} />
@@ -370,7 +370,7 @@ const SavingsAccount = () => {
                                     render={({ field }) => (
                                         <FileUploadInput {...field}
                                             required
-                                            fileType=".pdf,.doc,.docx"
+                                            fileType=".pdf,.doc,.docx,image/jpeg,image/png"
                                             inputError={errors.utilityBill?.message}
                                             description="Upload a copy of your LAWMA Bill, or Task Force or Electricity Receipt"
                                             labelName="Utility Bill" onFileChange={(file) => field.onChange(file)} />
