@@ -38,7 +38,7 @@ interface Documents {
 
 export interface AccountInformation {
   accountNumber?: string;
-  accountTypeId?: number;
+  accountTypeId?: string | number;
   firstname?: string;
   middleName?: string;
   lastname?: string;
