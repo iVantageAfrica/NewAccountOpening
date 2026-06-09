@@ -12,7 +12,7 @@ const BANK_NAME = "Imperial Homes Mortgage Bank Limited";
 const LOGO_PATH = "/images/imperialLogo.png";
 
 /* ─────────────────────────────────────────
-   TYPES  (extend as needed)
+   TYPES
 ───────────────────────────────────────── */
 interface Referee {
   name?: string;
@@ -78,7 +78,7 @@ export interface AccountInformation {
 }
 
 /* ─────────────────────────────────────────
-   IMAGE HELPER  (same as indemnity form)
+   IMAGE HELPER
 ───────────────────────────────────────── */
 const loadImageAsBase64 = async (url: string): Promise<string> => {
   if (!url) throw new Error("No URL");
@@ -101,10 +101,24 @@ const loadImageAsBase64 = async (url: string): Promise<string> => {
 };
 
 /* ─────────────────────────────────────────
+   FILE TYPE HELPER
+───────────────────────────────────────── */
+function getFileType(url: string): "image" | "pdf" | "office" | "other" {
+  const clean = url.split("?")[0].toLowerCase();
+  if (/\.(jpg|jpeg|png|gif|webp|bmp)$/.test(clean)) return "image";
+  if (clean.endsWith(".pdf")) return "pdf";
+  if (/\.(doc|docx|xls|xlsx|ppt|pptx)$/.test(clean)) return "office";
+  // also check data URIs
+  if (url.startsWith("data:image/")) return "image";
+  if (url.startsWith("data:application/pdf")) return "pdf";
+  return "other";
+}
+
+/* ─────────────────────────────────────────
    DRAWING HELPERS
 ───────────────────────────────────────── */
 
-/** Orange section header bar (like <tr class="section-title"> in the PHP) */
+/** Orange section header bar */
 function drawSectionHeader(doc: jsPDF, label: string, y: number, pageWidth: number) {
   doc.setFillColor(...BRAND_COLOR);
   doc.rect(40, y, pageWidth - 80, 18, "F");
@@ -128,7 +142,6 @@ function drawRow(
 ) {
   const colW = (pageWidth - 80) / 2;
 
-  // borders
   doc.setDrawColor(0, 0, 0);
   doc.setLineWidth(0.3);
   doc.rect(40, y, colW, rowHeight);
@@ -139,7 +152,6 @@ function drawRow(
   doc.text(key, 44, y + 12);
 
   doc.setFont("helvetica", "normal");
-  // truncate long values so they don't overflow
   const maxWidth = colW - 8;
   const safeValue = doc.splitTextToSize(value || "-", maxWidth)[0] ?? "-";
   doc.text(safeValue, 44 + colW, y + 12);
@@ -158,7 +170,7 @@ function checkPageBreak(doc: jsPDF, y: number, needed = 30): number {
 }
 
 /* ─────────────────────────────────────────
-   FULL-PAGE HEADER  (repeated on page 1)
+   FULL-PAGE HEADER
 ───────────────────────────────────────── */
 async function drawPageHeader(
   doc: jsPDF,
@@ -166,11 +178,9 @@ async function drawPageHeader(
   accountInfo: AccountInformation,
   pageWidth: number
 ): Promise<number> {
-  // Orange bar
   doc.setFillColor(...BRAND_COLOR);
   doc.rect(0, 0, pageWidth, 72, "F");
 
-  // Logo
   try {
     const logoB64 = await loadImageAsBase64(LOGO_PATH);
     doc.addImage(logoB64, "PNG", 40, 14, 42, 42);
@@ -178,7 +188,6 @@ async function drawPageHeader(
     // silently skip if logo fails
   }
 
-  // Bank name & subtitle
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(15);
@@ -189,7 +198,6 @@ async function drawPageHeader(
 
   doc.setTextColor(0, 0, 0);
 
-  // Meta row (Account Type / Status / Date) — no-border table style
   let y = 85;
   doc.setFontSize(9);
   doc.setFont("helvetica", "bold");
@@ -223,21 +231,22 @@ async function drawCustomerCard(
   const passportX = pageWidth - 40 - passportSize;
   const cardStartY = y;
 
-  // Section header
   y = drawSectionHeader(doc, "Customer Information", y, pageWidth);
 
-  const colW = (pageWidth - 80) / 2;
   const rowH = 18;
 
-  // Row 1: First / Last / Middle | passport (rowspan 3)
   const rows = [
     [
       ["Firstname:", accountInfo.firstname || "-"],
       ["Lastname:", accountInfo.lastname || "-"],
     ],
     [
+      ["Middlename:", accountInfo.middleName || "-"],
       ["Account No: ", accountInfo.accountNumber || "-"],
-      ["BVN:", accountInfo.bvn || "-"],
+    ],
+    [
+       ["BVN:", accountInfo.bvn || "-"],
+      ["NIN:", accountInfo.nin || "-"],
     ],
     [
       ["Gender:", accountInfo.gender || "-"],
@@ -249,61 +258,44 @@ async function drawCustomerCard(
     ],
   ];
 
-rows.forEach(([left, right]) => {
-  const narrowW = passportX - 40 - 10;
-  const halfW = narrowW / 2;
+  rows.forEach(([left, right]) => {
+    const narrowW = passportX - 40 - 10;
+    const halfW = narrowW / 2;
 
-  // LEFT CELL
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.3);
-  doc.rect(40, y, halfW, rowH);
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.3);
+    doc.rect(40, y, halfW, rowH);
+    doc.rect(40 + halfW, y, halfW, rowH);
 
-  // RIGHT CELL
-  doc.rect(40 + halfW, y, halfW, rowH);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text(left[0], 46, y + 12);
 
-  // LEFT LABEL
-  doc.setFontSize(9);
-  doc.setFont("helvetica", "bold");
-  doc.text(left[0], 46, y + 12);
+    doc.setFont("helvetica", "normal");
+    const leftValueX = 46 + doc.getTextWidth(left[0]) + 4;
+    const leftValue = doc.splitTextToSize(
+      left[1] || "-",
+      halfW - doc.getTextWidth(left[0]) - 12
+    )[0];
+    doc.text(leftValue, leftValueX, y + 12);
 
-  // LEFT VALUE
-  doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "bold");
+    const rightCellX = 40 + halfW + 6;
+    doc.text(right[0], rightCellX, y + 12);
 
-  const leftValueX =
-    46 + doc.getTextWidth(left[0]) + 4;
+    doc.setFont("helvetica", "normal");
+    const rightValueX = rightCellX + doc.getTextWidth(right[0]) + 4;
+    const rightValue = doc.splitTextToSize(
+      right[1] || "-",
+      halfW - doc.getTextWidth(right[0]) - 12
+    )[0];
+    doc.text(rightValue, rightValueX, y + 12);
 
-  const leftValue = doc.splitTextToSize(
-    left[1] || "-",
-    halfW - doc.getTextWidth(left[0]) - 12
-  )[0];
+    y += rowH;
+  });
 
-  doc.text(leftValue, leftValueX, y + 12);
-
-  // RIGHT LABEL
-  doc.setFont("helvetica", "bold");
-
-  const rightCellX = 40 + halfW + 6;
-
-  doc.text(right[0], rightCellX, y + 12);
-
-  // RIGHT VALUE
-  doc.setFont("helvetica", "normal");
-
-  const rightValueX =
-    rightCellX + doc.getTextWidth(right[0]) + 4;
-
-  const rightValue = doc.splitTextToSize(
-    right[1] || "-",
-    halfW - doc.getTextWidth(right[0]) - 12
-  )[0];
-
-  doc.text(rightValue, rightValueX, y + 12);
-
-  y += rowH;
-});
-
-  // Passport box (right side, spans multiple rows)
-  const passportY = cardStartY + 18 + 2; // start just below section header
+  // Passport box
+  const passportY = cardStartY + 18 + 2;
   doc.setDrawColor(0, 0, 0);
   doc.setLineWidth(0.3);
   doc.rect(passportX, passportY, passportSize, passportSize + 10);
@@ -353,7 +345,7 @@ function drawSection(
 }
 
 /* ─────────────────────────────────────────
-   DOCUMENT IMAGE PAGE
+   DOCUMENT IMAGE / LINK PAGE  (updated)
 ───────────────────────────────────────── */
 async function drawDocumentPage(
   doc: jsPDF,
@@ -363,50 +355,98 @@ async function drawDocumentPage(
   pageHeight: number
 ) {
   doc.addPage();
-
   drawSectionHeader(doc, title, 40, pageWidth);
 
+  // ── No document submitted ──
   if (!url) {
     doc.setFontSize(10);
-    doc.text(`${title} not available`, 40, 90);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`${title} was not submitted.`, 40, 90);
+    doc.setTextColor(0, 0, 0);
     return;
   }
 
-  try {
-    const imgB64 = await loadImageAsBase64(url);
-    const imgType = imgB64.startsWith("data:image/png")
-      ? "PNG"
-      : "JPEG";
+  const fileType = getFileType(url);
 
-    const imageWidth = pageWidth * 0.9;
-    const imageHeight = pageHeight * 0.5;
-    const x = (pageWidth - imageWidth) / 2;
-    const y = 90;
-    doc.setDrawColor(180, 180, 180);
-    doc.setLineWidth(0.5);
-    doc.rect(x, y, imageWidth, imageHeight);
-
-    // image
-    doc.addImage(
-      imgB64,
-      imgType,
-      x,
-      y,
-      imageWidth,
-      imageHeight
-    );
-  } catch {
-    doc.setFontSize(10);
-    doc.setTextColor(150);
-
-    doc.text(
-      "Image could not be loaded.",
-      40,
-      90
-    );
-
-    doc.setTextColor(0, 0, 0);
+  // ── Renderable image ──
+  if (fileType === "image") {
+    try {
+      const imgB64 = await loadImageAsBase64(url);
+      const imgType = imgB64.startsWith("data:image/png") ? "PNG" : "JPEG";
+      const imageWidth = pageWidth * 0.9;
+      const imageHeight = pageHeight * 0.5;
+      const x = (pageWidth - imageWidth) / 2;
+      const y = 90;
+      doc.setDrawColor(180, 180, 180);
+      doc.setLineWidth(0.5);
+      doc.rect(x, y, imageWidth, imageHeight);
+      doc.addImage(imgB64, imgType, x, y, imageWidth, imageHeight);
+      return;
+    } catch {
+      // fall through to link fallback below
+    }
   }
+
+  // ── Non-image file (PDF / Office / unknown) OR image load failed ──
+  // Draw a styled link box so the admin can click through
+  const boxX = 40;
+  const boxY = 80;
+  const boxW = pageWidth - 80;
+  const boxH = 110;
+
+  // Light orange tinted background
+  doc.setFillColor(255, 243, 237);
+  doc.setDrawColor(...BRAND_COLOR);
+  doc.setLineWidth(0.8);
+  doc.roundedRect(boxX, boxY, boxW, boxH, 6, 6, "FD");
+
+  // Icon label
+  const icon =
+    fileType === "pdf"
+      ? "PDF Document"
+      : fileType === "office"
+        ? "Office Document"
+        : "Attached Document";
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...BRAND_COLOR);
+  doc.text(icon, boxX + 14, boxY + 24);
+
+  // Instruction
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(80, 80, 80);
+  doc.text(
+    "This document cannot be previewed inline. Click the link below to open it:",
+    boxX + 14,
+    boxY + 42
+  );
+
+  // Clickable URL (jsPDF link annotation)
+  const displayUrl = url.length > 80 ? url.slice(0, 77) + "..." : url;
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...BRAND_COLOR);
+  doc.textWithLink(displayUrl, boxX + 14, boxY + 62, { url });
+
+  // Underline the link manually
+  const linkTextWidth = doc.getTextWidth(displayUrl);
+  doc.setDrawColor(...BRAND_COLOR);
+  doc.setLineWidth(0.4);
+  doc.line(boxX + 14, boxY + 64, boxX + 14 + linkTextWidth, boxY + 64);
+
+  // Copy-hint note
+  doc.setFontSize(8);
+  doc.setTextColor(130, 130, 130);
+  doc.text(
+    "If the link is not clickable, copy the URL above into your browser.",
+    boxX + 14,
+    boxY + 82
+  );
+
+  doc.setTextColor(0, 0, 0);
+  doc.setFont("helvetica", "normal");
 }
 
 /* ─────────────────────────────────────────

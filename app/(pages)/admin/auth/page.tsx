@@ -2,7 +2,7 @@
 import Input from "@/app/components/ui/input";
 import PrimaryButton from "@/app/components/ui/primaryButton";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
-import { LoginMapper } from "@/app/utils/mapper/login";
+import { LoginMapper } from "@/app/utils/mapper/authentication";
 import { saveToLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { loginSchema, type LoginSchema } from "@/app/utils/validationSchema/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,6 +42,7 @@ const Authenticate = () => {
                         </div>
                         <div className="grid">
                             <h1 className="text-lg md:text-xl font-bold ">Account Opening</h1>
+                             <p className="text-xs">Administrative Section</p>
                         </div>
                     </div>
                 </div>
@@ -73,7 +74,7 @@ const Authenticate = () => {
                         </div>
 
                         <div className="justify-end pt-4 flex">
-                            <span className="text-black text-xs opacity-70 hover:cursor-pointer hover:opacity-100">
+                            <span className="text-black text-xs opacity-70 hover:cursor-pointer hover:opacity-100" onClick={()=>router.push("auth/forgot-password")}>
                                 Forgot Password?
                             </span>
                         </div>

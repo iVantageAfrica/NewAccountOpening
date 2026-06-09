@@ -241,6 +241,15 @@ export const useApiEndPoints = () => {
         return response;
     }, [request]);
 
+    const adminForgotPassword = useCallback(async (identifier: string) => {
+        const response = await request(`utility/reset-admin-password?emailAddress=${identifier}`)
+        return response
+    }, [request])
+
+    const adminUpdatePassword = useCallback(async (data: any) => {
+        const response = await request("utility/update-admin-password", "POST", data);
+        return response;
+    }, [request]);
 
     return {
         loading,
@@ -272,6 +281,8 @@ export const useApiEndPoints = () => {
         fetchCorporateAccount,
         accountDocumentAddition,
         individualAccountUpdate,
-        accountUpdateLink
+        accountUpdateLink,
+        adminForgotPassword,
+        adminUpdatePassword
     }
 }
