@@ -43,7 +43,7 @@ const SavingsAccount = () => {
         defaultValues: {
             nin: bvnData?.nin || "",
             mothersMaidenName: "",
-            phoneNumber: "",
+            phoneNumber: bvnData?.phoneNumber,
             emailAddress: bvnData?.emailAddress,
             employmentStatus: "",
             employer: "",
@@ -163,6 +163,7 @@ const SavingsAccount = () => {
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneNumberInput {...field}
+                                            required
                                             labelName="Current Phone Number"
                                             inputError={errors.phoneNumber?.message} />
                                     )}
