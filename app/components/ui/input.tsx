@@ -77,6 +77,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProp
               name={name}
               value={value}
               rows={rows}
+              placeholder={props.placeholder}
               onChange={handleChange}
               className={`w-full px-4 py-2 border border-gray-300 rounded text-sm text-black placeholder:text-xs focus:outline-none focus:border-primary ${className || ""}`}
             />

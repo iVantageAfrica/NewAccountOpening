@@ -33,6 +33,7 @@ export function useApi<T = any>() {
               : JSON.stringify(body),
         });
 
+        console.log("API Response:", response);
         const data = await response.json().catch(() => null);
 
         if (!response.ok || data?.statusCode !== 200) {

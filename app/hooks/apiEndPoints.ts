@@ -53,6 +53,11 @@ export const useApiEndPoints = () => {
         return response.data
     }, [request]);
 
+    const portalReferenceSummary = useCallback(async () => {
+        const response = await request("admin/portal-reference-summary")
+        return response.data
+    }, [request]);
+
     const savingsAccountSummary = useCallback(async () => {
         const response = await request("admin/savings-account-summary");
         return response.data;
@@ -137,6 +142,27 @@ export const useApiEndPoints = () => {
         [request]
     )
 
+        const portalReferenceList = useCallback(
+        async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
+            let queryParams = "";
+            if (pageUrl) {
+                const match = pageUrl.match(/[?&]page=(\d+)/);
+                if (match) page = match[1];
+            }
+
+            if (Number(page) > 1) {
+                queryParams = `?page=${page}${search ? `&search=${search}` : ""}`;
+            } else if (dataLength === 'all' || Number(dataLength) > 10) {
+                queryParams = `?dataLength=${dataLength}${search ? `&search=${search}` : ""}`;
+            } else if (search) {
+                queryParams = `?search=${search}`;
+            }
+            const response = await request(`admin/portal-reference-list${queryParams}`, "GET");
+            return response.data
+        },
+        [request]
+    )
+
     const corporateAccountList = useCallback(
         async (page?: string, search?: string, dataLength?: string, pageUrl?: string) => {
             let queryParams = "";
@@ -206,6 +232,11 @@ export const useApiEndPoints = () => {
 
     const accountReferenceSubmission = useCallback(async (data: any) => {
         const response = await request("account/update-bank-account-reference", "POST", data);
+        return response;
+    }, [request]);
+
+    const accountReferenceExtendedSubmission = useCallback(async (data: any) => {
+        const response = await request("account/create-extended-bank-account-reference", "POST", data);
         return response;
     }, [request]);
 
@@ -283,6 +314,9 @@ export const useApiEndPoints = () => {
         individualAccountUpdate,
         accountUpdateLink,
         adminForgotPassword,
-        adminUpdatePassword
+        adminUpdatePassword,
+        accountReferenceExtendedSubmission,
+        portalReferenceSummary,
+        portalReferenceList
     }
 }

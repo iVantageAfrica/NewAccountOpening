@@ -37,13 +37,19 @@ export interface Referee {
   name?: string;
   mobileNumber?: string;
   emailAddress?: string;
+  phoneNumber?: string;
   bankName?: string;
   accountName?: string;
   accountNumber?: string;
   accountType?: string;
   knownPeriod?: string;
   comment?: string;
+  address?: string;
   signature?: string;
+  accountHolderName?: string;
+  accountHolderNumber?: string;
+  accountHolderEmail?: string;
+  createdAt?: string;
 }
 
 export interface CompanyDocuments {
@@ -93,6 +99,10 @@ export interface DashboardSummary {
   approvedAccount?: string;
   awaitingAccount?: string;
   pendingAccount?: string;
+  totalReference?: string;
+  todayReference?: string;
+  weeklyReference?: string;
+  monthlyReference?: string;
 }
 
 export interface CorporateAccountState {
@@ -287,6 +297,19 @@ export interface CustomerAccountState {
   prevUrl: string | null;
   customerDetails: CustomerDetails;
   customerDetailModal: boolean;
+}
+
+export interface RefereeAccountState {
+  referenceList: [];
+  summary: DashboardSummary;
+  totalRecords: number;
+  currentPage: number;
+  entriesPerPage: number | "all";
+  searchQuery: string;
+  nextUrl: string | null;
+  prevUrl: string | null;
+  referenceDetails: Referee;
+  referenceDetailModal: boolean;
 }
 
 export interface CustomerDetails {
