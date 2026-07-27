@@ -33,8 +33,8 @@ export const Navigation = [
   },
 
   {
-    title: "Portal Reference",
-    path: "/admin/portal-reference",
+    title: "Reference Portal",
+    path: "/admin/reference-portal",
     icon: Link,
   },
   {
