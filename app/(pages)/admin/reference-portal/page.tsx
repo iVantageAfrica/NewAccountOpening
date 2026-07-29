@@ -5,8 +5,9 @@ import InformationText from "@/app/components/ui/informationText";
 import Modal from "@/app/components/ui/modal";
 import Spinner from "@/app/components/ui/spinner";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
+import { downloadReferenceForm } from "@/app/utils/formDownload/referenceForm";
 import { CustomerCurrentAccount, RefereeAccountState } from "@/app/utils/Utility/Interfaces";
-import { Eye, UserCheck, UserCog, UserPen, Users } from "lucide-react";
+import { Download, Eye, UserCheck, UserCog, UserPen, Users } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
@@ -171,12 +172,20 @@ const PortalReference = () => {
                     ))}
                     <div className="grid  w-full mb-2">
                         {state.referenceDetails?.signature && (
-                                   <InformationText
-                                                                title="Signature"
-                                                                data={state.referenceDetails?.signature || "Not Yet Submitted"}
-                                                                type="file"
-                                                            />
+                            <InformationText
+                                title="Signature"
+                                data={state.referenceDetails?.signature || "Not Yet Submitted"}
+                                type="file"
+                            />
                         )}
+                    </div>
+                    <div className="flex justify-end pb-2">
+                        <button
+                            onClick={() => downloadReferenceForm(state.referenceDetails)}
+                            className="inline-flex gap-2 cursor-pointer text-sm items-center text-white mt-4 bg-primary hover:underline px-4 py-2"
+                        >
+                            <Download size={14} /> Download Information
+                        </button>
                     </div>
                 </div>
 
