@@ -7,7 +7,7 @@ export const referencePortalMapper = (userFormData: any) => {
         user_account_number: userFormData.accountHolderNumber,
         account_holder_number: userFormData.accountHolderNumber,
         account_holder_name: userFormData.accountHolderName,
-        account_holder_email: userFormData.accountEmailAddress,
+        account_holder_email: userFormData.accountHolderEmailAddress,
         name: userFormData.name,
         email_address: userFormData.email,
         mobile_number: userFormData.mobile,
