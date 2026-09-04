@@ -1,7 +1,7 @@
 "use client";
 import { Navigation } from "@/app/components/adminLayout/navigation";
 import { SideBarProps } from "@/app/utils/Utility/Interfaces";
-import { clearAppState } from "@/app/utils/Utility/reUsableFunction";
+import { clearAppState, getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 import { ArrowLeftRight,LogOut, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,6 +11,15 @@ import React from "react";
 const SideBar:React.FC<SideBarProps>  = ({ collapsed, setIsCollapsed, mobileOpen, setMobileOpen }) => {
     const pathname = usePathname();
     const router = useRouter();
+    const adminData = getFromLocalStorage("adminDetails") as Record<string, any> | null;
+    const isSuperAdmin = adminData?.role === "Super Admin" || adminData?.is_super_admin === true;
+    const isComplianceOfficer = adminData?.role === "Compliance Officer";
+
+    const visibleNavigation = Navigation.filter(
+        (item) => (item.superAdminOnly ? isSuperAdmin : true)
+            && (item.complianceOfficerOnly ? (isSuperAdmin || isComplianceOfficer) : true)
+    );
+
     const logOut = () =>{
         clearAppState();
         router.replace("/admin/auth")
@@ -47,7 +56,7 @@ const SideBar:React.FC<SideBarProps>  = ({ collapsed, setIsCollapsed, mobileOpen
 
 
                 <div className="mt-8 space-y-3 px-4">
-                    {Navigation.map((item, index) => {
+                    {visibleNavigation.map((item, index) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.path;
 

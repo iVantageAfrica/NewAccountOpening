@@ -4,14 +4,18 @@ import DataTable from "@/app/components/ui/dataTable";
 import { useApiEndPoints } from "@/app/hooks/apiEndPoints";
 import Spinner from "@/app/components/ui/spinner";
 import DashboardStatCard from "@/app/components/ui/dashboardCard";
-import { User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import Modal from "@/app/components/ui/modal";
 import { useRouter } from "next/navigation";
-import { CustomerAccountState } from "@/app/utils/Utility/Interfaces";
+import { ComplianceReviewSummary, CustomerAccountState } from "@/app/utils/Utility/Interfaces";
+import { getFromLocalStorage } from "@/app/utils/Utility/reUsableFunction";
 
 const CustomerAccount = () => {
   const router = useRouter();
-  const { listAllCustomer, loading, customerSummaryList } = useApiEndPoints();
+  const { listAllCustomer, loading, customerSummaryList, complianceReviewSummary } = useApiEndPoints();
+  const [complianceSummary, setComplianceSummary] = useState<ComplianceReviewSummary | null>(null);
+  const adminData = getFromLocalStorage("adminDetails") as Record<string, any> | null;
+  const canReviewForCompliance = (adminData?.permissions ?? []).includes("approve-account");
   const [state, setState] = useState<CustomerAccountState>({
     customerList: [],
     summary: {},
@@ -47,10 +51,14 @@ const CustomerAccount = () => {
   useEffect(() => {
     (async () => {
       await fetchSummary();
+      if (canReviewForCompliance) {
+        const result = await complianceReviewSummary();
+        setComplianceSummary(result ?? null);
+      }
       const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
       await fetchCustomers(state.currentPage, state.searchQuery, perPage);
     })();
-  }, [state.currentPage, state.searchQuery, state.entriesPerPage,state.totalRecords, fetchSummary, fetchCustomers]);
+  }, [state.currentPage, state.searchQuery, state.entriesPerPage,state.totalRecords, fetchSummary, fetchCustomers, canReviewForCompliance, complianceReviewSummary]);
 
   const handlePageChange = (direction: "next" | "prev") => {
     const perPage = state.entriesPerPage === "all" ? state.totalRecords || 10 : state.entriesPerPage;
@@ -65,6 +73,32 @@ const CustomerAccount = () => {
   return (
     <div>
       <Spinner loading={loading} />
+
+      {canReviewForCompliance && complianceSummary && complianceSummary.total > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 mt-4">
+          <div className="flex items-start gap-3">
+            <div className="h-10 w-10 shrink-0 rounded-full bg-amber-100 flex items-center justify-center">
+              <Bell size={18} className="text-amber-600" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-amber-800">Awaiting Your Review</p>
+              <p className="text-xs text-amber-700">
+                You have {complianceSummary.total} account{complianceSummary.total > 1 ? "s" : ""} awaiting your review.
+                {complianceSummary.savings > 0 && ` ${complianceSummary.savings} Savings,`}
+                {complianceSummary.current > 0 && ` ${complianceSummary.current} Current,`}
+                {complianceSummary.corporate > 0 && ` ${complianceSummary.corporate} Corporate,`}
+                {" awaiting compliance review."}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => router.push("/admin/account-review")}
+            className="shrink-0 text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-4 py-2 transition-colors"
+          >
+            Go to Account Review
+          </button>
+        </div>
+      )}
 
       {/* Dashboard Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 mt-4">

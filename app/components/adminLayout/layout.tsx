@@ -1,6 +1,7 @@
 "use client";
 import { Menu } from "lucide-react";
 import SideBar from "@/app/components/adminLayout/sideBar";
+import ChangePasswordModal from "@/app/components/adminLayout/changePasswordModal";
 import React  from "react";
 import Image from "next/image";
 import { Navigation } from "../../components/adminLayout/navigation";
@@ -16,6 +17,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const current = Navigation.find((item) => item.path === pathname);
     const adminData = getFromLocalStorage("adminDetails") as AdminData | null;
+    const usesDefaultPassword = adminData?.is_default_password === true;
+
+    const [passwordModalOpen, setPasswordModalOpen] = React.useState(() => adminData?.is_default_password === true);
+
+    React.useEffect(() => {
+        if (usesDefaultPassword && !passwordModalOpen) {
+            setPasswordModalOpen(true);
+        }
+        if (!usesDefaultPassword && passwordModalOpen) {
+            setPasswordModalOpen(false);
+        }
+    }, [usesDefaultPassword, passwordModalOpen]);
 
     return (
         <div className="flex h-screen">
@@ -44,7 +57,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         </div>
                     </div>
                     <div className="px-4 bg-gray-100 h-screen">
-                        <p className="text-gray-500 pt-22 font-bold text-lg">{current?.title}</p>
+                        <p className="pt-22 font-bold text-lg  text-black">{current?.title}</p>
                         <div className="py-2">
                             {children}
                         </div>
@@ -52,6 +65,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 
                 </div>
             </div>
+
+            <ChangePasswordModal
+                isVisible={passwordModalOpen}
+                onClose={() => setPasswordModalOpen(false)}
+            />
         </div>
     );
 };

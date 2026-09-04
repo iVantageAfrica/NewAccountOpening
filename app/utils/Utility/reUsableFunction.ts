@@ -54,6 +54,23 @@ export const formatDateTime = (dateString?: string, options?: Intl.DateTimeForma
   return date.toLocaleString("en-US", options || defaultOptions);
 };
 
+export const formatDateTimeWithSeconds = (dateString?: string) => {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  const datePart = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  });
+  const timePart = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  return `${datePart} ${timePart}`;
+};
+
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY!;
 export const encrypt = (data: unknown): string => {
   const stringifiedData = JSON.stringify(data);

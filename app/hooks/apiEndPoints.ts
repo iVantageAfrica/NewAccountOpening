@@ -282,6 +282,89 @@ export const useApiEndPoints = () => {
         return response;
     }, [request]);
 
+    const listAdmins = useCallback(async () => {
+        const response = await request("admin/list-admins", "GET");
+        return response.data;
+    }, [request]);
+
+    const fetchAdmin = useCallback(async (adminId: string | number) => {
+        const response = await request(`admin/fetch-admin?adminId=${adminId}`, "GET");
+        return response.data;
+    }, [request]);
+
+    const createAdmin = useCallback(async (data: any) => {
+        const response = await request("admin/create-admin", "POST", data);
+        return response;
+    }, [request]);
+
+    const updateAdmin = useCallback(async (adminId: string | number, data: any) => {
+        const response = await request(`admin/update-admin/${adminId}`, "PUT", data);
+        return response;
+    }, [request]);
+
+    const deleteAdmin = useCallback(async (adminId: string | number) => {
+        const response = await request(`admin/delete-admin/${adminId}`, "DELETE");
+        return response;
+    }, [request]);
+
+    const changePassword = useCallback(async (data: any) => {
+        const response = await request("admin/change-password", "PUT", data);
+        return response;
+    }, [request]);
+
+    const listAuditLogs = useCallback(
+        async (adminId?: string | number, page?: string, dataLength?: string, pageUrl?: string) => {
+            let queryParams = "";
+            const params: string[] = [];
+            if (adminId && String(adminId) !== 'all') params.push(`adminId=${adminId}`);
+            if (pageUrl) {
+                const match = pageUrl.match(/[?&]page=(\d+)/);
+                if (match) page = match[1];
+            }
+            if (page && Number(page) > 1) params.push(`page=${page}`);
+            if (dataLength === 'all' || (dataLength && Number(dataLength) > 10)) params.push(`dataLength=${dataLength}`);
+            if (params.length > 0) queryParams = `?${params.join("&")}`;
+            const response = await request(`admin/audit-logs${queryParams}`, "GET");
+            return response.data;
+        },
+        [request]
+    );
+
+    const cmoReviewAccount = useCallback(async (data: { accountNumber: string; accountType: string; complianceOfficerId?: string | number }) => {
+        const response = await request("admin/review-account", "POST", data);
+        return response;
+    }, [request]);
+
+    const cmoFlagAccount = useCallback(async (data: { accountNumber: string; accountType: string; reason?: string }) => {
+        const response = await request("admin/flag-account", "POST", data);
+        return response;
+    }, [request]);
+
+    const complianceApproveAccount = useCallback(async (data: { accountNumber: string; accountType: string }) => {
+        const response = await request("admin/approve-account", "POST", data);
+        return response;
+    }, [request]);
+
+    const complianceFlagAccount = useCallback(async (data: { accountNumber: string; accountType: string; reason?: string }) => {
+        const response = await request("admin/flag-account-for-compliance", "POST", data);
+        return response;
+    }, [request]);
+
+    const listComplianceOfficers = useCallback(async () => {
+        const response = await request("admin/compliance-officers", "GET");
+        return response;
+    }, [request]);
+
+    const awaitingComplianceReview = useCallback(async () => {
+        const response = await request("admin/awaiting-compliance-review", "GET");
+        return response.data;
+    }, [request]);
+
+    const complianceReviewSummary = useCallback(async () => {
+        const response = await request("admin/compliance-review-summary", "GET");
+        return response.data;
+    }, [request]);
+
     return {
         loading,
         error,
@@ -317,6 +400,20 @@ export const useApiEndPoints = () => {
         adminUpdatePassword,
         accountReferenceExtendedSubmission,
         portalReferenceSummary,
-        portalReferenceList
+        portalReferenceList,
+        listAdmins,
+        fetchAdmin,
+        createAdmin,
+        updateAdmin,
+        deleteAdmin,
+        changePassword,
+        listAuditLogs,
+        cmoReviewAccount,
+        cmoFlagAccount,
+        complianceApproveAccount,
+        complianceFlagAccount,
+        listComplianceOfficers,
+        awaitingComplianceReview,
+        complianceReviewSummary
     }
 }

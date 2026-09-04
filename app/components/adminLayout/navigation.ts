@@ -1,6 +1,15 @@
-import { BookCopy, BookUser, CreditCard, GalleryHorizontalEnd, Link, User, Users, } from "lucide-react";
+import { BookCopy, BookUser, ClipboardCheck, ClipboardList, CreditCard, GalleryHorizontalEnd, Link, Shield, User, UserRound, Users, } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-export const Navigation = [
+export interface NavigationItem {
+  title: string;
+  path: string;
+  icon: LucideIcon;
+  superAdminOnly?: boolean;
+  complianceOfficerOnly?: boolean;
+}
+
+export const Navigation: NavigationItem[] = [
   // {
   //   title: "Dashboard",
   //   path: "/admin/dashboard",
@@ -41,5 +50,28 @@ export const Navigation = [
     title: "Debit Card Request",
     path: "/admin/card-request",
     icon: CreditCard
+  },
+  {
+    title: "Account Review",
+    path: "/admin/account-review",
+    icon: ClipboardCheck,
+    complianceOfficerOnly: true,
+  },
+  {
+    title: "Admins",
+    path: "/admin/admins",
+    icon: Shield,
+    superAdminOnly: true,
+  },
+  {
+    title: "Audit Logs",
+    path: "/admin/audit-logs",
+    icon: ClipboardList,
+    superAdminOnly: true,
+  },
+  {
+    title: "Profile",
+    path: "/admin/profile",
+    icon: UserRound,
   }
 ];

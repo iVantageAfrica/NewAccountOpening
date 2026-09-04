@@ -67,7 +67,7 @@ const PortalReference = () => {
 
     return (
         <div>
-            <p className="text-gray-500 pb-5 -pt-2">This page displays the list of references submitted by customers for accounts that are not yet linked.</p>
+            <p className="text-gray-500 pb-5 -pt-5 text-xs">This page displays the list of references submitted by customers for accounts that are not yet linked.</p>
             <Spinner loading={loading} />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-6  mb-8 mt-4">
                 <DashboardStatCard icon={<Users />}

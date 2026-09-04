@@ -92,6 +92,18 @@ export interface CorporateAccount {
     signature?: string;
     [key: string]: string | undefined;
   };
+
+  cmoStatus?: string;
+  cmoReviewedByName?: string;
+  cmoReviewedAt?: string;
+  cmoFlaggedReason?: string;
+  complianceStatus?: string;
+  complianceReviewedByName?: string;
+  complianceReviewedAt?: string;
+  complianceFlaggedReason?: string;
+  complianceAssignedTo?: string | number;
+  complianceAssignedToName?: string;
+  complianceAssignedAt?: string;
 }
 
 export interface DashboardSummary {
@@ -220,6 +232,18 @@ export interface IndividualAccountData {
     nextOfKinRelationship?: string;
     createdAt?: string;
   }[];
+
+  cmoStatus?: string;
+  cmoReviewedByName?: string;
+  cmoReviewedAt?: string;
+  cmoFlaggedReason?: string;
+  complianceStatus?: string;
+  complianceReviewedByName?: string;
+  complianceReviewedAt?: string;
+  complianceFlaggedReason?: string;
+  complianceAssignedTo?: string | number;
+  complianceAssignedToName?: string;
+  complianceAssignedAt?: string;
 }
 
 export interface POSAccountState {
@@ -328,9 +352,68 @@ export interface CustomerDetails {
 }
 
 export interface AdminData {
+  id?: string | number;
   firstname: string;
   lastname?: string;
   email?: string;
+  role?: string | null;
+  isSuperAdmin?: boolean;
+  is_super_admin?: boolean;
+  is_admin?: boolean;
+  is_default_password?: boolean;
+  permissions?: string[];
+  createdAt?: string;
+}
+
+export interface AdminListItem {
+  id: string | number;
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+  role?: string | null;
+  is_super_admin?: boolean;
+  is_default_password?: boolean;
+  created_at?: string;
+  createdAt?: string;
+  [key: string]: unknown;
+}
+
+export interface ComplianceOfficerItem {
+  id: string | number;
+  name: string;
+  email?: string;
+}
+
+export type ComplianceReviewItem = {
+  id: string | number;
+  accountNumber: string;
+  accountType: string;
+  accountTypeId?: string | number;
+  holderName?: string;
+  status?: string;
+  cmoReviewedByName?: string | null;
+  cmoReviewedAt?: string | null;
+  createdAt?: string;
+};
+
+export interface ComplianceReviewSummary {
+  total: number;
+  savings: number;
+  current: number;
+  corporate: number;
+}
+
+export interface AuditLogItem {
+  id: string | number;
+  adminId?: string | number | null;
+  adminName?: string | null;
+  action?: string;
+  description?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  metadata?: Record<string, unknown> | null;
+  createdAt?: string;
+  [key: string]: unknown;
 }
 
 export interface SideBarProps {
