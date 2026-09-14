@@ -161,7 +161,7 @@ if (accountInformation.signature) {
     doc.addImage(signatureBase64, "PNG", 40, yPos + 10, 160, 55);
     yPos += 70;
   } catch (error) {
-    console.error("Signature load error:", error);
+  
     // Draw a placeholder box instead
     doc.text("Signature:", 40, yPos);
     doc.setDrawColor(200, 200, 200);

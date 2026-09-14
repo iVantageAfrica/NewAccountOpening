@@ -83,7 +83,6 @@ export const decrypt = (cipher: string): string => {
     const decryptedStr = bytes.toString(CryptoJS.enc.Utf8);
     return JSON.parse(decryptedStr);
   } catch (e) {
-    console.error("Failed to decrypt:", e);
     return "";
   }
 };

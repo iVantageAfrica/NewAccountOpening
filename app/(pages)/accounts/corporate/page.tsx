@@ -118,7 +118,6 @@ function CorporateAccountContent() {
 
     const onSubmit = async (data: FormData) => {
         const payload = corporateAccountMapper(data, bvnData!.bvn, accountData.id);
-        console.log(payload)
         const apiResponse = await createCorporateAccount(payload);
         if (apiResponse.statusCode === 200) {
             setSuccessModal(true);

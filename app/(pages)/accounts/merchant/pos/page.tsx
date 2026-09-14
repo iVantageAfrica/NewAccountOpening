@@ -61,7 +61,6 @@ const POSMerchantAccount = () => {
     });
 
     const onSubmit = async (data: FormData) => {
-        console.log("I am here")
         const payload = posAccountMapper(data, bvnData!.bvn)
         const apiResponse = await createPosMerchantAccount(payload)
         if (apiResponse.statusCode === 200) {
