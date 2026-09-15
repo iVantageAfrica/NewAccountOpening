@@ -11,7 +11,7 @@ export async function proxyHandler(
     contentType?: string
 ) {
     let payload: any = null;
-    if (method !== "GET") {
+    if (method !== "GET" && method !== "DELETE") {
         const contentTypeHeader = req.headers.get("content-type") || "";
         if (contentTypeHeader.includes("multipart/form-data")) {
             const form = await req.formData();
