@@ -15,9 +15,16 @@ export async function proxyHandler(
         const contentTypeHeader = req.headers.get("content-type") || "";
         if (contentTypeHeader.includes("multipart/form-data")) {
             const form = await req.formData();
-            payload = form; 
+            payload = form;
         } else {
-            payload = await req.json();
+            const text = await req.text().catch(() => "");
+            if (text) {
+                try {
+                    payload = JSON.parse(text);
+                } catch {
+                    payload = text;
+                }
+            }
         }
     }
     const authHeader = req.headers.get("authorization");

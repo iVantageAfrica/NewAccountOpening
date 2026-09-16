@@ -34,3 +34,19 @@ export const changeAdminPasswordSchema = z.object({
 });
 
 export type ChangeAdminPasswordSchema = z.infer<typeof changeAdminPasswordSchema>;
+
+export const createSupportMailSchema = z.object({
+    firstname: z.string().min(1, "Firstname cannot be empty").max(255, "Firstname is too long"),
+    lastname: z.string().min(1, "Lastname cannot be empty").max(255, "Lastname is too long"),
+    email: z.string().email("Enter a valid email address").max(255, "Email address is too long"),
+});
+
+export type CreateSupportMailSchema = z.infer<typeof createSupportMailSchema>;
+
+export const updateSupportMailSchema = z.object({
+    firstname: z.string().min(1, "Firstname cannot be empty").max(255, "Firstname is too long"),
+    lastname: z.string().min(1, "Lastname cannot be empty").max(255, "Lastname is too long"),
+    email: z.string().email("Enter a valid email address").max(255, "Email address is too long"),
+});
+
+export type UpdateSupportMailSchema = z.infer<typeof updateSupportMailSchema>;

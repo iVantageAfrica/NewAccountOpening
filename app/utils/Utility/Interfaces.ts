@@ -416,6 +416,17 @@ export interface AuditLogItem {
   [key: string]: unknown;
 }
 
+export interface SupportMailItem {
+  id: string | number;
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  [key: string]: unknown;
+}
+
 export interface SideBarProps {
   collapsed: boolean;
   setIsCollapsed: (value: boolean) => void;

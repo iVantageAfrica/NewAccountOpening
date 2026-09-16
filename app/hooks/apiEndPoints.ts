@@ -330,6 +330,41 @@ export const useApiEndPoints = () => {
         [request]
     );
 
+    const listSupportMails = useCallback(async () => {
+        const response = await request("admin/list-support-notifications", "GET");
+        return response.data;
+    }, [request]);
+
+    const fetchSupportMail = useCallback(async (id: string | number) => {
+        const response = await request(`admin/fetch-support-notification/${id}`, "GET");
+        return response.data;
+    }, [request]);
+
+    const createSupportMail = useCallback(async (data: any) => {
+        const response = await request("admin/create-support-notification", "POST", data);
+        return response;
+    }, [request]);
+
+    const updateSupportMail = useCallback(async (id: string | number, data: any) => {
+        const response = await request(`admin/update-support-notification/${id}`, "PUT", data);
+        return response;
+    }, [request]);
+
+    const activateSupportMail = useCallback(async (id: string | number) => {
+        const response = await request(`admin/activate-support-notification/${id}`, "POST");
+        return response;
+    }, [request]);
+
+    const deactivateSupportMail = useCallback(async (id: string | number) => {
+        const response = await request(`admin/deactivate-support-notification/${id}`, "POST");
+        return response;
+    }, [request]);
+
+    const deleteSupportMail = useCallback(async (id: string | number) => {
+        const response = await request(`admin/delete-support-notification/${id}`, "DELETE");
+        return response;
+    }, [request]);
+
     const cmoReviewAccount = useCallback(async (data: { accountNumber: string; accountType: string; complianceOfficerId?: string | number }) => {
         const response = await request("admin/review-account", "POST", data);
         return response;
@@ -408,6 +443,13 @@ export const useApiEndPoints = () => {
         deleteAdmin,
         changePassword,
         listAuditLogs,
+        listSupportMails,
+        fetchSupportMail,
+        createSupportMail,
+        updateSupportMail,
+        activateSupportMail,
+        deactivateSupportMail,
+        deleteSupportMail,
         cmoReviewAccount,
         cmoFlagAccount,
         complianceApproveAccount,

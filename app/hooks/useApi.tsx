@@ -43,7 +43,13 @@ export function useApi<T = any>() {
             title: "Error",
             description: message,
           });
-          if (data?.error?.statusCode ===501 ) {
+          const errorMessage = data?.error?.message || "";
+          const isTokenExpired =
+            String(message).toLowerCase().includes("token has expired") ||
+            String(errorMessage).toLowerCase().includes("token has expired");
+          const isAuthError =
+            data?.error?.statusCode === 501 || data?.error?.statusCode === 401;
+          if (isAuthError || isTokenExpired) {
             clearAppState();
             router.push("/admin/auth");
           }

@@ -1,4 +1,4 @@
-import { BookCopy, BookUser, ClipboardCheck, ClipboardList, CreditCard, GalleryHorizontalEnd, Link, Shield, User, UserRound, Users, } from "lucide-react";
+import { BookCopy, BookUser, ClipboardCheck, ClipboardList, CreditCard, GalleryHorizontalEnd, Link, Mail, Shield, User, UserRound, Users, } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavigationItem {
@@ -61,6 +61,12 @@ export const Navigation: NavigationItem[] = [
     title: "Admins",
     path: "/admin/admins",
     icon: Shield,
+    superAdminOnly: true,
+  },
+  {
+    title: "Support Mail",
+    path: "/admin/support-mail",
+    icon: Mail,
     superAdminOnly: true,
   },
   {
